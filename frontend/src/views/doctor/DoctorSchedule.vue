@@ -19,6 +19,19 @@
         class="page-alert"
       />
 
+      <div class="insight-grid">
+        <div
+          v-for="item in scheduleModel.summaryCards"
+          :key="item.label"
+          class="insight-card"
+          :class="{ 'is-textual': typeof item.value === 'string' && String(item.value).length > 8 }"
+        >
+          <div class="insight-label">{{ item.label }}</div>
+          <div class="insight-value">{{ item.value }}</div>
+          <div class="insight-hint">{{ item.hint }}</div>
+        </div>
+      </div>
+
       <div class="section-meta">
         <span>{{ scheduleModel.items.length }} 条排班记录</span>
         <span v-if="loading">加载中...</span>
@@ -100,12 +113,56 @@ onMounted(() => {
   margin-bottom: 16px;
 }
 
+.insight-grid {
+  margin-bottom: 16px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.insight-card {
+  padding: 14px 16px;
+  border: 1px solid #dbeafe;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #eff6ff 0%, #f8fafc 100%);
+}
+
+.insight-card.is-textual .insight-value {
+  font-size: 18px;
+}
+
+.insight-label {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.insight-value {
+  margin-top: 8px;
+  font-size: 24px;
+  font-weight: 700;
+  color: #164e63;
+  line-height: 1.2;
+  word-break: break-word;
+}
+
+.insight-hint {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #64748b;
+}
+
 .section-meta {
   margin-bottom: 12px;
   display: flex;
   justify-content: space-between;
   font-size: 12px;
   color: #64748b;
+}
+
+@media (max-width: 1100px) {
+  .insight-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 900px) {

@@ -16,6 +16,14 @@
             </div>
           </template>
 
+          <div class="insight-grid">
+            <div v-for="item in scheduleInsights.summaryCards" :key="item.label" class="insight-card">
+              <div class="insight-label">{{ item.label }}</div>
+              <div class="insight-value">{{ item.value }}</div>
+              <div class="insight-hint">{{ item.hint }}</div>
+            </div>
+          </div>
+
           <div class="section-meta">
             <span>{{ schedules.length }} 条排班记录</span>
             <span v-if="loading">加载中...</span>
@@ -32,7 +40,16 @@
               <template #default="{ row }">{{ formatFee(row.fee) }}</template>
             </el-table-column>
             <el-table-column prop="totalSlots" label="总号源" width="90" />
-            <el-table-column prop="remainingSlots" label="剩余" width="90" />
+            <el-table-column label="剩余号源" width="120">
+              <template #default="{ row }">
+                <div class="quota-cell">
+                  <span>{{ row.remainingSlots }}</span>
+                  <el-tag size="small" :type="getScheduleCapacityMeta(row).type">
+                    {{ getScheduleCapacityMeta(row).label }}
+                  </el-tag>
+                </div>
+              </template>
+            </el-table-column>
             <el-table-column label="状态" width="100">
               <template #default="{ row }">
                 <el-tag :type="row.enabled ? 'success' : 'info'">
@@ -47,6 +64,8 @@
               </template>
             </el-table-column>
           </el-table>
+
+          <el-empty v-if="!loading && schedules.length === 0" :description="scheduleInsights.emptyHint" />
         </el-card>
       </el-col>
 
@@ -128,14 +147,16 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref } from "vue";
+import { computed, onMounted, reactive, ref } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import {
+  buildAdminScheduleInsights,
   createAdminSchedule,
   createScheduleDraftFromDoctor,
   disableAdminSchedule,
   fetchAdminSchedules,
   fetchScheduleDoctorOptions,
+  getScheduleCapacityMeta,
   updateAdminSchedule,
 } from "../../services/adminSchedules.js";
 
@@ -148,6 +169,7 @@ const editingScheduleId = ref("");
 const schedules = ref([]);
 const doctorOptions = ref([]);
 const form = reactive(createEmptyForm());
+const scheduleInsights = computed(() => buildAdminScheduleInsights(schedules.value));
 
 function createEmptyForm() {
   return {
@@ -353,6 +375,40 @@ onMounted(async () => {
   color: #64748b;
 }
 
+.insight-grid {
+  margin-bottom: 16px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.insight-card {
+  padding: 14px 16px;
+  border: 1px solid #dbeafe;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #eff6ff 0%, #f8fafc 100%);
+}
+
+.insight-label {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.insight-value {
+  margin-top: 8px;
+  font-size: 24px;
+  font-weight: 700;
+  color: #164e63;
+  line-height: 1.2;
+  word-break: break-word;
+}
+
+.insight-hint {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #64748b;
+}
+
 .section-meta {
   margin-bottom: 12px;
   display: flex;
@@ -361,8 +417,21 @@ onMounted(async () => {
   color: #64748b;
 }
 
+.quota-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
 .rule-box {
   margin-top: 14px;
+}
+
+@media (max-width: 1100px) {
+  .insight-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 900px) {
