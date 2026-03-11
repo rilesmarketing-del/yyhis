@@ -4,15 +4,15 @@
       <template #header>
         <div class="header-row">
           <div>
-            <div class="panel-title">My Schedule</div>
-            <div class="panel-subtitle">Read-only view of schedules assigned to the current doctor account.</div>
+            <div class="panel-title">我的排班</div>
+            <div class="panel-subtitle">只读查看当前医生账号已绑定的排班信息。</div>
           </div>
-          <el-button @click="loadSchedules">Refresh</el-button>
+          <el-button @click="loadSchedules">刷新</el-button>
         </div>
       </template>
 
       <el-alert
-        title="Schedules are managed by admins. Doctors can only view them here."
+        title="排班由管理端维护，医生端仅提供查看。"
         type="info"
         :closable="false"
         show-icon
@@ -20,20 +20,20 @@
       />
 
       <div class="section-meta">
-        <span>{{ scheduleModel.items.length }} schedule records</span>
-        <span v-if="loading">Loading...</span>
+        <span>{{ scheduleModel.items.length }} 条排班记录</span>
+        <span v-if="loading">加载中...</span>
       </div>
 
       <el-table :data="scheduleModel.items" border v-loading="loading">
-        <el-table-column prop="date" label="Date" width="120" />
-        <el-table-column prop="weekdayLabel" label="Day" width="90" />
-        <el-table-column prop="timeSlot" label="Time" width="130" />
-        <el-table-column prop="department" label="Department" min-width="120" />
-        <el-table-column prop="doctorName" label="Doctor" min-width="120" />
-        <el-table-column prop="title" label="Title" min-width="120" />
-        <el-table-column prop="feeLabel" label="Fee" width="110" />
-        <el-table-column prop="quotaLabel" label="Quota" width="130" />
-        <el-table-column label="Status" width="100">
+        <el-table-column prop="date" label="日期" width="120" />
+        <el-table-column prop="weekdayLabel" label="星期" width="90" />
+        <el-table-column prop="timeSlot" label="时段" width="130" />
+        <el-table-column prop="department" label="科室" min-width="120" />
+        <el-table-column prop="doctorName" label="医生" min-width="120" />
+        <el-table-column prop="title" label="职称" min-width="120" />
+        <el-table-column prop="feeLabel" label="费用" width="110" />
+        <el-table-column prop="quotaLabel" label="号源" width="130" />
+        <el-table-column label="状态" width="100">
           <template #default="{ row }">
             <el-tag :type="row.statusType">{{ row.statusLabel }}</el-tag>
           </template>
@@ -59,7 +59,7 @@ async function loadSchedules() {
     const schedules = await fetchMyDoctorSchedules();
     scheduleModel.value = buildDoctorScheduleModel(schedules);
   } catch (error) {
-    ElMessage.error(error.message || "Failed to load doctor schedules");
+    ElMessage.error(error.message || "医生排班加载失败");
   } finally {
     loading.value = false;
   }

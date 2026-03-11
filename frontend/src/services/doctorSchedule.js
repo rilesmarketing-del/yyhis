@@ -1,6 +1,6 @@
 import { apiRequest } from "./apiClient.js";
 
-const weekdayLabels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const weekdayLabels = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
 
 export function fetchMyDoctorSchedules() {
   return apiRequest("/api/doctor/schedule/mine");
@@ -18,15 +18,15 @@ export function buildDoctorScheduleModel(schedules = []) {
       date: item.date || "",
       weekdayLabel: formatWeekday(item.date),
       timeSlot: item.timeSlot || "",
-      feeLabel: `${Number(item.fee ?? 0).toFixed(2)} \u5143`,
+      feeLabel: `${Number(item.fee ?? 0).toFixed(2)} 元`,
       quotaLabel: `${Number(item.remainingSlots ?? 0)} / ${Number(item.totalSlots ?? 0)}`,
-      statusLabel: item.enabled === false ? "\u5df2\u505c\u7528" : "\u5df2\u542f\u7528",
+      statusLabel: item.enabled === false ? "已停用" : "已启用",
       statusType: item.enabled === false ? "info" : "success",
     }));
 
   return {
     items,
-    emptyHint: "\u6682\u65e0\u6392\u73ed\u6570\u636e",
+    emptyHint: "暂无排班数据",
   };
 }
 

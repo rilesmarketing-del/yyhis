@@ -1,4 +1,5 @@
-﻿import assert from "node:assert/strict";
+import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import { createScheduleDraftFromDoctor } from "../src/services/adminSchedules.js";
 import { buildDoctorScheduleModel } from "../src/services/doctorSchedule.js";
 
@@ -32,9 +33,22 @@ const model = buildDoctorScheduleModel([
 ]);
 
 assert.equal(model.items.length, 1);
+assert.equal(model.items[0].weekdayLabel, "周四");
 assert.equal(model.items[0].statusLabel, "已启用");
 assert.equal(model.items[0].feeLabel, "28.00 元");
 assert.equal(model.items[0].quotaLabel, "7 / 12");
 assert.equal(model.emptyHint, "暂无排班数据");
+
+const [adminSchedulingView, doctorScheduleView] = await Promise.all([
+  readFile(new URL("../src/views/admin/AdminScheduling.vue", import.meta.url), "utf8"),
+  readFile(new URL("../src/views/doctor/DoctorSchedule.vue", import.meta.url), "utf8"),
+]);
+
+assert.match(adminSchedulingView, /排班配置/);
+assert.match(adminSchedulingView, /新建排班/);
+assert.match(adminSchedulingView, /绑定真实医生账号/);
+assert.match(doctorScheduleView, /我的排班/);
+assert.match(doctorScheduleView, /当前医生账号/);
+assert.match(doctorScheduleView, /刷新/);
 
 console.log("doctor schedule mapping tests passed");

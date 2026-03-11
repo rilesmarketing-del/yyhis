@@ -6,44 +6,44 @@
           <template #header>
             <div class="header-row">
               <div>
-                <div class="panel-title">Schedule Config</div>
-                <div class="panel-subtitle">Bind schedules to real doctor accounts instead of free-text names.</div>
+                <div class="panel-title">排班配置</div>
+                <div class="panel-subtitle">排班直接绑定真实医生账号，不再使用自由填写的医生姓名。</div>
               </div>
               <div class="header-actions">
-                <el-button @click="loadSchedules">Refresh</el-button>
-                <el-button type="primary" @click="openCreateDialog">New Schedule</el-button>
+                <el-button @click="loadSchedules">刷新</el-button>
+                <el-button type="primary" @click="openCreateDialog">新建排班</el-button>
               </div>
             </div>
           </template>
 
           <div class="section-meta">
-            <span>{{ schedules.length }} schedule records</span>
-            <span v-if="loading">Loading...</span>
+            <span>{{ schedules.length }} 条排班记录</span>
+            <span v-if="loading">加载中...</span>
           </div>
 
           <el-table :data="schedules" border v-loading="loading">
-            <el-table-column prop="doctorName" label="Doctor" min-width="120" />
-            <el-table-column prop="doctorUsername" label="Account" min-width="120" />
-            <el-table-column prop="title" label="Title" min-width="120" />
-            <el-table-column prop="department" label="Department" min-width="120" />
-            <el-table-column prop="date" label="Date" width="120" />
-            <el-table-column prop="timeSlot" label="Time" width="130" />
-            <el-table-column label="Fee" width="100">
+            <el-table-column prop="doctorName" label="医生" min-width="120" />
+            <el-table-column prop="doctorUsername" label="账号" min-width="120" />
+            <el-table-column prop="title" label="职称" min-width="120" />
+            <el-table-column prop="department" label="科室" min-width="120" />
+            <el-table-column prop="date" label="日期" width="120" />
+            <el-table-column prop="timeSlot" label="时段" width="130" />
+            <el-table-column label="费用" width="100">
               <template #default="{ row }">{{ formatFee(row.fee) }}</template>
             </el-table-column>
-            <el-table-column prop="totalSlots" label="Total" width="90" />
-            <el-table-column prop="remainingSlots" label="Left" width="90" />
-            <el-table-column label="Status" width="100">
+            <el-table-column prop="totalSlots" label="总号源" width="90" />
+            <el-table-column prop="remainingSlots" label="剩余" width="90" />
+            <el-table-column label="状态" width="100">
               <template #default="{ row }">
                 <el-tag :type="row.enabled ? 'success' : 'info'">
-                  {{ row.enabled ? 'Enabled' : 'Disabled' }}
+                  {{ row.enabled ? '已启用' : '已停用' }}
                 </el-tag>
               </template>
             </el-table-column>
-            <el-table-column label="Actions" min-width="160" fixed="right">
+            <el-table-column label="操作" min-width="160" fixed="right">
               <template #default="{ row }">
-                <el-button type="primary" link @click="openEditDialog(row)">Edit</el-button>
-                <el-button type="danger" link :disabled="!row.enabled" @click="handleDisable(row)">Disable</el-button>
+                <el-button type="primary" link @click="openEditDialog(row)">编辑</el-button>
+                <el-button type="danger" link :disabled="!row.enabled" @click="handleDisable(row)">停用</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -53,31 +53,31 @@
       <el-col :xs="24" :lg="8">
         <el-card shadow="never">
           <template #header>
-            <span>Binding Rules</span>
+            <span>绑定规则</span>
           </template>
           <el-alert
-            title="Schedules now snapshot doctor name, title, and department from the selected doctor account."
+            title="排班会从所选医生账号同步医生姓名、职称和科室快照。"
             type="success"
             :closable="false"
             show-icon
           />
           <el-descriptions :column="1" border class="rule-box">
-            <el-descriptions-item label="Source">Only enabled doctor accounts are selectable.</el-descriptions-item>
-            <el-descriptions-item label="Patient View">Patients only see enabled schedules.</el-descriptions-item>
-            <el-descriptions-item label="Doctor View">Doctors query schedules by username binding.</el-descriptions-item>
-            <el-descriptions-item label="Editing">Total slots cannot drop below used slots.</el-descriptions-item>
+            <el-descriptions-item label="来源">只能选择已启用的医生账号。</el-descriptions-item>
+            <el-descriptions-item label="患者端">患者只能看到已启用的排班。</el-descriptions-item>
+            <el-descriptions-item label="医生端">医生按账号绑定关系查询自己的排班。</el-descriptions-item>
+            <el-descriptions-item label="编辑限制">总号源不能小于已使用号源。</el-descriptions-item>
           </el-descriptions>
         </el-card>
       </el-col>
     </el-row>
 
-    <el-dialog v-model="dialogVisible" :title="dialogMode === 'create' ? 'New Schedule' : 'Edit Schedule'" width="560px">
+    <el-dialog v-model="dialogVisible" :title="dialogMode === 'create' ? '新建排班' : '编辑排班'" width="560px">
       <el-form :model="form" label-width="96px">
-        <el-form-item label="Doctor">
+        <el-form-item label="医生">
           <el-select
             v-model="form.doctorUsername"
             filterable
-            placeholder="Select a doctor account"
+            placeholder="请选择医生账号"
             :loading="doctorOptionsLoading"
             style="width: 100%"
             @change="handleDoctorChange"
@@ -90,38 +90,38 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="Doctor Name">
+        <el-form-item label="医生姓名">
           <el-input v-model="form.doctorName" disabled />
         </el-form-item>
-        <el-form-item label="Title">
+        <el-form-item label="职称">
           <el-input v-model="form.title" disabled />
         </el-form-item>
-        <el-form-item label="Department">
+        <el-form-item label="科室">
           <el-input v-model="form.department" disabled />
         </el-form-item>
-        <el-form-item label="Date">
+        <el-form-item label="日期">
           <el-date-picker
             v-model="form.date"
             type="date"
             value-format="YYYY-MM-DD"
-            placeholder="Select a date"
+            placeholder="请选择日期"
             style="width: 100%"
           />
         </el-form-item>
-        <el-form-item label="Time Slot">
-          <el-input v-model="form.timeSlot" placeholder="e.g. 09:00-09:30" />
+        <el-form-item label="时段">
+          <el-input v-model="form.timeSlot" placeholder="例如 09:00-09:30" />
         </el-form-item>
-        <el-form-item label="Fee">
+        <el-form-item label="费用">
           <el-input-number v-model="form.fee" :min="0" :precision="2" :step="1" style="width: 100%" />
         </el-form-item>
-        <el-form-item label="Total Slots">
+        <el-form-item label="总号源">
           <el-input-number v-model="form.totalSlots" :min="1" :step="1" style="width: 100%" />
         </el-form-item>
       </el-form>
 
       <template #footer>
-        <el-button @click="dialogVisible = false">Cancel</el-button>
-        <el-button type="primary" :loading="submitting" @click="submitSchedule">Save</el-button>
+        <el-button @click="dialogVisible = false">取消</el-button>
+        <el-button type="primary" :loading="submitting" @click="submitSchedule">保存</el-button>
       </template>
     </el-dialog>
   </div>
@@ -182,11 +182,11 @@ function syncDoctorSnapshot(username) {
 }
 
 function formatDoctorOption(doctor) {
-  return `${doctor.displayName} (${doctor.username}) / ${doctor.department || 'No department'} / ${doctor.title || 'No title'}`;
+  return `${doctor.displayName} (${doctor.username}) / ${doctor.department || '未设置科室'} / ${doctor.title || '未设置职称'}`;
 }
 
 function formatFee(fee) {
-  return `${Number(fee || 0).toFixed(2)} CNY`;
+  return `${Number(fee || 0).toFixed(2)} 元`;
 }
 
 async function loadDoctorOptions() {
@@ -194,7 +194,7 @@ async function loadDoctorOptions() {
   try {
     doctorOptions.value = await fetchScheduleDoctorOptions();
   } catch (error) {
-    ElMessage.error(error.message || "Failed to load doctor accounts");
+    ElMessage.error(error.message || "医生账号加载失败");
   } finally {
     doctorOptionsLoading.value = false;
   }
@@ -212,7 +212,7 @@ async function loadSchedules() {
   try {
     schedules.value = await fetchAdminSchedules();
   } catch (error) {
-    ElMessage.error(error.message || "Failed to load schedules");
+    ElMessage.error(error.message || "排班加载失败");
   } finally {
     loading.value = false;
   }
@@ -266,11 +266,11 @@ function buildPayload() {
 
 function validateForm() {
   if (!form.doctorUsername || !form.date || !form.timeSlot.trim()) {
-    ElMessage.warning("Please complete the schedule form");
+    ElMessage.warning("请完整填写排班信息");
     return false;
   }
   if (Number(form.totalSlots) <= 0) {
-    ElMessage.warning("Total slots must be greater than 0");
+    ElMessage.warning("总号源必须大于 0");
     return false;
   }
   return true;
@@ -286,15 +286,15 @@ async function submitSchedule() {
     const payload = buildPayload();
     if (dialogMode.value === "create") {
       await createAdminSchedule(payload);
-      ElMessage.success("Schedule created");
+      ElMessage.success("排班创建成功");
     } else {
       await updateAdminSchedule(editingScheduleId.value, payload);
-      ElMessage.success("Schedule updated");
+      ElMessage.success("排班更新成功");
     }
     dialogVisible.value = false;
     await loadSchedules();
   } catch (error) {
-    ElMessage.error(error.message || "Failed to save schedule");
+    ElMessage.error(error.message || "排班保存失败");
   } finally {
     submitting.value = false;
   }
@@ -303,16 +303,16 @@ async function submitSchedule() {
 async function handleDisable(row) {
   try {
     await ElMessageBox.confirm(
-      `Disable ${row.department} / ${row.doctorName} / ${row.date} ${row.timeSlot}?`,
-      "Disable Schedule",
+      `确认停用 ${row.department} / ${row.doctorName} / ${row.date} ${row.timeSlot} 的排班吗？`,
+      "停用排班",
       { type: "warning" }
     );
     await disableAdminSchedule(row.id);
-    ElMessage.success("Schedule disabled");
+    ElMessage.success("排班已停用");
     await loadSchedules();
   } catch (error) {
     if (error !== "cancel") {
-      ElMessage.error(error.message || "Failed to disable schedule");
+      ElMessage.error(error.message || "排班停用失败");
     }
   }
 }
