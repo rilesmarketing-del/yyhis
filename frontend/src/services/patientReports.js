@@ -1,4 +1,4 @@
-﻿function isEligibleAppointment(appointment, today) {
+function isEligibleAppointment(appointment, today) {
   return appointment.status === "BOOKED" && appointment.paymentStatus === "PAID" && appointment.date <= today;
 }
 
@@ -49,10 +49,18 @@ function buildRealAdvice(record, today) {
   return "如有不适，请按医嘱及时复诊。";
 }
 
-function mapVisitReport(record, today) {
+function buildAppointmentMap(appointments) {
+  return new Map((appointments || []).map((item) => [item.id, item]));
+}
+
+function resolveSerialNumber(appointmentMap, appointmentId) {
+  return appointmentMap.get(appointmentId)?.serialNumber || appointmentId;
+}
+
+function mapVisitReport(record, today, appointmentMap) {
   return {
     id: record.id,
-    serialNumber: record.appointmentId,
+    serialNumber: resolveSerialNumber(appointmentMap, record.appointmentId),
     reportNo: buildReportNo(record.id),
     item: getReportItem(record.department),
     date: record.completedAt || `${record.visitDate || ""} ${record.visitTimeSlot || ""}`.trim(),
@@ -82,6 +90,7 @@ function mapAppointmentReport(appointment, today) {
 }
 
 export function buildPatientReports({ appointments = [], visitRecords = [], today }) {
+  const appointmentMap = buildAppointmentMap(appointments);
   const realReports = visitRecords
     .filter(hasRealReport)
     .sort(
@@ -90,7 +99,7 @@ export function buildPatientReports({ appointments = [], visitRecords = [], toda
         String(right.visitDate || "").localeCompare(String(left.visitDate || "")) ||
         String(right.visitTimeSlot || "").localeCompare(String(left.visitTimeSlot || ""))
     )
-    .map((record) => mapVisitReport(record, today));
+    .map((record) => mapVisitReport(record, today, appointmentMap));
 
   if (realReports.length > 0) {
     return realReports;

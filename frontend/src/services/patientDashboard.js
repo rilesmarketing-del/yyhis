@@ -81,7 +81,7 @@ function buildEmptyTimeline() {
       id: "empty",
       time: "现在",
       title: "还没有预约记录",
-      desc: "去预约挂号创建第一条记录后，这里会显示你的最近动态",
+      desc: "去预约挂号创建第一条记录后，这里会显示你的最近动态。",
       type: "primary",
     },
   ];
@@ -112,7 +112,7 @@ export function buildPatientDashboardModel({ appointments, today, currentMonth }
       { key: "create", label: "新建预约挂号", desc: todayBooked > 0 ? `今日待就诊 ${todayBooked} 次` : "随时创建新的预约", path: "/patient/appointments", type: "primary" },
       { key: "appointments", label: "查看我的预约", desc: appointments.length > 0 ? `当前共有 ${appointments.length} 条预约记录` : "还没有预约记录", path: "/patient/appointments", type: "success" },
       { key: "payments", label: "处理待支付账单", desc: describePendingPayments(pendingPayments), path: "/patient/payments", type: "warning" },
-      { key: "reports", label: "查看检查报告", desc: "报告模块仍为演示入口", path: "/patient/reports", type: "info" },
+      { key: "reports", label: "查看检查报告", desc: "查看真实报告与复诊建议", path: "/patient/reports", type: "info" },
     ],
   };
 }

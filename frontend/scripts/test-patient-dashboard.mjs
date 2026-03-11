@@ -58,6 +58,7 @@ assert.equal(model.timeline[0].title, "已预约，待支付");
 assert.equal(model.timeline[1].title, "预约已支付");
 assert.equal(model.timeline[2].title, "预约已取消，已退款");
 assert.equal(model.quickActions[2].desc, "当前有 1 笔待支付");
+assert.equal(model.quickActions[3].desc, "查看真实报告与复诊建议");
 
 const emptyModel = buildPatientDashboardModel({
   appointments: [],

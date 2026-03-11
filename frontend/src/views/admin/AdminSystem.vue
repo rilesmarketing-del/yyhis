@@ -1,87 +1,210 @@
 <template>
-  <el-tabs v-model="tab">
-    <el-tab-pane label="参数配置" name="params">
-      <el-card>
-        <el-form :model="params" label-width="130px">
-          <el-form-item label="会话超时(分钟)">
-            <el-input-number v-model="params.sessionTimeout" :min="10" :max="240" />
-          </el-form-item>
-          <el-form-item label="预约提前天数">
-            <el-input-number v-model="params.appointDays" :min="1" :max="30" />
-          </el-form-item>
-          <el-form-item label="停诊短信模板">
-            <el-input v-model="params.cancelTemplate" />
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary">保存参数</el-button>
-          </el-form-item>
-        </el-form>
-      </el-card>
-    </el-tab-pane>
+  <div class="admin-system-page">
+    <el-card shadow="never" class="hero-card">
+      <div class="header-row">
+        <div>
+          <div class="panel-title">系统管理</div>
+          <div class="panel-subtitle">汇总当前账号、组织、排班与运营信号，优先呈现真实系统运行状态；参数配置与字典维护将在后续补齐。</div>
+        </div>
+        <el-button @click="loadSystemOverview">刷新数据</el-button>
+      </div>
+    </el-card>
 
-    <el-tab-pane label="字典管理" name="dict">
-      <el-card>
-        <el-table :data="dicts" border>
-          <el-table-column prop="type" label="字典类型" width="180" />
-          <el-table-column prop="key" label="键" width="140" />
-          <el-table-column prop="value" label="值" min-width="180" />
-          <el-table-column label="操作" width="120">
-            <template #default>
-              <el-button link type="primary">编辑</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-card>
-    </el-tab-pane>
+    <el-row :gutter="12">
+      <el-col v-for="item in systemModel.cards" :key="item.label" :xs="24" :sm="12" :lg="6">
+        <el-card shadow="never" class="stat-card" v-loading="loading">
+          <div class="stat-label">{{ item.label }}</div>
+          <div class="stat-value">{{ item.value }}</div>
+          <div class="stat-desc">{{ item.desc }}</div>
+        </el-card>
+      </el-col>
+    </el-row>
 
-    <el-tab-pane label="操作日志" name="ops">
-      <el-card>
-        <el-table :data="logs" border>
-          <el-table-column prop="time" label="时间" width="170" />
-          <el-table-column prop="user" label="用户" width="120" />
-          <el-table-column prop="action" label="操作" min-width="220" />
-          <el-table-column prop="ip" label="IP" width="130" />
-        </el-table>
-      </el-card>
-    </el-tab-pane>
+    <el-row :gutter="12" class="mt-12">
+      <el-col :xs="24" :lg="9">
+        <el-card shadow="never" v-loading="loading" class="section-card">
+          <template #header>
+            <span>角色账号分布</span>
+          </template>
+          <div v-if="systemModel.roleStats.length > 0" class="role-stats">
+            <div v-for="item in systemModel.roleStats" :key="item.role" class="role-stat-item">
+              <div class="role-stat-header">
+                <el-tag :type="item.tagType" effect="plain">{{ item.label }}</el-tag>
+                <strong>{{ item.value }}</strong>
+              </div>
+            </div>
+          </div>
+          <el-empty v-else :description="systemModel.emptyRoleHint" />
+        </el-card>
+      </el-col>
 
-    <el-tab-pane label="审计日志" name="audit">
-      <el-card>
-        <el-table :data="audits" border>
-          <el-table-column prop="time" label="时间" width="170" />
-          <el-table-column prop="module" label="模块" width="140" />
-          <el-table-column prop="event" label="审计事件" min-width="220" />
-          <el-table-column prop="result" label="结果" width="100" />
-        </el-table>
-      </el-card>
-    </el-tab-pane>
-  </el-tabs>
+      <el-col :xs="24" :lg="15">
+        <el-card shadow="never" v-loading="loading" class="section-card">
+          <template #header>
+            <span>关键运营指标</span>
+          </template>
+          <el-table :data="systemModel.metrics" border>
+            <el-table-column prop="metric" label="指标" min-width="220" />
+            <el-table-column prop="value" label="当前值" width="140" />
+          </el-table>
+          <el-empty v-if="!loading && systemModel.metrics.length === 0" :description="systemModel.emptyMetricsHint" />
+        </el-card>
+      </el-col>
+    </el-row>
+
+    <el-row :gutter="12" class="mt-12">
+      <el-col :xs="24" :lg="14">
+        <el-card shadow="never" v-loading="loading" class="section-card">
+          <template #header>
+            <span>系统提醒</span>
+          </template>
+          <el-alert
+            v-for="item in systemModel.reminders"
+            :key="item.id"
+            :title="item.title"
+            :type="item.type"
+            :closable="false"
+            show-icon
+            class="mb-8"
+          />
+        </el-card>
+      </el-col>
+
+      <el-col :xs="24" :lg="10">
+        <el-card shadow="never" v-loading="loading" class="note-card">
+          <template #header>
+            <span>阶段说明</span>
+          </template>
+          <div class="note-text">{{ systemModel.note }}</div>
+        </el-card>
+      </el-col>
+    </el-row>
+  </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
+import { ElMessage } from "element-plus";
+import { buildAdminSystemModel, fetchAdminSystemOverview } from "../../services/adminSystem.js";
 
-const tab = ref("params");
+const loading = ref(false);
+const systemModel = ref(buildAdminSystemModel());
 
-const params = ref({
-  sessionTimeout: 60,
-  appointDays: 7,
-  cancelTemplate: "您预约的门诊已停诊，请及时改约。",
+async function loadSystemOverview() {
+  loading.value = true;
+  try {
+    const overview = await fetchAdminSystemOverview();
+    systemModel.value = buildAdminSystemModel(overview);
+  } catch (error) {
+    systemModel.value = buildAdminSystemModel();
+    ElMessage.error(error.message || "系统运行总览加载失败");
+  } finally {
+    loading.value = false;
+  }
+}
+
+onMounted(() => {
+  loadSystemOverview();
 });
-
-const dicts = [
-  { type: "科室", key: "RESP", value: "呼吸内科" },
-  { type: "支付方式", key: "WX", value: "微信支付" },
-  { type: "号源类型", key: "EXP", value: "专家号" },
-];
-
-const logs = [
-  { time: "2026-03-06 09:50", user: "admin", action: "修改预约提前天数为 7", ip: "10.10.2.15" },
-  { time: "2026-03-06 10:05", user: "ops01", action: "导出 3 月业务报表", ip: "10.10.2.33" },
-];
-
-const audits = [
-  { time: "2026-03-06 09:55", module: "权限中心", event: "角色权限变更", result: "成功" },
-  { time: "2026-03-06 10:12", module: "收费医保", event: "异常账单人工冲正", result: "成功" },
-];
 </script>
+
+<style scoped>
+.admin-system-page {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.hero-card {
+  border: 1px solid #bfdbfe;
+  background: linear-gradient(135deg, #eff6ff 0%, #ffffff 58%, #f8fafc 100%);
+}
+
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.panel-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1d4ed8;
+}
+
+.panel-subtitle {
+  margin-top: 4px;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.mt-12 {
+  margin-top: 12px;
+}
+
+.mb-8 {
+  margin-bottom: 8px;
+}
+
+.stat-card {
+  min-height: 136px;
+}
+
+.stat-label {
+  color: #4f647e;
+  font-size: 13px;
+}
+
+.stat-value {
+  margin-top: 8px;
+  font-size: 26px;
+  color: #1d4ed8;
+  font-weight: 700;
+}
+
+.stat-desc {
+  margin-top: 6px;
+  color: #6b7c93;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.section-card,
+.note-card {
+  height: 100%;
+}
+
+.role-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.role-stat-item {
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid #dbeafe;
+  background: #f8fbff;
+}
+
+.role-stat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.note-text {
+  color: #475569;
+  line-height: 1.8;
+  font-size: 13px;
+}
+
+@media (max-width: 900px) {
+  .header-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+</style>

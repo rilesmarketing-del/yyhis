@@ -48,7 +48,7 @@ assert.equal(reports[0].source, "医生接诊");
 assert.equal(reports[0].reportNo, "REP-1001");
 assert.equal(reports[0].summary, "复诊情况稳定，建议一月后复查。");
 assert.equal(reports[0].advice, "继续低盐饮食，按时复诊。");
-assert.equal(reports[0].serialNumber, "a1");
+assert.equal(reports[0].serialNumber, "APT202603100001");
 
 const fallbackReports = buildPatientReports({ appointments, visitRecords: [], today: "2026-03-10" });
 assert.equal(fallbackReports.length, 2);
