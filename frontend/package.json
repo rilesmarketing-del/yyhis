@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "test:ci": "node ./scripts/test-patient-registration-handoff.mjs && node ./scripts/test-patient-dashboard.mjs && node ./scripts/test-doctor-orders-workbench.mjs && node ./scripts/test-doctor-clinical-structured-data.mjs && node ./scripts/test-admin-org-governance.mjs && node ./scripts/test-admin-pharmacy-system.mjs",
     "verify:bundle": "node ./scripts/check-bundle-size.mjs"
   },
   "dependencies": {
