@@ -30,13 +30,16 @@ public class AdminOrgService {
     private final DepartmentRepository departmentRepository;
     private final UserAccountRepository userAccountRepository;
     private final AccountProvisioningService accountProvisioningService;
+    private final PasswordService passwordService;
 
     public AdminOrgService(DepartmentRepository departmentRepository,
                            UserAccountRepository userAccountRepository,
-                           AccountProvisioningService accountProvisioningService) {
+                           AccountProvisioningService accountProvisioningService,
+                           PasswordService passwordService) {
         this.departmentRepository = departmentRepository;
         this.userAccountRepository = userAccountRepository;
         this.accountProvisioningService = accountProvisioningService;
+        this.passwordService = passwordService;
     }
 
     @Transactional(readOnly = true)
@@ -170,7 +173,7 @@ public class AdminOrgService {
     @Transactional
     public AdminOrgSummaryResponse.StaffItem resetPassword(String username) {
         UserAccount account = requireAccount(username);
-        account.setPassword(DEFAULT_RESET_PASSWORD);
+        account.setPassword(passwordService.encode(DEFAULT_RESET_PASSWORD));
         UserAccount saved = userAccountRepository.save(account);
         return toStaffItem(saved, buildDepartmentNameMap());
     }

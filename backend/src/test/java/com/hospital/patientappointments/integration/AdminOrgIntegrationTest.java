@@ -1,6 +1,7 @@
 package com.hospital.patientappointments.integration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -11,6 +12,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hospital.patientappointments.model.UserAccount;
+import com.hospital.patientappointments.repository.UserAccountRepository;
 import java.util.Iterator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +34,9 @@ class AdminOrgIntegrationTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private UserAccountRepository userAccountRepository;
 
     @Test
     void adminCanCreateDepartmentsAccountsAndSeeRealSummary() throws Exception {
@@ -66,6 +72,10 @@ class AdminOrgIntegrationTest {
 
         createAccount(adminToken, "govern_user", "doctor123", "Lin Doctor", "doctor", childDepartmentId, "Attending", "13800004444");
 
+        UserAccount createdUser = userAccountRepository.findByUsername("govern_user").orElseThrow();
+        assertNotEquals("doctor123", createdUser.getPassword());
+        assertTrue(createdUser.getPassword().startsWith("$2"));
+
         updateDepartment(adminToken, childDepartmentId, "Telemedicine Room", newParentId);
         updateAccount(adminToken, "govern_user", "Lin Patient", "patient", null, "", "13600009999");
 
@@ -87,6 +97,9 @@ class AdminOrgIntegrationTest {
         assertEquals("patient", loginRole("govern_user", "doctor123"));
 
         resetPassword(adminToken, "govern_user");
+        UserAccount resetUser = userAccountRepository.findByUsername("govern_user").orElseThrow();
+        assertNotEquals("123456", resetUser.getPassword());
+        assertTrue(resetUser.getPassword().startsWith("$2"));
         expectLoginFailure("govern_user", "doctor123");
         assertEquals("patient", loginRole("govern_user", "123456"));
     }

@@ -21,24 +21,31 @@ public class AuthService {
     private final UserAccountRepository userAccountRepository;
     private final LoginTokenRepository loginTokenRepository;
     private final AccountProvisioningService accountProvisioningService;
+    private final PasswordService passwordService;
     private final long tokenHours;
 
     public AuthService(UserAccountRepository userAccountRepository,
                        LoginTokenRepository loginTokenRepository,
                        AccountProvisioningService accountProvisioningService,
+                       PasswordService passwordService,
                        @Value("${demo.auth.token-hours:24}") long tokenHours) {
         this.userAccountRepository = userAccountRepository;
         this.loginTokenRepository = loginTokenRepository;
         this.accountProvisioningService = accountProvisioningService;
+        this.passwordService = passwordService;
         this.tokenHours = tokenHours;
     }
 
     @Transactional
     public LoginResponse login(String username, String password) {
         UserAccount account = userAccountRepository.findByUsernameAndEnabledTrue(username == null ? "" : username.trim())
-            .orElseThrow(() -> new AuthException("用户名或密码错误"));
-        if (!account.getPassword().equals(password)) {
-            throw new AuthException("用户名或密码错误");
+            .orElseThrow(() -> new AuthException("Invalid username or password"));
+        if (!matchesPassword(password, account.getPassword())) {
+            throw new AuthException("Invalid username or password");
+        }
+        if (passwordService.shouldUpgrade(account.getPassword())) {
+            account.setPassword(passwordService.encode(password));
+            userAccountRepository.save(account);
         }
 
         loginTokenRepository.deleteByExpiresAtBefore(LocalDateTime.now());
@@ -84,5 +91,13 @@ public class AuthService {
 
     public CurrentUserResponse toCurrentUserResponse(AuthenticatedUser user) {
         return new CurrentUserResponse(user.getUsername(), user.getRole().getCode(), user.getDisplayName(), user.getPatientId());
+    }
+
+    private boolean matchesPassword(String rawPassword, String storedPassword) {
+        try {
+            return passwordService.matches(rawPassword, storedPassword);
+        } catch (IllegalArgumentException exception) {
+            return false;
+        }
     }
 }

@@ -16,28 +16,31 @@ public class AccountProvisioningService {
 
     private final UserAccountRepository userAccountRepository;
     private final DepartmentRepository departmentRepository;
+    private final PasswordService passwordService;
 
     public AccountProvisioningService(UserAccountRepository userAccountRepository,
-                                      DepartmentRepository departmentRepository) {
+                                      DepartmentRepository departmentRepository,
+                                      PasswordService passwordService) {
         this.userAccountRepository = userAccountRepository;
         this.departmentRepository = departmentRepository;
+        this.passwordService = passwordService;
     }
 
     @Transactional
     public UserAccount createManagedAccount(CreateUserAccountRequest request) {
         if (request == null) {
-            throw new AppointmentBusinessException("人员账号参数不完整");
+            throw new AppointmentBusinessException("Account payload is required");
         }
         UserRole role = parseRole(request.getRole());
-        String username = normalizeRequired(request.getUsername(), "用户名不能为空");
-        String password = normalizeRequired(request.getPassword(), "初始密码不能为空");
-        String displayName = normalizeRequired(request.getDisplayName(), "显示名不能为空");
+        String username = normalizeRequired(request.getUsername(), "Username is required");
+        String password = normalizeRequired(request.getPassword(), "Initial password is required");
+        String displayName = normalizeRequired(request.getDisplayName(), "Display name is required");
         Long departmentId = normalizeDepartment(role, request.getDepartmentId());
         ensureUniqueUsername(username);
 
         UserAccount account = new UserAccount(
             username,
-            password,
+            passwordService.encode(password),
             role,
             displayName,
             role == UserRole.PATIENT ? nextPatientId() : null,
@@ -52,21 +55,21 @@ public class AccountProvisioningService {
     @Transactional
     public UserAccount registerPatient(RegisterPatientRequest request) {
         if (request == null) {
-            throw new AppointmentBusinessException("注册参数不完整");
+            throw new AppointmentBusinessException("Registration payload is required");
         }
-        String username = normalizeRequired(request.getUsername(), "用户名不能为空");
-        String password = normalizeRequired(request.getPassword(), "密码不能为空");
-        String confirmPassword = normalizeRequired(request.getConfirmPassword(), "确认密码不能为空");
-        String displayName = normalizeRequired(request.getDisplayName(), "显示名不能为空");
-        String mobile = normalizeRequired(request.getMobile(), "手机号不能为空");
+        String username = normalizeRequired(request.getUsername(), "Username is required");
+        String password = normalizeRequired(request.getPassword(), "Password is required");
+        String confirmPassword = normalizeRequired(request.getConfirmPassword(), "Confirm password is required");
+        String displayName = normalizeRequired(request.getDisplayName(), "Display name is required");
+        String mobile = normalizeRequired(request.getMobile(), "Mobile is required");
         if (!password.equals(confirmPassword)) {
-            throw new AppointmentBusinessException("两次输入的密码不一致");
+            throw new AppointmentBusinessException("Passwords do not match");
         }
         ensureUniqueUsername(username);
 
         UserAccount account = new UserAccount(
             username,
-            password,
+            passwordService.encode(password),
             UserRole.PATIENT,
             displayName,
             nextPatientId(),
@@ -80,18 +83,18 @@ public class AccountProvisioningService {
 
     public UserRole parseRole(String roleCode) {
         if (roleCode == null || roleCode.trim().isEmpty()) {
-            throw new AppointmentBusinessException("角色不能为空");
+            throw new AppointmentBusinessException("Role is required");
         }
         try {
             return UserRole.valueOf(roleCode.trim().toUpperCase());
         } catch (IllegalArgumentException exception) {
-            throw new AppointmentBusinessException("暂不支持当前角色");
+            throw new AppointmentBusinessException("Unsupported role");
         }
     }
 
     private void ensureUniqueUsername(String username) {
         if (userAccountRepository.existsByUsername(username)) {
-            throw new AppointmentBusinessException("用户名已存在");
+            throw new AppointmentBusinessException("Username already exists");
         }
     }
 
@@ -100,10 +103,10 @@ public class AccountProvisioningService {
             return departmentId;
         }
         if (departmentId == null) {
-            throw new AppointmentBusinessException("医生或管理员必须绑定科室");
+            throw new AppointmentBusinessException("Doctor and admin accounts require a department");
         }
         Department department = departmentRepository.findById(departmentId)
-            .orElseThrow(() -> new AppointmentBusinessException("未找到对应科室"));
+            .orElseThrow(() -> new AppointmentBusinessException("Department not found"));
         return department.getId();
     }
 

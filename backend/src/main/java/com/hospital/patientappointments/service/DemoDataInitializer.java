@@ -39,6 +39,7 @@ public class DemoDataInitializer implements ApplicationRunner {
     private final AppointmentRecordRepository appointmentRecordRepository;
     private final DepartmentRepository departmentRepository;
     private final VisitRecordRepository visitRecordRepository;
+    private final PasswordService passwordService;
     private final boolean walkthroughSeedEnabled;
 
     public DemoDataInitializer(UserAccountRepository userAccountRepository,
@@ -46,12 +47,14 @@ public class DemoDataInitializer implements ApplicationRunner {
                                AppointmentRecordRepository appointmentRecordRepository,
                                DepartmentRepository departmentRepository,
                                VisitRecordRepository visitRecordRepository,
+                               PasswordService passwordService,
                                @Value("${demo.seed.walkthrough-data:true}") boolean walkthroughSeedEnabled) {
         this.userAccountRepository = userAccountRepository;
         this.doctorScheduleRepository = doctorScheduleRepository;
         this.appointmentRecordRepository = appointmentRecordRepository;
         this.departmentRepository = departmentRepository;
         this.visitRecordRepository = visitRecordRepository;
+        this.passwordService = passwordService;
         this.walkthroughSeedEnabled = walkthroughSeedEnabled;
     }
 
@@ -91,9 +94,9 @@ public class DemoDataInitializer implements ApplicationRunner {
         Long cardiologyId = findDepartmentId("心内科");
         Long operationsId = findDepartmentId("运营中心");
         userAccountRepository.saveAll(List.of(
-            new UserAccount("patient", "patient123", UserRole.PATIENT, "张晓雪", "P1001", null, "", "13600000001", true),
-            new UserAccount("doctor", "doctor123", UserRole.DOCTOR, "李敏医生", null, cardiologyId, "主任医师", "13800001111", true),
-            new UserAccount("admin", "admin123", UserRole.ADMIN, "运营管理员", null, operationsId, "系统管理员", "13900002222", true)
+            new UserAccount("patient", passwordService.encode("patient123"), UserRole.PATIENT, "张晓雪", "P1001", null, "", "13600000001", true),
+            new UserAccount("doctor", passwordService.encode("doctor123"), UserRole.DOCTOR, "李敏医生", null, cardiologyId, "主任医师", "13800001111", true),
+            new UserAccount("admin", passwordService.encode("admin123"), UserRole.ADMIN, "运营管理员", null, operationsId, "系统管理员", "13900002222", true)
         ));
     }
 
