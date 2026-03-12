@@ -61,6 +61,15 @@ public class VisitRecord {
     @Column(length = 4000)
     private String reportNote;
 
+    @Column(length = 12000)
+    private String doctorOrdersJson;
+
+    @Column(length = 12000)
+    private String prescriptionsJson;
+
+    @Column(length = 12000)
+    private String reportsJson;
+
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
@@ -93,6 +102,9 @@ public class VisitRecord {
         this.doctorOrderNote = doctorOrderNote;
         this.prescriptionNote = prescriptionNote;
         this.reportNote = reportNote;
+        this.doctorOrdersJson = "";
+        this.prescriptionsJson = "";
+        this.reportsJson = "";
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.completedAt = completedAt;
@@ -130,6 +142,12 @@ public class VisitRecord {
     public void setPrescriptionNote(String prescriptionNote) { this.prescriptionNote = prescriptionNote; }
     public String getReportNote() { return reportNote; }
     public void setReportNote(String reportNote) { this.reportNote = reportNote; }
+    public String getDoctorOrdersJson() { return doctorOrdersJson; }
+    public void setDoctorOrdersJson(String doctorOrdersJson) { this.doctorOrdersJson = doctorOrdersJson; }
+    public String getPrescriptionsJson() { return prescriptionsJson; }
+    public void setPrescriptionsJson(String prescriptionsJson) { this.prescriptionsJson = prescriptionsJson; }
+    public String getReportsJson() { return reportsJson; }
+    public void setReportsJson(String reportsJson) { this.reportsJson = reportsJson; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }

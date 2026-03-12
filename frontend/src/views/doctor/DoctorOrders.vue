@@ -1,11 +1,11 @@
-﻿<template>
+<template>
   <div class="doctor-orders-page">
     <el-card shadow="never">
       <template #header>
         <div class="header-row">
           <div>
             <div class="panel-title">当前接诊工作台</div>
-            <div class="panel-subtitle">快速维护当前接诊患者的医嘱、处方和报告内容。</div>
+            <div class="panel-subtitle">快速维护当前接诊患者的结构化医嘱、处方和报告条目。</div>
           </div>
           <div class="header-actions">
             <el-button @click="loadWorkbench">刷新</el-button>
@@ -36,25 +36,90 @@
           <el-col :xs="24" :lg="8">
             <el-card shadow="never" class="editor-card">
               <template #header>
-                <span>医嘱</span>
+                <div class="section-header">
+                  <span>医嘱</span>
+                  <el-button type="primary" link @click="addDoctorOrder">新增</el-button>
+                </div>
               </template>
-              <el-input v-model="form.doctorOrderNote" type="textarea" :rows="10" placeholder="填写医生医嘱" />
+
+              <el-empty v-if="form.doctorOrders.length === 0" description="暂无医嘱条目" />
+
+              <div v-else class="editor-list">
+                <div v-for="(item, index) in form.doctorOrders" :key="item.id" class="editor-item">
+                  <div class="item-header">
+                    <span>医嘱 {{ index + 1 }}</span>
+                    <el-button link type="danger" @click="removeDoctorOrder(index)">删除</el-button>
+                  </div>
+                  <div class="item-grid two-col">
+                    <el-select v-model="item.category" placeholder="选择类别">
+                      <el-option v-for="option in doctorOrderCategoryOptions" :key="option.value" :label="option.label" :value="option.value" />
+                    </el-select>
+                    <el-select v-model="item.priority" placeholder="选择优先级">
+                      <el-option v-for="option in doctorOrderPriorityOptions" :key="option.value" :label="option.label" :value="option.value" />
+                    </el-select>
+                  </div>
+                  <el-input v-model="item.content" type="textarea" :rows="3" placeholder="填写具体医嘱内容" />
+                </div>
+              </div>
             </el-card>
           </el-col>
+
           <el-col :xs="24" :lg="8">
             <el-card shadow="never" class="editor-card">
               <template #header>
-                <span>处方</span>
+                <div class="section-header">
+                  <span>处方</span>
+                  <el-button type="primary" link @click="addPrescription">新增</el-button>
+                </div>
               </template>
-              <el-input v-model="form.prescriptionNote" type="textarea" :rows="10" placeholder="填写文字处方内容" />
+
+              <el-empty v-if="form.prescriptions.length === 0" description="暂无处方条目" />
+
+              <div v-else class="editor-list">
+                <div v-for="(item, index) in form.prescriptions" :key="item.id" class="editor-item">
+                  <div class="item-header">
+                    <span>处方 {{ index + 1 }}</span>
+                    <el-button link type="danger" @click="removePrescription(index)">删除</el-button>
+                  </div>
+                  <div class="item-grid two-col">
+                    <el-input v-model="item.drugName" placeholder="药品名" />
+                    <el-input v-model="item.dosage" placeholder="剂量" />
+                    <el-input v-model="item.frequency" placeholder="频次" />
+                    <el-input v-model="item.days" placeholder="天数" />
+                  </div>
+                  <el-input v-model="item.remark" placeholder="备注" />
+                </div>
+              </div>
             </el-card>
           </el-col>
+
           <el-col :xs="24" :lg="8">
             <el-card shadow="never" class="editor-card">
               <template #header>
-                <span>报告</span>
+                <div class="section-header">
+                  <span>报告</span>
+                  <el-button type="primary" link @click="addReport">新增</el-button>
+                </div>
               </template>
-              <el-input v-model="form.reportNote" type="textarea" :rows="10" placeholder="填写报告说明或随访结论" />
+
+              <el-empty v-if="form.reports.length === 0" description="暂无报告条目" />
+
+              <div v-else class="editor-list">
+                <div v-for="(item, index) in form.reports" :key="item.id" class="editor-item">
+                  <div class="item-header">
+                    <span>报告 {{ index + 1 }}</span>
+                    <el-button link type="danger" @click="removeReport(index)">删除</el-button>
+                  </div>
+                  <div class="item-grid two-col">
+                    <el-input v-model="item.itemName" placeholder="项目名" />
+                    <el-select v-model="item.resultFlag" placeholder="结果标记">
+                      <el-option v-for="option in reportFlagOptions" :key="option.value" :label="option.label" :value="option.value" />
+                    </el-select>
+                  </div>
+                  <el-input v-model="item.resultSummary" type="textarea" :rows="3" placeholder="填写结果摘要" />
+                  <el-input v-model="item.advice" type="textarea" :rows="2" placeholder="填写随访建议" />
+                </div>
+              </div>
             </el-card>
           </el-col>
         </el-row>
@@ -74,9 +139,16 @@ import { useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
 import {
   buildDoctorOrdersDraft,
+  buildStructuredCollectionsPayload,
+  createDoctorOrderItem,
+  createPrescriptionItem,
+  createReportItem,
+  doctorOrderCategoryOptions,
+  doctorOrderPriorityOptions,
   fetchDoctorRecord,
   fetchDoctorRecords,
   pickCurrentVisit,
+  reportFlagOptions,
   saveDoctorRecord,
   visitStatusMeta,
 } from "../../services/doctorClinic.js";
@@ -87,11 +159,39 @@ const saving = ref(false);
 const currentVisit = ref(null);
 const form = reactive(buildDoctorOrdersDraft(null));
 
+function replaceList(target, items) {
+  target.splice(0, target.length, ...items);
+}
+
 function syncDraft(record) {
   const draft = buildDoctorOrdersDraft(record);
-  form.doctorOrderNote = draft.doctorOrderNote;
-  form.prescriptionNote = draft.prescriptionNote;
-  form.reportNote = draft.reportNote;
+  replaceList(form.doctorOrders, draft.doctorOrders);
+  replaceList(form.prescriptions, draft.prescriptions);
+  replaceList(form.reports, draft.reports);
+}
+
+function addDoctorOrder() {
+  form.doctorOrders.push(createDoctorOrderItem());
+}
+
+function removeDoctorOrder(index) {
+  form.doctorOrders.splice(index, 1);
+}
+
+function addPrescription() {
+  form.prescriptions.push(createPrescriptionItem());
+}
+
+function removePrescription(index) {
+  form.prescriptions.splice(index, 1);
+}
+
+function addReport() {
+  form.reports.push(createReportItem());
+}
+
+function removeReport(index) {
+  form.reports.splice(index, 1);
 }
 
 function goTo(path) {
@@ -126,11 +226,7 @@ async function handleSave() {
   }
   saving.value = true;
   try {
-    await saveDoctorRecord(currentVisit.value.id, {
-      doctorOrderNote: form.doctorOrderNote,
-      prescriptionNote: form.prescriptionNote,
-      reportNote: form.reportNote,
-    });
+    await saveDoctorRecord(currentVisit.value.id, buildVisitRecordPayload({ ...currentVisit.value, ...form }));
     const detail = await fetchDoctorRecord(currentVisit.value.id);
     currentVisit.value = detail;
     syncDraft(detail);
@@ -192,6 +288,47 @@ onMounted(() => {
   height: 100%;
 }
 
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.editor-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.editor-item {
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid #dbeafe;
+  background: #f8fbff;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.item-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.item-grid.two-col {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .workbench-actions {
   display: flex;
   gap: 10px;
@@ -207,6 +344,10 @@ onMounted(() => {
 
   .header-actions {
     width: 100%;
+  }
+
+  .item-grid.two-col {
+    grid-template-columns: 1fr;
   }
 }
 </style>

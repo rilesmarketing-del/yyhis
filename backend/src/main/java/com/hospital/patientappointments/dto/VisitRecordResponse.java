@@ -1,5 +1,7 @@
 package com.hospital.patientappointments.dto;
 
+import java.util.List;
+
 public class VisitRecordResponse {
 
     private final String id;
@@ -18,6 +20,9 @@ public class VisitRecordResponse {
     private final String doctorOrderNote;
     private final String prescriptionNote;
     private final String reportNote;
+    private final List<DoctorOrderItemDto> doctorOrders;
+    private final List<PrescriptionItemDto> prescriptions;
+    private final List<ReportItemDto> reports;
     private final String createdAt;
     private final String updatedAt;
     private final String completedAt;
@@ -27,6 +32,18 @@ public class VisitRecordResponse {
                                String visitTimeSlot, String status, String chiefComplaint, String diagnosis,
                                String treatmentPlan, String doctorOrderNote, String prescriptionNote,
                                String reportNote, String createdAt, String updatedAt, String completedAt) {
+        this(id, appointmentId, patientId, patientName, doctorUsername, doctorName, department, visitDate, visitTimeSlot,
+            status, chiefComplaint, diagnosis, treatmentPlan, doctorOrderNote, prescriptionNote, reportNote,
+            List.of(), List.of(), List.of(), createdAt, updatedAt, completedAt);
+    }
+
+    public VisitRecordResponse(String id, String appointmentId, String patientId, String patientName,
+                               String doctorUsername, String doctorName, String department, String visitDate,
+                               String visitTimeSlot, String status, String chiefComplaint, String diagnosis,
+                               String treatmentPlan, String doctorOrderNote, String prescriptionNote,
+                               String reportNote, List<DoctorOrderItemDto> doctorOrders,
+                               List<PrescriptionItemDto> prescriptions, List<ReportItemDto> reports,
+                               String createdAt, String updatedAt, String completedAt) {
         this.id = id;
         this.appointmentId = appointmentId;
         this.patientId = patientId;
@@ -43,6 +60,9 @@ public class VisitRecordResponse {
         this.doctorOrderNote = doctorOrderNote;
         this.prescriptionNote = prescriptionNote;
         this.reportNote = reportNote;
+        this.doctorOrders = doctorOrders == null ? List.of() : doctorOrders;
+        this.prescriptions = prescriptions == null ? List.of() : prescriptions;
+        this.reports = reports == null ? List.of() : reports;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.completedAt = completedAt;
@@ -64,6 +84,9 @@ public class VisitRecordResponse {
     public String getDoctorOrderNote() { return doctorOrderNote; }
     public String getPrescriptionNote() { return prescriptionNote; }
     public String getReportNote() { return reportNote; }
+    public List<DoctorOrderItemDto> getDoctorOrders() { return doctorOrders; }
+    public List<PrescriptionItemDto> getPrescriptions() { return prescriptions; }
+    public List<ReportItemDto> getReports() { return reports; }
     public String getCreatedAt() { return createdAt; }
     public String getUpdatedAt() { return updatedAt; }
     public String getCompletedAt() { return completedAt; }

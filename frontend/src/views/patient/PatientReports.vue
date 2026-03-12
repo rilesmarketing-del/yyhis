@@ -1,11 +1,11 @@
-﻿<template>
+<template>
   <div class="reports-page">
     <el-card shadow="never">
       <template #header>
         <div class="header-row">
           <div>
             <div class="panel-title">检查报告</div>
-            <div class="panel-subtitle">优先展示医生完成接诊后生成的真实报告，缺失时回退预约映射报告。</div>
+            <div class="panel-subtitle">优先展示医生完成接诊后生成的真实结构化报告，缺失时回退预约映射报告。</div>
           </div>
           <el-button @click="loadReports">刷新数据</el-button>
         </div>
@@ -38,7 +38,7 @@
         <el-table-column prop="date" label="出具时间" width="180" />
         <el-table-column label="结果" width="120">
           <template #default="{ row }">
-            <el-tag :type="row.result === '待复核' ? 'warning' : 'success'">{{ row.result }}</el-tag>
+            <el-tag :type="reportTagType(row)">{{ row.resultLabel || row.result }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="summary" label="结论摘要" min-width="260" />
@@ -61,7 +61,7 @@
         <el-descriptions-item label="报告编号">{{ activeReport.reportNo }}</el-descriptions-item>
         <el-descriptions-item label="项目">{{ activeReport.item }}</el-descriptions-item>
         <el-descriptions-item label="关联预约单号">{{ activeReport.serialNumber }}</el-descriptions-item>
-        <el-descriptions-item label="结果">{{ activeReport.result }}</el-descriptions-item>
+        <el-descriptions-item label="结果">{{ activeReport.resultLabel || activeReport.result }}</el-descriptions-item>
         <el-descriptions-item label="结论">{{ activeReport.summary }}</el-descriptions-item>
         <el-descriptions-item label="建议">{{ activeReport.advice }}</el-descriptions-item>
       </el-descriptions>
@@ -101,6 +101,16 @@ const filteredReports = computed(() => {
     )
   );
 });
+
+function reportTagType(report) {
+  if (report.result === "ATTENTION") {
+    return "warning";
+  }
+  if (report.result === "FOLLOW_UP" || report.resultLabel === "待复核") {
+    return "info";
+  }
+  return "success";
+}
 
 function goTo(path) {
   router.push(path);

@@ -4,7 +4,7 @@
       <div class="header-row">
         <div>
           <div class="panel-title">药房与库存</div>
-          <div class="panel-subtitle">基于真实接诊记录里的文字处方内容生成的最小药房总览。</div>
+          <div class="panel-subtitle">基于真实接诊记录里的结构化处方条目和文字处方内容生成的最小药房总览。</div>
         </div>
         <el-button @click="loadPharmacy">刷新数据</el-button>
       </div>
@@ -37,6 +37,7 @@
                 <el-tag :type="row.statusType" effect="plain">{{ row.statusLabel }}</el-tag>
               </template>
             </el-table-column>
+            <el-table-column prop="structuredCount" label="条目数" width="90" />
             <el-table-column prop="prescriptionPreview" label="处方摘要" min-width="240" show-overflow-tooltip />
           </el-table>
           <el-empty v-if="!loading && pharmacyModel.records.length === 0" :description="pharmacyModel.emptyHint" />

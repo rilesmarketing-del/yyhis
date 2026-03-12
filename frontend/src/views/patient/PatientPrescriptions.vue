@@ -1,11 +1,11 @@
-﻿<template>
+<template>
   <div class="prescriptions-page">
     <el-card shadow="never">
       <template #header>
         <div class="header-row">
           <div>
             <div class="panel-title">处方与用药</div>
-            <div class="panel-subtitle">展示医生完成接诊后开立的文字处方内容。</div>
+            <div class="panel-subtitle">展示医生完成接诊后开立的结构化处方条目，并兼容历史文字处方。</div>
           </div>
           <el-button @click="loadPrescriptions">刷新数据</el-button>
         </div>
@@ -57,8 +57,16 @@
             <el-descriptions-item label="科室">{{ item.dept }}</el-descriptions-item>
             <el-descriptions-item label="医生">{{ item.doctorName }}</el-descriptions-item>
             <el-descriptions-item label="开立时间">{{ item.date }}</el-descriptions-item>
-            <el-descriptions-item label="处方内容">
+            <el-descriptions-item label="处方摘要">
               <div class="prescription-content">{{ item.content }}</div>
+            </el-descriptions-item>
+            <el-descriptions-item v-if="item.items.length > 0" label="条目明细">
+              <div class="prescription-items">
+                <div v-for="entry in item.items" :key="entry.id || entry.drugName" class="prescription-item">
+                  <div class="drug-name">{{ entry.drugName }}</div>
+                  <div class="drug-meta">{{ [entry.dosage, entry.frequency, entry.days ? `${entry.days}天` : '', entry.remark].filter(Boolean).join('，') }}</div>
+                </div>
+              </div>
             </el-descriptions-item>
           </el-descriptions>
         </el-collapse-item>
@@ -92,7 +100,7 @@ const filteredPrescriptions = computed(() => {
     return prescriptions.value;
   }
   return prescriptions.value.filter((item) =>
-    [item.presNo, item.dept, item.doctorName, item.content].some((value) => String(value || "").includes(key))
+    [item.presNo, item.dept, item.doctorName, item.content, ...(item.items || []).map((entry) => entry.drugName)].some((value) => String(value || "").includes(key))
   );
 });
 
@@ -191,6 +199,30 @@ onMounted(() => {
   white-space: pre-wrap;
   line-height: 1.7;
   color: #334155;
+}
+
+.prescription-items {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.prescription-item {
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.drug-name {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.drug-meta {
+  margin-top: 4px;
+  color: #475569;
+  line-height: 1.6;
 }
 
 @media (max-width: 900px) {

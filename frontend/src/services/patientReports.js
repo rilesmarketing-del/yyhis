@@ -2,8 +2,12 @@ function isEligibleAppointment(appointment, today) {
   return appointment.status === "BOOKED" && appointment.paymentStatus === "PAID" && appointment.date <= today;
 }
 
+function hasStructuredReports(record) {
+  return record.status === "COMPLETED" && Array.isArray(record.reports) && record.reports.length > 0;
+}
+
 function hasRealReport(record) {
-  return record.status === "COMPLETED" && String(record.reportNote || "").trim();
+  return record.status === "COMPLETED" && (hasStructuredReports(record) || String(record.reportNote || "").trim());
 }
 
 function buildReportNo(value) {
@@ -49,6 +53,15 @@ function buildRealAdvice(record, today) {
   return "如有不适，请按医嘱及时复诊。";
 }
 
+function buildResultLabel(flag) {
+  const flagMap = {
+    NORMAL: "正常",
+    ATTENTION: "关注",
+    FOLLOW_UP: "需复查",
+  };
+  return flagMap[flag] || flag || "已出具";
+}
+
 function buildAppointmentMap(appointments) {
   return new Map((appointments || []).map((item) => [item.id, item]));
 }
@@ -57,7 +70,24 @@ function resolveSerialNumber(appointmentMap, appointmentId) {
   return appointmentMap.get(appointmentId)?.serialNumber || appointmentId;
 }
 
-function mapVisitReport(record, today, appointmentMap) {
+function mapStructuredVisitReports(record, today, appointmentMap) {
+  return (record.reports || []).map((item, index) => ({
+    id: `${record.id}-${item.id || index + 1}`,
+    serialNumber: resolveSerialNumber(appointmentMap, record.appointmentId),
+    reportNo: buildReportNo(item.id || record.id),
+    item: item.itemName || getReportItem(record.department),
+    date: record.completedAt || `${record.visitDate || ""} ${record.visitTimeSlot || ""}`.trim(),
+    result: item.resultFlag || "NORMAL",
+    resultLabel: buildResultLabel(item.resultFlag || "NORMAL"),
+    summary: String(item.resultSummary || record.reportNote || "").trim(),
+    advice: String(item.advice || "").trim() || buildRealAdvice(record, today),
+    department: record.department,
+    doctorName: record.doctorName,
+    source: "医生接诊",
+  }));
+}
+
+function mapLegacyVisitReport(record, today, appointmentMap) {
   return {
     id: record.id,
     serialNumber: resolveSerialNumber(appointmentMap, record.appointmentId),
@@ -65,6 +95,7 @@ function mapVisitReport(record, today, appointmentMap) {
     item: getReportItem(record.department),
     date: record.completedAt || `${record.visitDate || ""} ${record.visitTimeSlot || ""}`.trim(),
     result: "已出具",
+    resultLabel: "已出具",
     summary: String(record.reportNote || "").trim(),
     advice: buildRealAdvice(record, today),
     department: record.department,
@@ -74,13 +105,15 @@ function mapVisitReport(record, today, appointmentMap) {
 }
 
 function mapAppointmentReport(appointment, today) {
+  const result = getFallbackResult(appointment.department);
   return {
     id: appointment.id,
     serialNumber: appointment.serialNumber,
     reportNo: buildReportNo(appointment.serialNumber),
     item: getReportItem(appointment.department),
     date: appointment.paidAt || `${appointment.date} ${appointment.timeSlot}`,
-    result: getFallbackResult(appointment.department),
+    result,
+    resultLabel: result,
     summary: buildFallbackSummary(appointment),
     advice: buildFallbackAdvice(appointment, today),
     department: appointment.department,
@@ -99,7 +132,7 @@ export function buildPatientReports({ appointments = [], visitRecords = [], toda
         String(right.visitDate || "").localeCompare(String(left.visitDate || "")) ||
         String(right.visitTimeSlot || "").localeCompare(String(left.visitTimeSlot || ""))
     )
-    .map((record) => mapVisitReport(record, today, appointmentMap));
+    .flatMap((record) => (hasStructuredReports(record) ? mapStructuredVisitReports(record, today, appointmentMap) : [mapLegacyVisitReport(record, today, appointmentMap)]));
 
   if (realReports.length > 0) {
     return realReports;

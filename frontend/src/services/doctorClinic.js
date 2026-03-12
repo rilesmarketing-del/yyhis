@@ -1,9 +1,113 @@
-﻿import { apiRequest } from "./apiClient.js";
+import { apiRequest } from "./apiClient.js";
 
 export const visitStatusMeta = {
   IN_PROGRESS: { label: "接诊中", type: "warning" },
   COMPLETED: { label: "已完成", type: "success" },
 };
+
+export const doctorOrderCategoryOptions = [
+  { label: "生活方式", value: "LIFESTYLE" },
+  { label: "用药指导", value: "MEDICATION" },
+  { label: "复诊安排", value: "FOLLOW_UP" },
+  { label: "检查建议", value: "CHECK" },
+];
+
+export const doctorOrderPriorityOptions = [
+  { label: "常规", value: "NORMAL" },
+  { label: "重点", value: "IMPORTANT" },
+];
+
+export const reportFlagOptions = [
+  { label: "正常", value: "NORMAL" },
+  { label: "关注", value: "ATTENTION" },
+  { label: "需复查", value: "FOLLOW_UP" },
+];
+
+function trimText(value) {
+  return String(value || "").trim();
+}
+
+function nextDraftId(prefix) {
+  return `${prefix}-${Math.random().toString(36).slice(2, 10)}`;
+}
+
+export function createDoctorOrderItem() {
+  return {
+    id: nextDraftId("ord"),
+    category: "FOLLOW_UP",
+    content: "",
+    priority: "NORMAL",
+  };
+}
+
+export function createPrescriptionItem() {
+  return {
+    id: nextDraftId("rx"),
+    drugName: "",
+    dosage: "",
+    frequency: "",
+    days: "",
+    remark: "",
+  };
+}
+
+export function createReportItem() {
+  return {
+    id: nextDraftId("rep"),
+    itemName: "",
+    resultSummary: "",
+    resultFlag: "NORMAL",
+    advice: "",
+  };
+}
+
+function cloneDoctorOrderItem(item = {}) {
+  return {
+    id: trimText(item.id) || nextDraftId("ord"),
+    category: trimText(item.category) || "FOLLOW_UP",
+    content: trimText(item.content),
+    priority: trimText(item.priority) || "NORMAL",
+  };
+}
+
+function clonePrescriptionItem(item = {}) {
+  return {
+    id: trimText(item.id) || nextDraftId("rx"),
+    drugName: trimText(item.drugName),
+    dosage: trimText(item.dosage),
+    frequency: trimText(item.frequency),
+    days: trimText(item.days),
+    remark: trimText(item.remark),
+  };
+}
+
+function cloneReportItem(item = {}) {
+  return {
+    id: trimText(item.id) || nextDraftId("rep"),
+    itemName: trimText(item.itemName),
+    resultSummary: trimText(item.resultSummary),
+    resultFlag: trimText(item.resultFlag) || "NORMAL",
+    advice: trimText(item.advice),
+  };
+}
+
+function normalizeDoctorOrders(items = []) {
+  return items
+    .map((item) => cloneDoctorOrderItem(item))
+    .filter((item) => item.content);
+}
+
+function normalizePrescriptions(items = []) {
+  return items
+    .map((item) => clonePrescriptionItem(item))
+    .filter((item) => item.drugName);
+}
+
+function normalizeReports(items = []) {
+  return items
+    .map((item) => cloneReportItem(item))
+    .filter((item) => item.itemName || item.resultSummary);
+}
 
 export function fetchDoctorQueue() {
   return apiRequest("/api/doctor/clinic/queue");
@@ -67,9 +171,38 @@ export function pickCurrentVisit(records = []) {
 
 export function buildDoctorOrdersDraft(record) {
   return {
-    doctorOrderNote: record?.doctorOrderNote || "",
-    prescriptionNote: record?.prescriptionNote || "",
-    reportNote: record?.reportNote || "",
+    doctorOrders: normalizeDoctorOrders(record?.doctorOrders || []),
+    prescriptions: normalizePrescriptions(record?.prescriptions || []),
+    reports: normalizeReports(record?.reports || []),
+  };
+}
+
+export function buildVisitRecordForm(record) {
+  const draft = buildDoctorOrdersDraft(record);
+  return {
+    chiefComplaint: trimText(record?.chiefComplaint),
+    diagnosis: trimText(record?.diagnosis),
+    treatmentPlan: trimText(record?.treatmentPlan),
+    doctorOrders: draft.doctorOrders,
+    prescriptions: draft.prescriptions,
+    reports: draft.reports,
+  };
+}
+
+export function buildStructuredCollectionsPayload(form = {}) {
+  return {
+    doctorOrders: normalizeDoctorOrders(form.doctorOrders || []),
+    prescriptions: normalizePrescriptions(form.prescriptions || []),
+    reports: normalizeReports(form.reports || []),
+  };
+}
+
+export function buildVisitRecordPayload(form = {}) {
+  return {
+    chiefComplaint: trimText(form.chiefComplaint),
+    diagnosis: trimText(form.diagnosis),
+    treatmentPlan: trimText(form.treatmentPlan),
+    ...buildStructuredCollectionsPayload(form),
   };
 }
 

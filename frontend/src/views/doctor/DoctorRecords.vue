@@ -56,19 +56,93 @@
               <el-form-item label="诊断">
                 <el-input v-model="form.diagnosis" type="textarea" :rows="2" />
               </el-form-item>
-              <el-form-item label="处理建议">
+              <el-form-item label="治疗计划">
                 <el-input v-model="form.treatmentPlan" type="textarea" :rows="3" />
               </el-form-item>
-              <el-form-item label="医嘱">
-                <el-input v-model="form.doctorOrderNote" type="textarea" :rows="3" />
-              </el-form-item>
-              <el-form-item label="处方">
-                <el-input v-model="form.prescriptionNote" type="textarea" :rows="3" />
-              </el-form-item>
-              <el-form-item label="报告说明">
-                <el-input v-model="form.reportNote" type="textarea" :rows="3" />
-              </el-form-item>
             </el-form>
+
+            <div class="structured-sections">
+              <el-card shadow="never" class="structured-card">
+                <template #header>
+                  <div class="section-header">
+                    <span>医嘱条目</span>
+                    <el-button type="primary" link @click="addDoctorOrder">新增医嘱</el-button>
+                  </div>
+                </template>
+
+                <el-empty v-if="form.doctorOrders.length === 0" description="暂无医嘱条目" />
+                <div v-else class="editor-list">
+                  <div v-for="(item, index) in form.doctorOrders" :key="item.id" class="editor-item">
+                    <div class="item-header">
+                      <span>医嘱 {{ index + 1 }}</span>
+                      <el-button link type="danger" @click="removeDoctorOrder(index)">删除</el-button>
+                    </div>
+                    <div class="item-grid two-col">
+                      <el-select v-model="item.category" placeholder="选择类别">
+                        <el-option v-for="option in doctorOrderCategoryOptions" :key="option.value" :label="option.label" :value="option.value" />
+                      </el-select>
+                      <el-select v-model="item.priority" placeholder="选择优先级">
+                        <el-option v-for="option in doctorOrderPriorityOptions" :key="option.value" :label="option.label" :value="option.value" />
+                      </el-select>
+                    </div>
+                    <el-input v-model="item.content" type="textarea" :rows="3" placeholder="填写具体医嘱内容" />
+                  </div>
+                </div>
+              </el-card>
+
+              <el-card shadow="never" class="structured-card">
+                <template #header>
+                  <div class="section-header">
+                    <span>处方条目</span>
+                    <el-button type="primary" link @click="addPrescription">新增处方</el-button>
+                  </div>
+                </template>
+
+                <el-empty v-if="form.prescriptions.length === 0" description="暂无处方条目" />
+                <div v-else class="editor-list">
+                  <div v-for="(item, index) in form.prescriptions" :key="item.id" class="editor-item">
+                    <div class="item-header">
+                      <span>处方 {{ index + 1 }}</span>
+                      <el-button link type="danger" @click="removePrescription(index)">删除</el-button>
+                    </div>
+                    <div class="item-grid two-col">
+                      <el-input v-model="item.drugName" placeholder="药品名" />
+                      <el-input v-model="item.dosage" placeholder="剂量" />
+                      <el-input v-model="item.frequency" placeholder="频次" />
+                      <el-input v-model="item.days" placeholder="天数" />
+                    </div>
+                    <el-input v-model="item.remark" placeholder="备注" />
+                  </div>
+                </div>
+              </el-card>
+
+              <el-card shadow="never" class="structured-card">
+                <template #header>
+                  <div class="section-header">
+                    <span>报告条目</span>
+                    <el-button type="primary" link @click="addReport">新增报告</el-button>
+                  </div>
+                </template>
+
+                <el-empty v-if="form.reports.length === 0" description="暂无报告条目" />
+                <div v-else class="editor-list">
+                  <div v-for="(item, index) in form.reports" :key="item.id" class="editor-item">
+                    <div class="item-header">
+                      <span>报告 {{ index + 1 }}</span>
+                      <el-button link type="danger" @click="removeReport(index)">删除</el-button>
+                    </div>
+                    <div class="item-grid two-col">
+                      <el-input v-model="item.itemName" placeholder="项目名" />
+                      <el-select v-model="item.resultFlag" placeholder="结果标记">
+                        <el-option v-for="option in reportFlagOptions" :key="option.value" :label="option.label" :value="option.value" />
+                      </el-select>
+                    </div>
+                    <el-input v-model="item.resultSummary" type="textarea" :rows="3" placeholder="填写结果摘要" />
+                    <el-input v-model="item.advice" type="textarea" :rows="2" placeholder="填写随访建议" />
+                  </div>
+                </div>
+              </el-card>
+            </div>
 
             <div class="record-actions">
               <el-button type="primary" :loading="saving" @click="handleSave">保存</el-button>
@@ -92,7 +166,22 @@
 import { onMounted, reactive, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
-import { completeDoctorRecord, fetchDoctorRecord, fetchDoctorRecords, saveDoctorRecord, sortDoctorRecords, visitStatusMeta } from "../../services/doctorClinic";
+import {
+  buildVisitRecordForm,
+  buildVisitRecordPayload,
+  completeDoctorRecord,
+  createDoctorOrderItem,
+  createPrescriptionItem,
+  createReportItem,
+  doctorOrderCategoryOptions,
+  doctorOrderPriorityOptions,
+  fetchDoctorRecord,
+  fetchDoctorRecords,
+  reportFlagOptions,
+  saveDoctorRecord,
+  sortDoctorRecords,
+  visitStatusMeta,
+} from "../../services/doctorClinic.js";
 
 const route = useRoute();
 const loading = ref(false);
@@ -100,22 +189,44 @@ const saving = ref(false);
 const completing = ref(false);
 const records = ref([]);
 const selectedRecord = ref(null);
-const form = reactive({
-  chiefComplaint: "",
-  diagnosis: "",
-  treatmentPlan: "",
-  doctorOrderNote: "",
-  prescriptionNote: "",
-  reportNote: "",
-});
+const form = reactive(buildVisitRecordForm(null));
+
+function replaceList(target, items) {
+  target.splice(0, target.length, ...items);
+}
 
 function syncForm(record) {
-  form.chiefComplaint = record?.chiefComplaint || "";
-  form.diagnosis = record?.diagnosis || "";
-  form.treatmentPlan = record?.treatmentPlan || "";
-  form.doctorOrderNote = record?.doctorOrderNote || "";
-  form.prescriptionNote = record?.prescriptionNote || "";
-  form.reportNote = record?.reportNote || "";
+  const nextForm = buildVisitRecordForm(record);
+  form.chiefComplaint = nextForm.chiefComplaint;
+  form.diagnosis = nextForm.diagnosis;
+  form.treatmentPlan = nextForm.treatmentPlan;
+  replaceList(form.doctorOrders, nextForm.doctorOrders);
+  replaceList(form.prescriptions, nextForm.prescriptions);
+  replaceList(form.reports, nextForm.reports);
+}
+
+function addDoctorOrder() {
+  form.doctorOrders.push(createDoctorOrderItem());
+}
+
+function removeDoctorOrder(index) {
+  form.doctorOrders.splice(index, 1);
+}
+
+function addPrescription() {
+  form.prescriptions.push(createPrescriptionItem());
+}
+
+function removePrescription(index) {
+  form.prescriptions.splice(index, 1);
+}
+
+function addReport() {
+  form.reports.push(createReportItem());
+}
+
+function removeReport(index) {
+  form.reports.splice(index, 1);
 }
 
 async function selectRecord(visitId) {
@@ -158,8 +269,9 @@ async function handleSave() {
   }
   saving.value = true;
   try {
-    const saved = await saveDoctorRecord(selectedRecord.value.id, { ...form });
+    const saved = await saveDoctorRecord(selectedRecord.value.id, buildVisitRecordPayload(form));
     selectedRecord.value = saved;
+    syncForm(saved);
     ElMessage.success("病历已保存");
     await loadRecords();
   } catch (error) {
@@ -180,6 +292,7 @@ async function handleComplete() {
     completing.value = true;
     const completed = await completeDoctorRecord(selectedRecord.value.id);
     selectedRecord.value = completed;
+    syncForm(completed);
     ElMessage.success("接诊已完成");
     await loadRecords();
   } catch (error) {
@@ -227,15 +340,72 @@ onMounted(() => {
   margin-top: 12px;
 }
 
-.record-actions {
+.structured-sections {
   display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.structured-card {
+  border-color: #dbeafe;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.editor-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.editor-item {
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid #dbeafe;
+  background: #f8fbff;
+  display: flex;
+  flex-direction: column;
   gap: 10px;
 }
 
+.item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.item-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.item-grid.two-col {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.record-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
 @media (max-width: 900px) {
-  .header-row {
+  .header-row,
+  .record-actions {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .item-grid.two-col {
+    grid-template-columns: 1fr;
   }
 }
 </style>

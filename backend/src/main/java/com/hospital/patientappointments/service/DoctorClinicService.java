@@ -30,11 +30,14 @@ public class DoctorClinicService {
 
     private final AppointmentRecordRepository appointmentRecordRepository;
     private final VisitRecordRepository visitRecordRepository;
+    private final VisitRecordStructuredDataMapper structuredDataMapper;
 
     public DoctorClinicService(AppointmentRecordRepository appointmentRecordRepository,
-                               VisitRecordRepository visitRecordRepository) {
+                               VisitRecordRepository visitRecordRepository,
+                               VisitRecordStructuredDataMapper structuredDataMapper) {
         this.appointmentRecordRepository = appointmentRecordRepository;
         this.visitRecordRepository = visitRecordRepository;
+        this.structuredDataMapper = structuredDataMapper;
     }
 
     @Transactional(readOnly = true)
@@ -102,9 +105,7 @@ public class DoctorClinicService {
         record.setChiefComplaint(defaultText(request == null ? null : request.getChiefComplaint()));
         record.setDiagnosis(defaultText(request == null ? null : request.getDiagnosis()));
         record.setTreatmentPlan(defaultText(request == null ? null : request.getTreatmentPlan()));
-        record.setDoctorOrderNote(defaultText(request == null ? null : request.getDoctorOrderNote()));
-        record.setPrescriptionNote(defaultText(request == null ? null : request.getPrescriptionNote()));
-        record.setReportNote(defaultText(request == null ? null : request.getReportNote()));
+        structuredDataMapper.applyStructuredData(record, request);
         record.setUpdatedAt(LocalDateTime.now());
         return toVisitResponse(visitRecordRepository.save(record));
     }
@@ -198,27 +199,7 @@ public class DoctorClinicService {
     }
 
     private VisitRecordResponse toVisitResponse(VisitRecord record) {
-        return new VisitRecordResponse(
-            record.getId(),
-            record.getAppointmentId(),
-            record.getPatientId(),
-            record.getPatientName(),
-            record.getDoctorUsername(),
-            record.getDoctorName(),
-            record.getDepartment(),
-            record.getVisitDate(),
-            record.getVisitTimeSlot(),
-            record.getStatus().name(),
-            record.getChiefComplaint(),
-            record.getDiagnosis(),
-            record.getTreatmentPlan(),
-            record.getDoctorOrderNote(),
-            record.getPrescriptionNote(),
-            record.getReportNote(),
-            formatTime(record.getCreatedAt()),
-            formatTime(record.getUpdatedAt()),
-            formatTime(record.getCompletedAt())
-        );
+        return structuredDataMapper.toVisitRecordResponse(record, this::formatTime);
     }
 
     private DoctorPatientResponse toDoctorPatientResponse(VisitRecord latestRecord, int visitCount) {

@@ -19,16 +19,19 @@ public class AdminPharmacyService {
     private static final DateTimeFormatter RESPONSE_TIME = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     private final VisitRecordRepository visitRecordRepository;
+    private final VisitRecordStructuredDataMapper structuredDataMapper;
 
-    public AdminPharmacyService(VisitRecordRepository visitRecordRepository) {
+    public AdminPharmacyService(VisitRecordRepository visitRecordRepository,
+                                VisitRecordStructuredDataMapper structuredDataMapper) {
         this.visitRecordRepository = visitRecordRepository;
+        this.structuredDataMapper = structuredDataMapper;
     }
 
     @Transactional(readOnly = true)
     public AdminPharmacyOverviewResponse getOverview() {
         String today = LocalDate.now().toString();
         List<VisitRecord> prescriptionRecords = visitRecordRepository.findAll(Sort.by(Sort.Direction.DESC, "updatedAt")).stream()
-            .filter(record -> !isBlank(record.getPrescriptionNote()))
+            .filter(record -> !structuredDataMapper.readPrescriptions(record).isEmpty() || !isBlank(record.getPrescriptionNote()))
             .collect(Collectors.toList());
 
         int totalPrescriptions = prescriptionRecords.size();
@@ -48,27 +51,7 @@ public class AdminPharmacyService {
     }
 
     private VisitRecordResponse toVisitResponse(VisitRecord record) {
-        return new VisitRecordResponse(
-            record.getId(),
-            record.getAppointmentId(),
-            record.getPatientId(),
-            record.getPatientName(),
-            record.getDoctorUsername(),
-            record.getDoctorName(),
-            record.getDepartment(),
-            record.getVisitDate(),
-            record.getVisitTimeSlot(),
-            record.getStatus().name(),
-            record.getChiefComplaint(),
-            record.getDiagnosis(),
-            record.getTreatmentPlan(),
-            record.getDoctorOrderNote(),
-            record.getPrescriptionNote(),
-            record.getReportNote(),
-            formatTime(record.getCreatedAt()),
-            formatTime(record.getUpdatedAt()),
-            formatTime(record.getCompletedAt())
-        );
+        return structuredDataMapper.toVisitRecordResponse(record, this::formatTime);
     }
 
     private String formatTime(LocalDateTime value) {

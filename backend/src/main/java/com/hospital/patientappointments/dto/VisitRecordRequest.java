@@ -1,5 +1,7 @@
 package com.hospital.patientappointments.dto;
 
+import java.util.List;
+
 public class VisitRecordRequest {
 
     private String chiefComplaint;
@@ -8,6 +10,9 @@ public class VisitRecordRequest {
     private String doctorOrderNote;
     private String prescriptionNote;
     private String reportNote;
+    private List<DoctorOrderItemDto> doctorOrders;
+    private List<PrescriptionItemDto> prescriptions;
+    private List<ReportItemDto> reports;
 
     public String getChiefComplaint() { return chiefComplaint; }
     public void setChiefComplaint(String chiefComplaint) { this.chiefComplaint = chiefComplaint; }
@@ -21,4 +26,10 @@ public class VisitRecordRequest {
     public void setPrescriptionNote(String prescriptionNote) { this.prescriptionNote = prescriptionNote; }
     public String getReportNote() { return reportNote; }
     public void setReportNote(String reportNote) { this.reportNote = reportNote; }
+    public List<DoctorOrderItemDto> getDoctorOrders() { return doctorOrders; }
+    public void setDoctorOrders(List<DoctorOrderItemDto> doctorOrders) { this.doctorOrders = doctorOrders; }
+    public List<PrescriptionItemDto> getPrescriptions() { return prescriptions; }
+    public void setPrescriptions(List<PrescriptionItemDto> prescriptions) { this.prescriptions = prescriptions; }
+    public List<ReportItemDto> getReports() { return reports; }
+    public void setReports(List<ReportItemDto> reports) { this.reports = reports; }
 }

@@ -25,6 +25,38 @@ function normalizeText(value, fallback = "-") {
   return text || fallback;
 }
 
+function normalizePrescriptionItem(item = {}) {
+  return {
+    drugName: String(item.drugName || "").trim(),
+    dosage: String(item.dosage || "").trim(),
+    frequency: String(item.frequency || "").trim(),
+    days: String(item.days || "").trim(),
+    remark: String(item.remark || "").trim(),
+  };
+}
+
+function describePrescriptionItem(item) {
+  return [item.drugName, item.dosage, item.frequency, item.days ? `${item.days}天` : "", item.remark]
+    .filter(Boolean)
+    .join("，");
+}
+
+function buildPrescriptionPreview(item) {
+  const prescriptions = Array.isArray(item.prescriptions)
+    ? item.prescriptions.map((entry) => normalizePrescriptionItem(entry)).filter((entry) => entry.drugName)
+    : [];
+  if (prescriptions.length > 0) {
+    return {
+      preview: prescriptions.map((entry) => describePrescriptionItem(entry)).join("；"),
+      count: prescriptions.length,
+    };
+  }
+  return {
+    preview: normalizeText(item.prescriptionNote),
+    count: 0,
+  };
+}
+
 export function buildAdminPharmacyModel(overview = {}) {
   const cards = overview.cards || {};
   const records = Array.isArray(overview.records) ? overview.records : [];
@@ -37,6 +69,7 @@ export function buildAdminPharmacyModel(overview = {}) {
     ],
     records: records.map((item) => {
       const statusMeta = visitStatusMeta[item.status] || { label: item.status || "未知", type: "info" };
+      const prescriptionMeta = buildPrescriptionPreview(item);
       return {
         id: item.id,
         patientLabel: formatPatientLabel(item.patientName, item.patientId),
@@ -45,10 +78,11 @@ export function buildAdminPharmacyModel(overview = {}) {
         visitTime: formatVisitTime(item.visitDate, item.visitTimeSlot),
         statusLabel: statusMeta.label,
         statusType: statusMeta.type,
-        prescriptionPreview: normalizeText(item.prescriptionNote),
+        prescriptionPreview: prescriptionMeta.preview,
+        structuredCount: prescriptionMeta.count,
       };
     }),
     emptyHint: "当前暂无处方记录",
-    note: "当前页面基于医生填写的文字处方内容，不代表药品库存实物数量，库存与出入库能力将在后续补齐。",
+    note: "当前页面优先展示结构化处方条目，同时保留对文字处方内容的兼容，不代表药品库存实物数量，库存与出入库能力将在后续补齐。",
   };
 }
