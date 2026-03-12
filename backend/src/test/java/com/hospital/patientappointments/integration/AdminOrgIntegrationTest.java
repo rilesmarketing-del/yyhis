@@ -1,9 +1,12 @@
 package com.hospital.patientappointments.integration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -43,12 +46,7 @@ class AdminOrgIntegrationTest {
         assertEquals("admin", loginRole("admin_ops", "admin123"));
         assertEquals("patient", loginRole("patient_new", "patient123"));
 
-        MvcResult summaryResult = mockMvc.perform(get("/api/admin/org/summary")
-                .header("Authorization", "Bearer " + adminToken))
-            .andExpect(status().isOk())
-            .andReturn();
-
-        JsonNode root = objectMapper.readTree(summaryResult.getResponse().getContentAsString());
+        JsonNode root = readSummary(adminToken);
         assertTrue(containsDepartment(root.get("departments"), "Digital Clinic"));
         assertTrue(containsDepartment(root.get("departments"), "Followup Room"));
         assertTrue(containsStaff(root.get("staffs"), "doctor_new", "doctor", "Followup Room"));
@@ -57,6 +55,49 @@ class AdminOrgIntegrationTest {
         assertTrue(containsRole(root.get("roleStats"), "patient"));
         assertTrue(containsRole(root.get("roleStats"), "doctor"));
         assertTrue(containsRole(root.get("roleStats"), "admin"));
+    }
+
+    @Test
+    void adminCanGovernDepartmentsAndAccounts() throws Exception {
+        String adminToken = login("admin", "admin123");
+        Long originalParentId = createDepartment(adminToken, "Operations Center", null);
+        Long childDepartmentId = createDepartment(adminToken, "Observation Room", originalParentId);
+        Long newParentId = createDepartment(adminToken, "Digital Services", null);
+
+        createAccount(adminToken, "govern_user", "doctor123", "Lin Doctor", "doctor", childDepartmentId, "Attending", "13800004444");
+
+        updateDepartment(adminToken, childDepartmentId, "Telemedicine Room", newParentId);
+        updateAccount(adminToken, "govern_user", "Lin Patient", "patient", null, "", "13600009999");
+
+        JsonNode summaryAfterUpdate = readSummary(adminToken);
+        assertTrue(containsDepartment(summaryAfterUpdate.get("departments"), "Telemedicine Room"));
+
+        JsonNode governedUser = findStaff(summaryAfterUpdate.get("staffs"), "govern_user");
+        assertNotNull(governedUser);
+        assertEquals("patient", governedUser.path("role").asText());
+        assertEquals("", governedUser.path("departmentName").asText());
+        assertEquals("", governedUser.path("title").asText());
+        assertEquals("13600009999", governedUser.path("mobile").asText());
+        assertTrue(governedUser.path("patientId").asText().startsWith("P"));
+
+        disableAccount(adminToken, "govern_user");
+        expectLoginFailure("govern_user", "doctor123");
+
+        enableAccount(adminToken, "govern_user");
+        assertEquals("patient", loginRole("govern_user", "doctor123"));
+
+        resetPassword(adminToken, "govern_user");
+        expectLoginFailure("govern_user", "doctor123");
+        assertEquals("patient", loginRole("govern_user", "123456"));
+    }
+
+    @Test
+    void adminCannotDisableSelf() throws Exception {
+        String adminToken = login("admin", "admin123");
+
+        mockMvc.perform(post("/api/admin/accounts/admin/disable")
+                .header("Authorization", "Bearer " + adminToken))
+            .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -81,6 +122,18 @@ class AdminOrgIntegrationTest {
             .andReturn();
 
         return objectMapper.readTree(result.getResponse().getContentAsString()).get("id").asLong();
+    }
+
+    private void updateDepartment(String token, Long departmentId, String name, Long parentId) throws Exception {
+        String payload = parentId == null
+            ? String.format("{\"name\":\"%s\"}", name)
+            : String.format("{\"name\":\"%s\",\"parentId\":%d}", name, parentId);
+
+        mockMvc.perform(put("/api/admin/departments/{departmentId}", departmentId)
+                .header("Authorization", "Bearer " + token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(payload))
+            .andExpect(status().isOk());
     }
 
     private void createAccount(String token,
@@ -110,6 +163,56 @@ class AdminOrgIntegrationTest {
             .andExpect(status().isOk());
     }
 
+    private void updateAccount(String token,
+                               String username,
+                               String displayName,
+                               String role,
+                               Long departmentId,
+                               String title,
+                               String mobile) throws Exception {
+        String departmentPart = departmentId == null ? "null" : departmentId.toString();
+        String payload = String.format(
+            "{\"displayName\":\"%s\",\"role\":\"%s\",\"departmentId\":%s,\"title\":\"%s\",\"mobile\":\"%s\"}",
+            displayName,
+            role,
+            departmentPart,
+            title,
+            mobile
+        );
+
+        mockMvc.perform(put("/api/admin/accounts/{username}", username)
+                .header("Authorization", "Bearer " + token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(payload))
+            .andExpect(status().isOk());
+    }
+
+    private void enableAccount(String token, String username) throws Exception {
+        mockMvc.perform(post("/api/admin/accounts/{username}/enable", username)
+                .header("Authorization", "Bearer " + token))
+            .andExpect(status().isOk());
+    }
+
+    private void disableAccount(String token, String username) throws Exception {
+        mockMvc.perform(post("/api/admin/accounts/{username}/disable", username)
+                .header("Authorization", "Bearer " + token))
+            .andExpect(status().isOk());
+    }
+
+    private void resetPassword(String token, String username) throws Exception {
+        mockMvc.perform(post("/api/admin/accounts/{username}/reset-password", username)
+                .header("Authorization", "Bearer " + token))
+            .andExpect(status().isOk());
+    }
+
+    private JsonNode readSummary(String token) throws Exception {
+        MvcResult summaryResult = mockMvc.perform(get("/api/admin/org/summary")
+                .header("Authorization", "Bearer " + token))
+            .andExpect(status().isOk())
+            .andReturn();
+        return objectMapper.readTree(summaryResult.getResponse().getContentAsString());
+    }
+
     private String login(String username, String password) throws Exception {
         MvcResult result = mockMvc.perform(post("/api/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -126,6 +229,13 @@ class AdminOrgIntegrationTest {
             .andExpect(status().isOk())
             .andReturn();
         return objectMapper.readTree(result.getResponse().getContentAsString()).get("role").asText();
+    }
+
+    private void expectLoginFailure(String username, String password) throws Exception {
+        mockMvc.perform(post("/api/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"username\":\"" + username + "\",\"password\":\"" + password + "\"}"))
+            .andExpect(status().isUnauthorized());
     }
 
     private boolean containsDepartment(JsonNode departments, String name) {
@@ -157,16 +267,21 @@ class AdminOrgIntegrationTest {
         return false;
     }
 
-    private boolean containsPatient(JsonNode staffs, String username) {
+    private JsonNode findStaff(JsonNode staffs, String username) {
         if (staffs == null || !staffs.isArray()) {
-            return false;
+            return null;
         }
         for (JsonNode staff : staffs) {
-            if (username.equals(staff.path("username").asText()) && staff.path("patientId").asText().startsWith("P")) {
-                return true;
+            if (username.equals(staff.path("username").asText())) {
+                return staff;
             }
         }
-        return false;
+        return null;
+    }
+
+    private boolean containsPatient(JsonNode staffs, String username) {
+        JsonNode staff = findStaff(staffs, username);
+        return staff != null && staff.path("patientId").asText().startsWith("P");
     }
 
     private boolean containsRole(JsonNode roleStats, String role) {
