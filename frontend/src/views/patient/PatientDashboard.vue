@@ -1,5 +1,22 @@
 <template>
   <div class="dashboard-page">
+    <el-card v-if="registrationGuide" class="welcome-card" shadow="never">
+      <div class="welcome-shell">
+        <div>
+          <p class="welcome-eyebrow">新患者引导</p>
+          <div class="welcome-title">{{ registrationGuide.title }}</div>
+          <div class="welcome-subtitle">{{ registrationGuide.patientLabel }}</div>
+          <p class="welcome-desc">{{ registrationGuide.description }}</p>
+        </div>
+        <div class="welcome-actions">
+          <el-button type="primary" class="welcome-primary" @click="handleGuidePrimaryAction">
+            {{ registrationGuide.primaryAction.label }}
+          </el-button>
+          <el-button text @click="dismissRegistrationGuide">{{ registrationGuide.secondaryAction.label }}</el-button>
+        </div>
+      </div>
+    </el-card>
+
     <el-card class="hero-card" shadow="never">
       <template #header>
         <div class="header-row">
@@ -84,8 +101,12 @@ import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
 import { fetchMyAppointments } from "../../services/patientAppointments";
-import { buildPatientDashboardModel } from "../../services/patientDashboard";
-import { getActivePatient } from "../../services/patientSession";
+import { buildPatientDashboardModel, buildPatientRegistrationGuide } from "../../services/patientDashboard";
+import {
+  clearRegistrationOnboarding,
+  getActivePatient,
+  getRegistrationOnboarding,
+} from "../../services/patientSession";
 
 function getToday() {
   return new Date().toISOString().slice(0, 10);
@@ -98,6 +119,7 @@ function getCurrentMonth() {
 const router = useRouter();
 const activePatient = ref(getActivePatient());
 const loading = ref(false);
+const registrationGuide = ref(null);
 const dashboardModel = ref(
   buildPatientDashboardModel({
     appointments: [],
@@ -105,6 +127,26 @@ const dashboardModel = ref(
     currentMonth: getCurrentMonth(),
   })
 );
+
+function consumeRegistrationGuide() {
+  const onboarding = getRegistrationOnboarding();
+  registrationGuide.value = buildPatientRegistrationGuide(onboarding);
+  if (onboarding) {
+    clearRegistrationOnboarding();
+  }
+}
+
+function dismissRegistrationGuide() {
+  registrationGuide.value = null;
+}
+
+function handleGuidePrimaryAction() {
+  const targetPath = registrationGuide.value?.primaryAction?.path;
+  registrationGuide.value = null;
+  if (targetPath) {
+    router.push(targetPath);
+  }
+}
 
 function goTo(path) {
   router.push(path);
@@ -133,6 +175,7 @@ async function loadDashboard() {
 }
 
 onMounted(() => {
+  consumeRegistrationGuide();
   loadDashboard();
 });
 </script>
@@ -144,8 +187,67 @@ onMounted(() => {
   gap: 12px;
 }
 
+.welcome-card,
 .hero-card {
   border: 1px solid #dbeafe;
+}
+
+.welcome-card {
+  background:
+    radial-gradient(circle at top left, rgba(20, 184, 166, 0.18), transparent 26%),
+    linear-gradient(135deg, #ffffff 0%, #f0fdf9 55%, #fff7ed 100%);
+}
+
+.welcome-shell {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.welcome-eyebrow {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #0f766e;
+}
+
+.welcome-title {
+  margin-top: 10px;
+  font-size: 24px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.welcome-subtitle {
+  margin-top: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #0f766e;
+}
+
+.welcome-desc {
+  max-width: 620px;
+  margin: 10px 0 0;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #475569;
+}
+
+.welcome-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.welcome-primary {
+  min-width: 132px;
+}
+
+.hero-card {
   background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 55%, #ecfeff 100%);
 }
 
@@ -266,9 +368,18 @@ onMounted(() => {
 }
 
 @media (max-width: 900px) {
+  .welcome-shell,
   .header-row {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .welcome-actions {
+    width: 100%;
+  }
+
+  .welcome-primary {
+    width: 100%;
   }
 
   .quick-actions {

@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { buildPatientDashboardModel } from "../src/services/patientDashboard.js";
+import { buildPatientDashboardModel, buildPatientRegistrationGuide } from "../src/services/patientDashboard.js";
 
 const appointments = [
   {
@@ -69,5 +69,18 @@ const emptyModel = buildPatientDashboardModel({
 assert.equal(emptyModel.timeline.length, 1);
 assert.equal(emptyModel.timeline[0].title, "还没有预约记录");
 assert.equal(emptyModel.quickActions[2].desc, "暂无待支付账单");
+
+const guide = buildPatientRegistrationGuide({
+  displayName: "新患者",
+  patientId: "P1088",
+});
+
+assert.equal(guide.title, "欢迎来到患者工作台");
+assert.equal(guide.patientLabel, "患者编号 P1088");
+assert.equal(guide.primaryAction.label, "去预约挂号");
+assert.equal(guide.secondaryAction.label, "稍后再说");
+assert.match(guide.description, /新患者/);
+
+assert.equal(buildPatientRegistrationGuide(null), null);
 
 console.log("patient dashboard mapping tests passed");

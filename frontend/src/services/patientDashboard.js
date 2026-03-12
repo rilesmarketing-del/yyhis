@@ -87,6 +87,27 @@ function buildEmptyTimeline() {
   ];
 }
 
+export function buildPatientRegistrationGuide(registrationOnboarding) {
+  if (!registrationOnboarding?.patientId) {
+    return null;
+  }
+
+  const displayName = registrationOnboarding.displayName || "新患者";
+
+  return {
+    title: "欢迎来到患者工作台",
+    patientLabel: `患者编号 ${registrationOnboarding.patientId}`,
+    description: `${displayName}，你的账号已经准备好了。建议先去预约挂号，后续缴费、就诊和报告都会在这里汇总。`,
+    primaryAction: {
+      label: "去预约挂号",
+      path: "/patient/appointments",
+    },
+    secondaryAction: {
+      label: "稍后再说",
+    },
+  };
+}
+
 export function buildPatientDashboardModel({ appointments, today, currentMonth }) {
   const todayBooked = countTodayBooked(appointments, today);
   const pendingPayments = countPendingPayments(appointments);
@@ -109,10 +130,34 @@ export function buildPatientDashboardModel({ appointments, today, currentMonth }
     ],
     timeline,
     quickActions: [
-      { key: "create", label: "新建预约挂号", desc: todayBooked > 0 ? `今日待就诊 ${todayBooked} 次` : "随时创建新的预约", path: "/patient/appointments", type: "primary" },
-      { key: "appointments", label: "查看我的预约", desc: appointments.length > 0 ? `当前共有 ${appointments.length} 条预约记录` : "还没有预约记录", path: "/patient/appointments", type: "success" },
-      { key: "payments", label: "处理待支付账单", desc: describePendingPayments(pendingPayments), path: "/patient/payments", type: "warning" },
-      { key: "reports", label: "查看检查报告", desc: "查看真实报告与复诊建议", path: "/patient/reports", type: "info" },
+      {
+        key: "create",
+        label: "新建预约挂号",
+        desc: todayBooked > 0 ? `今日待就诊 ${todayBooked} 次` : "随时创建新的预约",
+        path: "/patient/appointments",
+        type: "primary",
+      },
+      {
+        key: "appointments",
+        label: "查看我的预约",
+        desc: appointments.length > 0 ? `当前共有 ${appointments.length} 条预约记录` : "还没有预约记录",
+        path: "/patient/appointments",
+        type: "success",
+      },
+      {
+        key: "payments",
+        label: "处理待支付账单",
+        desc: describePendingPayments(pendingPayments),
+        path: "/patient/payments",
+        type: "warning",
+      },
+      {
+        key: "reports",
+        label: "查看检查报告",
+        desc: "查看真实报告与复诊建议",
+        path: "/patient/reports",
+        type: "info",
+      },
     ],
   };
 }

@@ -6,7 +6,7 @@
         <h1>医院业务系统演示登录</h1>
         <p class="hero-copy">
           这一版已经接入了最小鉴权、数据库持久化、真实排班管理，以及管理端组织与人员维护。
-          患者除了使用演示账号，也可以在右侧直接完成自助注册，再用新账号登录患者端。
+          患者除了使用演示账号，也可以在右侧直接完成自助注册，注册成功后会自动进入患者端首页。
         </p>
 
         <div class="preset-list">
@@ -86,7 +86,7 @@
       </el-form>
       <template #footer>
         <el-button @click="registerVisible = false">取消</el-button>
-        <el-button type="primary" :loading="registering" @click="handleRegister">注册并返回登录</el-button>
+        <el-button type="primary" :loading="registering" @click="handleRegister">注册并进入患者端</el-button>
       </template>
     </el-dialog>
   </div>
@@ -98,6 +98,7 @@ import { useRoute, useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
 import { login, registerPatient } from "../../services/auth";
 import { roleMeta } from "../../config/menu";
+import { setRegistrationOnboarding } from "../../services/patientSession";
 
 const router = useRouter();
 const route = useRoute();
@@ -131,6 +132,11 @@ function createRegisterForm() {
 function fillPreset(preset) {
   form.username = preset.username;
   form.password = preset.password;
+}
+
+function fillLoginForm(username, password) {
+  form.username = username;
+  form.password = password;
 }
 
 function openRegisterDialog() {
@@ -168,8 +174,12 @@ async function handleLogin() {
 }
 
 async function handleRegister() {
-  if (!registerForm.username.trim() || !registerForm.password.trim() || !registerForm.confirmPassword.trim()
-    || !registerForm.displayName.trim() || !registerForm.mobile.trim()) {
+  const username = registerForm.username.trim();
+  const password = registerForm.password;
+  const displayName = registerForm.displayName.trim();
+  const mobile = registerForm.mobile.trim();
+
+  if (!username || !password || !registerForm.confirmPassword.trim() || !displayName || !mobile) {
     ElMessage.warning("请完整填写注册信息");
     return;
   }
@@ -181,16 +191,29 @@ async function handleRegister() {
   registering.value = true;
   try {
     const response = await registerPatient({
-      username: registerForm.username.trim(),
-      password: registerForm.password,
+      username,
+      password,
       confirmPassword: registerForm.confirmPassword,
-      displayName: registerForm.displayName.trim(),
-      mobile: registerForm.mobile.trim(),
+      displayName,
+      mobile,
     });
-    form.username = registerForm.username.trim();
-    form.password = registerForm.password;
+
+    fillLoginForm(username, password);
     registerVisible.value = false;
-    ElMessage.success(`注册成功，患者编号 ${response.patientId}，请使用新账号登录`);
+    Object.assign(registerForm, createRegisterForm());
+
+    try {
+      const user = await login({ username, password });
+      setRegistrationOnboarding({
+        username: user.username || username,
+        displayName: user.displayName || response.displayName || displayName,
+        patientId: user.patientId || response.patientId,
+      });
+      ElMessage.success(`注册成功，已自动进入患者端，患者编号 ${user.patientId || response.patientId}`);
+      await router.replace(resolveTargetPath(user.role));
+    } catch (loginError) {
+      ElMessage.warning(`注册成功，患者编号 ${response.patientId}，账号已创建，请手动登录`);
+    }
   } catch (error) {
     ElMessage.error(error.message || "注册失败，请稍后重试");
   } finally {
