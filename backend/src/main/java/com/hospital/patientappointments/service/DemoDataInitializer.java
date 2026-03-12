@@ -25,9 +25,11 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 @Component
+@Order(1)
 public class DemoDataInitializer implements ApplicationRunner {
 
     private static final DateTimeFormatter SERIAL_DATE = DateTimeFormatter.ofPattern("yyyyMMdd");
