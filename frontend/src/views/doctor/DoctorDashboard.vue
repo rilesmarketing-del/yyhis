@@ -1,13 +1,19 @@
 ﻿<template>
-  <div class="doctor-dashboard-page">
+  <div class="doctor-dashboard-page doctor-command-panel">
     <el-card shadow="never" class="hero-card">
       <div class="hero-row">
-        <div>
+        <div class="hero-copy-block">
+          <p class="hero-eyebrow">Doctor Command</p>
           <div class="hero-title">医生工作总览</div>
-          <div class="hero-subtitle">围绕当前候诊、接诊和患者维护情况生成的真实总览。</div>
+          <div class="hero-subtitle">围绕当前候诊、接诊和患者维护情况生成的真实工作中枢。</div>
+          <div class="hero-badges">
+            <span class="hero-badge">今日接诊面板</span>
+            <span class="hero-badge hero-badge-soft">效率优先</span>
+          </div>
         </div>
+
         <div class="hero-actions">
-          <el-button @click="loadDashboard">刷新</el-button>
+          <el-button class="refresh-button" @click="loadDashboard">刷新</el-button>
           <el-button
             v-for="action in quickActions"
             :key="action.path"
@@ -33,9 +39,14 @@
 
     <el-row :gutter="12" class="mt-12">
       <el-col :xs="24" :lg="14">
-        <el-card shadow="never">
+        <el-card shadow="never" class="section-card" v-loading="loading">
           <template #header>
-            <span>今日候诊与接诊概览</span>
+            <div class="section-head">
+              <div>
+                <span class="section-title">今日候诊与接诊概览</span>
+                <p class="section-subtitle">优先帮助医生确认当前患者状态和入口来源。</p>
+              </div>
+            </div>
           </template>
           <el-table :data="overview" border v-loading="loading">
             <el-table-column prop="patientName" label="患者" width="120" />
@@ -52,9 +63,14 @@
         </el-card>
       </el-col>
       <el-col :xs="24" :lg="10">
-        <el-card shadow="never">
+        <el-card shadow="never" class="section-card todo-card">
           <template #header>
-            <span>待处理事项</span>
+            <div class="section-head">
+              <div>
+                <span class="section-title">待处理事项</span>
+                <p class="section-subtitle">把当天仍需关注的动作收在一个轻量工作清单里。</p>
+              </div>
+            </div>
           </template>
           <el-timeline>
             <el-timeline-item v-for="todo in todos" :key="todo.id" :type="todo.type">
@@ -124,34 +140,83 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.doctor-dashboard-page {
+.doctor-command-panel {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
+  font-family: "Segoe UI Variable Text", "Microsoft YaHei UI", "PingFang SC", sans-serif;
+}
+
+.hero-card,
+.section-card,
+.stat-card {
+  border: 1px solid rgba(125, 164, 190, 0.2);
+  border-radius: 24px;
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.06);
 }
 
 .hero-card {
-  border: 1px solid #dbeafe;
-  background: linear-gradient(135deg, #eff6ff 0%, #f8fafc 100%);
+  background:
+    radial-gradient(circle at 92% 16%, rgba(56, 189, 248, 0.2), transparent 24%),
+    linear-gradient(135deg, #eef6ff 0%, #f8fafc 58%, #eefaf7 100%);
 }
 
 .hero-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 16px;
+  gap: 18px;
+}
+
+.hero-copy-block {
+  max-width: 640px;
+}
+
+.hero-eyebrow {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #0f766e;
 }
 
 .hero-title {
-  font-size: 22px;
+  margin-top: 10px;
+  font-size: 28px;
   font-weight: 700;
-  color: #1d4ed8;
+  color: #0f172a;
 }
 
 .hero-subtitle {
-  margin-top: 6px;
-  font-size: 13px;
-  color: #64748b;
+  margin-top: 8px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #5b6c77;
+}
+
+.hero-badges {
+  margin-top: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #0f4c81;
+  background: rgba(37, 99, 235, 0.1);
+}
+
+.hero-badge-soft {
+  color: #0f766e;
+  background: rgba(15, 118, 110, 0.1);
 }
 
 .hero-actions {
@@ -161,8 +226,17 @@ onMounted(() => {
   justify-content: flex-end;
 }
 
+.refresh-button {
+  min-height: 42px;
+  border-radius: 14px;
+}
+
 .mt-12 {
   margin-top: 12px;
+}
+
+.stat-card {
+  background: rgba(255, 255, 255, 0.84);
 }
 
 .stat-card .label {
@@ -171,20 +245,51 @@ onMounted(() => {
 }
 
 .stat-card .value {
-  font-size: 28px;
+  font-size: 30px;
   color: #2563eb;
-  margin-top: 8px;
+  margin-top: 10px;
   font-weight: 700;
 }
 
 .stat-card .desc {
-  color: #7a8b87;
-  margin-top: 6px;
+  color: #6f8189;
+  margin-top: 8px;
   font-size: 12px;
+  line-height: 1.6;
+}
+
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #16344f;
+}
+
+.section-subtitle {
+  margin: 6px 0 0;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #64748b;
+}
+
+.todo-card {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(240, 249, 255, 0.9));
+}
+
+:deep(.el-table) {
+  border-radius: 16px;
+  overflow: hidden;
 }
 
 @media (max-width: 900px) {
-  .hero-row {
+  .hero-row,
+  .section-head {
     flex-direction: column;
     align-items: flex-start;
   }

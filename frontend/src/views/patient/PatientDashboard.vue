@@ -1,5 +1,5 @@
-<template>
-  <div class="dashboard-page">
+﻿<template>
+  <div class="dashboard-page patient-warmth-panel">
     <el-card v-if="registrationGuide" class="welcome-card" shadow="never">
       <div class="welcome-shell">
         <div>
@@ -18,15 +18,25 @@
     </el-card>
 
     <el-card class="hero-card" shadow="never">
-      <template #header>
-        <div class="header-row">
-          <div>
-            <div class="panel-title">患者首页</div>
-            <div class="panel-subtitle">基于当前患者真实预约数据生成的总览</div>
+      <div class="hero-shell">
+        <div class="hero-copy-block">
+          <p class="hero-eyebrow">Patient Hub</p>
+          <div class="panel-title">患者首页</div>
+          <div class="panel-subtitle">围绕当前患者真实预约与就诊记录生成的温和型总览。</div>
+
+          <div class="hero-badges">
+            <span class="hero-badge">今日关注</span>
+            <span class="hero-badge hero-badge-soft">安心就诊链路</span>
           </div>
-          <el-button @click="loadDashboard">刷新数据</el-button>
         </div>
-      </template>
+
+        <div class="hero-side-card">
+          <span class="hero-side-label">当前登录患者</span>
+          <strong>{{ activePatient.name }}</strong>
+          <span>{{ activePatient.id }}</span>
+          <el-button class="hero-refresh" @click="loadDashboard">刷新数据</el-button>
+        </div>
+      </div>
 
       <el-alert
         :title="`当前登录患者：${activePatient.name}（${activePatient.id}）`"
@@ -49,10 +59,13 @@
 
     <el-row :gutter="12" class="mt-12">
       <el-col :xs="24" :lg="14">
-        <el-card shadow="never" v-loading="loading">
+        <el-card shadow="never" class="section-card timeline-card" v-loading="loading">
           <template #header>
             <div class="header-row">
-              <span>近期预约动态</span>
+              <div>
+                <span class="section-title">近期预约动态</span>
+                <p class="section-subtitle">帮助患者快速确认下一次就诊、支付与后续检查状态。</p>
+              </div>
               <el-button link type="primary" @click="goTo('/patient/appointments')">查看全部</el-button>
             </div>
           </template>
@@ -72,9 +85,14 @@
       </el-col>
 
       <el-col :xs="24" :lg="10">
-        <el-card shadow="never" v-loading="loading">
+        <el-card shadow="never" class="section-card action-card" v-loading="loading">
           <template #header>
-            <span>快捷入口</span>
+            <div class="header-row compact-header">
+              <div>
+                <span class="section-title">快捷入口</span>
+                <p class="section-subtitle">从首页直接进入预约、支付、就诊和报告查看。</p>
+              </div>
+            </div>
           </template>
 
           <div class="quick-actions">
@@ -181,21 +199,25 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.dashboard-page {
+.patient-warmth-panel {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
+  font-family: "Segoe UI Variable Text", "Microsoft YaHei UI", "PingFang SC", sans-serif;
 }
 
 .welcome-card,
-.hero-card {
-  border: 1px solid #dbeafe;
+.hero-card,
+.section-card {
+  border: 1px solid rgba(141, 165, 159, 0.22);
+  border-radius: 26px;
+  box-shadow: 0 20px 42px rgba(15, 23, 42, 0.06);
 }
 
 .welcome-card {
   background:
-    radial-gradient(circle at top left, rgba(20, 184, 166, 0.18), transparent 26%),
-    linear-gradient(135deg, #ffffff 0%, #f0fdf9 55%, #fff7ed 100%);
+    radial-gradient(circle at top left, rgba(20, 184, 166, 0.16), transparent 28%),
+    linear-gradient(135deg, #ffffff 0%, #f2fdf8 55%, #fff8ee 100%);
 }
 
 .welcome-shell {
@@ -205,18 +227,19 @@ onMounted(() => {
   gap: 20px;
 }
 
-.welcome-eyebrow {
+.welcome-eyebrow,
+.hero-eyebrow {
   margin: 0;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: #0f766e;
 }
 
 .welcome-title {
   margin-top: 10px;
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 700;
   color: #0f172a;
 }
@@ -224,7 +247,7 @@ onMounted(() => {
 .welcome-subtitle {
   margin-top: 6px;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   color: #0f766e;
 }
 
@@ -232,7 +255,7 @@ onMounted(() => {
   max-width: 620px;
   margin: 10px 0 0;
   font-size: 14px;
-  line-height: 1.7;
+  line-height: 1.8;
   color: #475569;
 }
 
@@ -243,12 +266,100 @@ onMounted(() => {
   flex-shrink: 0;
 }
 
-.welcome-primary {
-  min-width: 132px;
+.welcome-primary,
+.hero-refresh {
+  min-width: 136px;
+  min-height: 44px;
+  border-radius: 14px;
 }
 
 .hero-card {
-  background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 55%, #ecfeff 100%);
+  overflow: hidden;
+  background:
+    radial-gradient(circle at top right, rgba(251, 191, 36, 0.16), transparent 24%),
+    linear-gradient(140deg, #fefefe 0%, #eefbf8 48%, #fff7ed 100%);
+}
+
+.hero-shell {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.hero-copy-block {
+  max-width: 620px;
+}
+
+.panel-title {
+  margin-top: 10px;
+  font-size: 24px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.panel-subtitle {
+  margin-top: 8px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #55646f;
+}
+
+.hero-badges {
+  margin-top: 18px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #134e4a;
+  background: linear-gradient(135deg, rgba(15, 118, 110, 0.14), rgba(255, 255, 255, 0.9));
+}
+
+.hero-badge-soft {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.16), rgba(255, 255, 255, 0.9));
+}
+
+.hero-side-card {
+  min-width: 220px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-radius: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.68);
+  backdrop-filter: blur(10px);
+}
+
+.hero-side-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #0f766e;
+}
+
+.hero-side-card strong {
+  font-size: 22px;
+  color: #0f172a;
+}
+
+.hero-side-card span:last-of-type {
+  color: #64748b;
+}
+
+.patient-alert {
+  margin-bottom: 16px;
+  border-radius: 18px;
 }
 
 .mt-12 {
@@ -262,37 +373,38 @@ onMounted(() => {
   gap: 16px;
 }
 
-.panel-title {
-  font-size: 18px;
-  font-weight: 600;
-  color: #164e63;
+.compact-header {
+  align-items: flex-start;
 }
 
-.panel-subtitle {
-  margin-top: 4px;
+.section-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #183b35;
+}
+
+.section-subtitle {
+  margin: 6px 0 0;
   font-size: 12px;
+  line-height: 1.6;
   color: #64748b;
 }
 
-.patient-alert {
-  margin-bottom: 16px;
-}
-
 .stat-card {
-  min-height: 148px;
-  border-radius: 16px;
-  border: 1px solid #d7efe8;
-  background: rgba(255, 255, 255, 0.88);
+  min-height: 152px;
+  border-radius: 22px;
+  border: 1px solid rgba(215, 239, 232, 0.72);
+  background: rgba(255, 255, 255, 0.82);
 }
 
 .stat-label {
-  color: #5a6b67;
+  color: #58716a;
   font-size: 13px;
 }
 
 .stat-value {
   margin-top: 10px;
-  font-size: 30px;
+  font-size: 32px;
   font-weight: 700;
   color: #0f766e;
 }
@@ -301,7 +413,7 @@ onMounted(() => {
   margin-top: 8px;
   color: #64748b;
   font-size: 12px;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
 .quick-actions {
@@ -315,60 +427,61 @@ onMounted(() => {
   flex-direction: column;
   align-items: flex-start;
   gap: 8px;
-  min-height: 104px;
+  min-height: 112px;
   padding: 16px;
-  border-radius: 16px;
-  border: 1px solid #dbeafe;
-  background: #ffffff;
+  border-radius: 18px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  background: rgba(255, 255, 255, 0.88);
   cursor: pointer;
   text-align: left;
-  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
 }
 
 .quick-action:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 24px rgba(15, 118, 110, 0.08);
+  transform: translateY(-3px);
+  box-shadow: 0 16px 28px rgba(15, 118, 110, 0.1);
 }
 
 .quick-action-title {
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 700;
   color: #0f172a;
 }
 
 .quick-action-desc {
   font-size: 12px;
-  line-height: 1.5;
+  line-height: 1.6;
   color: #64748b;
 }
 
 .quick-action-primary {
-  border-color: #bfdbfe;
+  border-color: rgba(191, 219, 254, 0.9);
   background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%);
 }
 
 .quick-action-success {
-  border-color: #bbf7d0;
+  border-color: rgba(187, 247, 208, 0.9);
   background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%);
 }
 
 .quick-action-warning {
-  border-color: #fde68a;
+  border-color: rgba(253, 230, 138, 0.9);
   background: linear-gradient(135deg, #fffbeb 0%, #ffffff 100%);
 }
 
 .quick-action-info {
-  border-color: #cbd5e1;
+  border-color: rgba(203, 213, 225, 0.9);
   background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
 }
 
 .muted {
+  margin-top: 4px;
   color: #6c7f7a;
-  margin-top: 3px;
 }
 
 @media (max-width: 900px) {
   .welcome-shell,
+  .hero-shell,
   .header-row {
     flex-direction: column;
     align-items: flex-start;
@@ -376,10 +489,17 @@ onMounted(() => {
 
   .welcome-actions {
     width: 100%;
+    flex-wrap: wrap;
   }
 
-  .welcome-primary {
+  .welcome-primary,
+  .hero-refresh {
     width: 100%;
+  }
+
+  .hero-side-card {
+    width: 100%;
+    min-width: 0;
   }
 
   .quick-actions {
