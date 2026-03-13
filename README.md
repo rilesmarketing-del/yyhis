@@ -19,3 +19,10 @@ It validates:
 - frontend `npm run test:ci`
 - frontend `npm run build`
 - frontend `npm run verify:bundle`
+
+## Connect GitHub Remote
+
+When you create an empty GitHub repository later, connect and push this local repository with:
+
+- `git remote add origin <your-github-repo-url>`
+- `git push -u origin main`
