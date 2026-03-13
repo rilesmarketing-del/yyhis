@@ -11,3 +11,4 @@ Thumbs.db
 /frontend/dist/
 *.lnk
 .edge-profile/
+.worktrees/
