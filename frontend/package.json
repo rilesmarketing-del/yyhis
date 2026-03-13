@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test:ci": "node ./scripts/test-patient-registration-handoff.mjs && node ./scripts/test-patient-dashboard.mjs && node ./scripts/test-doctor-orders-workbench.mjs && node ./scripts/test-doctor-clinical-structured-data.mjs && node ./scripts/test-admin-org-governance.mjs && node ./scripts/test-admin-pharmacy-system.mjs",
+    "test:ci": "node ./scripts/test-common-copy.mjs && node ./scripts/test-patient-registration-handoff.mjs && node ./scripts/test-patient-dashboard.mjs && node ./scripts/test-patient-visits.mjs && node ./scripts/test-patient-reports.mjs && node ./scripts/test-patient-prescriptions.mjs && node ./scripts/test-doctor-dashboard.mjs && node ./scripts/test-doctor-visit-flow.mjs && node ./scripts/test-doctor-orders-workbench.mjs && node ./scripts/test-doctor-clinical-structured-data.mjs && node ./scripts/test-doctor-schedule.mjs && node ./scripts/test-admin-dashboard.mjs && node ./scripts/test-admin-auth.mjs && node ./scripts/test-admin-billing.mjs && node ./scripts/test-admin-org.mjs && node ./scripts/test-admin-org-governance.mjs && node ./scripts/test-admin-pharmacy-system.mjs && node ./scripts/test-admin-reports.mjs",
     "verify:bundle": "node ./scripts/check-bundle-size.mjs"
   },
   "dependencies": {
