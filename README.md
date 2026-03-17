@@ -26,3 +26,20 @@ When you create an empty GitHub repository later, connect and push this local re
 
 - `git remote add origin <your-github-repo-url>`
 - `git push -u origin main`
+
+## One-Click Local Launch
+
+You can double-click `智慧医院系统.cmd` in the project root to start the local system.
+
+The launcher will:
+
+- reuse running services if `5173` and `8080` are already up
+- start the missing frontend/backend service if only one side is down
+- open `http://127.0.0.1:5173` in your default browser when the frontend is ready
+
+Launcher logs are written to:
+
+- `backend/launch-backend.log`
+- `backend/launch-backend.err.log`
+- `frontend/launch-frontend.log`
+- `frontend/launch-frontend.err.log`

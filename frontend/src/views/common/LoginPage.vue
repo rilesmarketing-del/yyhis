@@ -10,43 +10,21 @@
           <p class="eyebrow">智慧医院业务系统</p>
           <span class="hero-pill">门诊服务与临床协同平台</span>
           <el-button
-            v-if="patientModeEnabled"
             plain
             class="mode-toggle-button mode-toggle-inline"
-            @click="unlockVisible = true"
+            @click="handleModeToggleAction"
           >
-            切换模式
+            {{ patientModeEnabled ? "切换模式" : "切换为患者模式" }}
           </el-button>
         </div>
         <h1>{{ patientModeEnabled ? "医院患者服务入口" : "医院业务系统登录" }}</h1>
-        <p v-if="!patientModeEnabled" class="hero-copy">面向患者服务、临床接诊和运营管理的一体化系统，支持预约、接诊、收费、药房和组织治理等核心业务协同。</p>
-
-        <div v-if="!patientModeEnabled" class="hero-metrics role-entry-grid">
-          <article class="metric-card">
-            <span class="metric-label">患者服务入口</span>
-            <strong>预约与就诊</strong>
-            <p>用于患者预约挂号、支付、查看就诊记录、报告与处方。</p>
-            <button type="button" class="entry-shortcut" @click="fillPreset(patientPreset)">填入患者账号</button>
-          </article>
-          <article class="metric-card">
-            <span class="metric-label">医护工作入口</span>
-            <strong>接诊与病历</strong>
-            <p>用于医护人员查看候诊队列、接诊、记录医嘱与维护病历。</p>
-            <button type="button" class="entry-shortcut" @click="fillPreset(doctorPreset)">填入医护账号</button>
-          </article>
-          <article class="metric-card">
-            <span class="metric-label">运营管理入口</span>
-            <strong>排班与治理</strong>
-            <p>用于管理人员处理排班、收费、药房、报表和组织治理工作。</p>
-            <button type="button" class="entry-shortcut" @click="fillPreset(adminPreset)">填入管理账号</button>
-          </article>
-        </div>
-
-        <div class="mode-actions" v-if="!patientModeEnabled">
-          <el-button plain class="mode-toggle-button" @click="handleEnablePatientMode">
-            切换为患者模式
-          </el-button>
-        </div>
+        <p class="hero-copy">
+          {{
+            patientModeEnabled
+              ? "当前浏览器已切换为患者服务入口，适用于患者登录与自助注册。"
+              : "面向患者服务、临床接诊和运营管理的一体化系统，支持预约、接诊、收费、药房和组织治理等核心业务协同。"
+          }}
+        </p>
       </section>
 
       <el-card class="login-card" :class="{ 'patient-login-card': patientModeEnabled }" shadow="never">
@@ -61,15 +39,6 @@
             <span class="card-chip">安全接入</span>
           </div>
         </template>
-
-        <el-alert
-          v-if="!patientModeEnabled"
-          :title="patientModeEnabled ? '当前浏览器处于患者服务模式。若需恢复后台入口，请由管理员验证后解除。' : '请使用对应业务账号登录。患者也可以直接完成自助注册后进入系统。'"
-          :type="patientModeEnabled ? 'warning' : 'info'"
-          :closable="false"
-          show-icon
-          class="login-alert"
-        />
 
         <el-form label-position="top" @submit.prevent>
           <el-form-item label="用户名">
@@ -164,8 +133,6 @@ const unlockVisible = ref(false);
 const patientModeState = ref(isPatientModeEnabled());
 
 const patientPreset = { label: "患者服务入口", username: "patient", password: "patient123", role: "patient" };
-const doctorPreset = { label: "医护工作入口", username: "doctor", password: "doctor123", role: "doctor" };
-const adminPreset = { label: "运营管理入口", username: "admin", password: "admin123", role: "admin" };
 
 const patientModeEnabled = computed(() => patientModeState.value);
 
@@ -190,11 +157,6 @@ function createRegisterForm() {
   };
 }
 
-function fillPreset(preset) {
-  form.username = preset.username;
-  form.password = preset.password;
-}
-
 function fillLoginForm(username, password) {
   form.username = username;
   form.password = password;
@@ -214,6 +176,15 @@ function openRegisterDialog() {
   registerVisible.value = true;
 }
 
+function handleModeToggleAction() {
+  if (patientModeEnabled.value) {
+    unlockVisible.value = true;
+    return;
+  }
+
+  handleEnablePatientMode();
+}
+
 function resolveTargetPath(role) {
   const redirect = typeof route.query.redirect === "string" ? route.query.redirect : "";
   if (redirect && redirect.startsWith(`/${role}/`)) {
@@ -226,7 +197,8 @@ function handleEnablePatientMode() {
   enablePatientMode();
   clearAuthSession();
   syncPatientModeState();
-  fillPreset(patientPreset);
+  form.username = patientPreset.username;
+  form.password = patientPreset.password;
   ElMessage.success("当前浏览器已切换为患者模式");
 }
 
@@ -391,25 +363,18 @@ async function handleRegister() {
 }
 
 .login-shell {
+  --login-shell-inline: 32px;
   position: relative;
   z-index: 1;
-  max-width: 1200px;
+  max-width: 760px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(340px, 420px);
-  gap: 28px;
-  align-items: stretch;
-}
-
-.patient-mode-shell {
-  --patient-mode-inline: 32px;
-  max-width: 760px;
   grid-template-columns: minmax(0, 1fr);
   gap: 18px;
   align-items: start;
 }
 
-.patient-mode-shell > * {
+.login-shell > * {
   width: 100%;
 }
 
@@ -419,9 +384,11 @@ async function handleRegister() {
 }
 
 .login-hero {
-  padding: 38px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 28px var(--login-shell-inline);
   position: relative;
-  background: rgba(255, 255, 255, 0.76);
+  background: linear-gradient(145deg, rgba(255, 251, 235, 0.92), rgba(240, 253, 250, 0.9));
   border: 1px solid rgba(141, 165, 159, 0.24);
   box-shadow: 0 28px 64px rgba(15, 23, 42, 0.08);
   backdrop-filter: blur(18px);
@@ -429,19 +396,12 @@ async function handleRegister() {
 }
 
 .patient-mode-banner {
-  background: linear-gradient(145deg, rgba(255, 251, 235, 0.92), rgba(240, 253, 250, 0.9));
-  width: 100%;
-  box-sizing: border-box;
-  padding: 28px var(--patient-mode-inline);
+  padding: 28px var(--login-shell-inline);
 }
 
 .patient-mode-banner h1 {
   margin: 14px 0 0;
   font-size: clamp(28px, 4vw, 40px);
-}
-
-.patient-mode-banner .mode-actions {
-  margin-top: 16px;
 }
 
 .hero-topline {
@@ -495,65 +455,6 @@ async function handleRegister() {
   color: #435562;
 }
 
-.hero-metrics {
-  margin-top: 28px;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
-}
-
-.role-entry-grid {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.metric-card {
-  min-height: 156px;
-  padding: 20px;
-  border-radius: 22px;
-  background: linear-gradient(160deg, rgba(255, 255, 255, 0.94), rgba(245, 248, 247, 0.9));
-  border: 1px solid rgba(148, 163, 184, 0.16);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
-}
-
-.metric-label {
-  display: inline-flex;
-  margin-bottom: 10px;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--orbit-teal);
-}
-
-.metric-card strong {
-  display: block;
-  font-size: 22px;
-  color: #10231f;
-}
-
-.metric-card p {
-  margin: 10px 0 0;
-  font-size: 13px;
-  line-height: 1.7;
-  color: var(--orbit-muted);
-}
-
-.entry-shortcut {
-  margin-top: 16px;
-  min-height: 42px;
-  padding: 0 16px;
-  border: none;
-  border-radius: 14px;
-  background: linear-gradient(135deg, rgba(15, 118, 110, 0.14), rgba(245, 158, 11, 0.18));
-  color: #134e4a;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.mode-actions {
-  margin-top: 20px;
-}
-
 .mode-toggle-button {
   min-height: 44px;
   border-radius: 14px;
@@ -596,11 +497,6 @@ async function handleRegister() {
   color: #64748b;
 }
 
-.login-alert {
-  margin-bottom: 18px;
-  border-radius: 18px;
-}
-
 .login-button {
   width: 100%;
   min-height: 46px;
@@ -623,11 +519,11 @@ async function handleRegister() {
 
 :deep(.patient-login-card .el-card__body) {
   justify-content: flex-start;
-  padding: 0 var(--patient-mode-inline) 26px;
+  padding: 0 var(--login-shell-inline) 26px;
 }
 
 :deep(.patient-login-card .el-card__header) {
-  padding: 28px var(--patient-mode-inline) 18px;
+  padding: 28px var(--login-shell-inline) 18px;
 }
 
 :deep(.login-card .el-input__wrapper) {
@@ -652,9 +548,7 @@ async function handleRegister() {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .login-hero,
-  .metric-card,
-  .entry-shortcut {
+  .login-hero {
     animation: none;
     transition: none;
   }
@@ -665,13 +559,7 @@ async function handleRegister() {
     padding: 20px;
   }
 
-  .login-shell,
-  .patient-mode-shell {
-    grid-template-columns: 1fr;
-  }
-
-  .hero-metrics,
-  .role-entry-grid {
+  .login-shell {
     grid-template-columns: 1fr;
   }
 }
