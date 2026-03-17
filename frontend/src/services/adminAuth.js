@@ -18,15 +18,33 @@ const roleMeta = {
   },
 };
 
+const allRoleMeta = {
+  role: "all",
+  label: "全部端",
+  scopeHint: "查看全部端账号与角色边界",
+  tagType: "info",
+};
+
 export function fetchAdminAuthAccounts() {
   return apiRequest("/api/admin/auth/accounts");
 }
 
-export function buildAdminAuthModel(payload = {}, selectedRole = "") {
+export function buildAdminAuthModel(payload = {}, selectedFilter = "all") {
   const accounts = Array.isArray(payload.accounts) ? payload.accounts : [];
   const roleSummary = Array.isArray(payload.roleSummary) ? payload.roleSummary : [];
+  const filterValue = selectedFilter || "all";
 
-  const mappedAccounts = accounts.map((item) => {
+  const filterOptions = [
+    { value: "all", label: allRoleMeta.label },
+    { value: "patient", label: roleMeta.patient.label },
+    { value: "doctor", label: roleMeta.doctor.label },
+    { value: "admin", label: roleMeta.admin.label },
+  ];
+
+  const filteredAccountsSource = filterValue === "all" ? accounts : accounts.filter((item) => item.role === filterValue);
+  const filteredSummarySource = filterValue === "all" ? roleSummary : roleSummary.filter((item) => item.role === filterValue);
+
+  const mappedAccounts = filteredAccountsSource.map((item) => {
     const meta = roleMeta[item.role] || {};
     return {
       username: item.username,
@@ -42,7 +60,7 @@ export function buildAdminAuthModel(payload = {}, selectedRole = "") {
     };
   });
 
-  const mappedSummary = roleSummary.map((item) => {
+  const mappedSummary = filteredSummarySource.map((item) => {
     const meta = roleMeta[item.role] || {};
     return {
       role: item.role,
@@ -53,13 +71,29 @@ export function buildAdminAuthModel(payload = {}, selectedRole = "") {
     };
   });
 
-  const resolvedRole = selectedRole || mappedAccounts[0]?.role || mappedSummary[0]?.role || "";
-  const activeRole = mappedSummary.find((item) => item.role === resolvedRole) || null;
+  const activeRole =
+    filterValue === "all"
+      ? {
+          role: "all",
+          label: allRoleMeta.label,
+          count: mappedAccounts.length,
+          scopeHint: allRoleMeta.scopeHint,
+          tagType: allRoleMeta.tagType,
+        }
+      : mappedSummary.find((item) => item.role === filterValue) || {
+          role: filterValue,
+          label: roleMeta[filterValue]?.label || "未知角色",
+          count: mappedAccounts.length,
+          scopeHint: roleMeta[filterValue]?.scopeHint || "暂无角色说明",
+          tagType: roleMeta[filterValue]?.tagType || "info",
+        };
 
   return {
     accounts: mappedAccounts,
     roleSummary: mappedSummary,
     activeRole,
+    filterOptions,
+    selectedFilter: filterValue,
     emptyHint: "暂无账号数据",
   };
 }

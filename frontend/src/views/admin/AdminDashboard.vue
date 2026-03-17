@@ -12,10 +12,11 @@
           </div>
         </div>
         <div class="hero-actions">
-          <el-button class="refresh-button" @click="loadDashboard">刷新</el-button>
+          <el-button class="hero-action-button refresh-button" @click="loadDashboard">刷新</el-button>
           <el-button
             v-for="action in dashboardModel.quickActions"
             :key="action.path"
+            class="hero-action-button"
             :type="action.type === 'info' ? '' : action.type"
             :plain="action.type !== 'primary'"
             @click="goTo(action.path)"
@@ -196,11 +197,20 @@ onMounted(() => {
   flex-wrap: wrap;
   gap: 8px;
   justify-content: flex-end;
+  align-items: center;
+}
+
+.hero-action-button {
+  min-height: 44px;
+  padding: 0 22px;
+  border-radius: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .refresh-button {
-  min-height: 42px;
-  border-radius: 14px;
+  min-width: 88px;
 }
 
 .mt-12 {

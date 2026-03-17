@@ -4,9 +4,16 @@
       <div class="hero-row">
         <div>
           <div class="hero-title">账号与角色查看</div>
-          <div class="hero-subtitle">基于真实演示账号生成的最小只读权限概览，便于管理端查看当前角色边界。</div>
+          <div class="hero-subtitle">基于当前系统账号生成的只读权限概览，便于管理端按端查看角色边界与账号分布。</div>
         </div>
-        <el-button @click="loadAccounts">刷新数据</el-button>
+        <div class="hero-actions">
+          <el-radio-group v-model="selectedFilter" size="default" @change="handleFilterChange">
+            <el-radio-button v-for="item in authModel.filterOptions" :key="item.value" :label="item.value">
+              {{ item.label }}
+            </el-radio-button>
+          </el-radio-group>
+          <el-button @click="loadAccounts">刷新数据</el-button>
+        </div>
       </div>
     </el-card>
 
@@ -14,7 +21,7 @@
       <el-col :xs="24" :lg="14">
         <el-card shadow="never" v-loading="loading">
           <template #header>
-            <span>真实账号列表</span>
+            <span>账号列表</span>
           </template>
           <el-table
             :data="authModel.accounts"
@@ -60,7 +67,7 @@
                 :key="item.role"
                 class="summary-item"
                 :class="{ active: item.role === authModel.activeRole?.role }"
-                @click="selectRole(item.role)"
+                @click="handleFilterChange(item.role)"
               >
                 <div class="summary-header">
                   <el-tag :type="item.tagType" effect="plain">{{ item.label }}</el-tag>
@@ -82,26 +89,22 @@ import { ElMessage } from "element-plus";
 import { buildAdminAuthModel, fetchAdminAuthAccounts } from "../../services/adminAuth.js";
 
 const loading = ref(false);
-const selectedRole = ref("");
+const selectedFilter = ref("all");
 const rawPayload = ref({ accounts: [], roleSummary: [] });
 const authModel = ref(buildAdminAuthModel());
 
 function applyPayload(payload) {
   rawPayload.value = payload;
-  authModel.value = buildAdminAuthModel(payload, selectedRole.value);
-  if (!selectedRole.value && authModel.value.activeRole?.role) {
-    selectedRole.value = authModel.value.activeRole.role;
-    authModel.value = buildAdminAuthModel(payload, selectedRole.value);
-  }
+  authModel.value = buildAdminAuthModel(payload, selectedFilter.value);
 }
 
-function selectRole(role) {
-  selectedRole.value = role;
-  authModel.value = buildAdminAuthModel(rawPayload.value, selectedRole.value);
+function handleFilterChange(role) {
+  selectedFilter.value = role;
+  authModel.value = buildAdminAuthModel(rawPayload.value, selectedFilter.value);
 }
 
 function handleRowClick(row) {
-  selectRole(row.role);
+  handleFilterChange(row.role);
 }
 
 async function loadAccounts() {
@@ -111,8 +114,8 @@ async function loadAccounts() {
     applyPayload(payload);
   } catch (error) {
     rawPayload.value = { accounts: [], roleSummary: [] };
-    authModel.value = buildAdminAuthModel();
-    selectedRole.value = "";
+    authModel.value = buildAdminAuthModel({}, "all");
+    selectedFilter.value = "all";
     ElMessage.error(error.message || "账号与角色数据加载失败");
   } finally {
     loading.value = false;
@@ -141,6 +144,13 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
   gap: 16px;
+}
+
+.hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .hero-title {
@@ -200,6 +210,10 @@ onMounted(() => {
   .hero-row {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .hero-actions {
+    width: 100%;
   }
 }
 </style>

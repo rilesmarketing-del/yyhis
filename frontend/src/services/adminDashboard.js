@@ -42,10 +42,10 @@ export function buildAdminDashboardModel(summary = {}) {
       ? alerts.map((item, index) => ({ id: `alert-${index}`, title: item.message, type: item.level || "info" }))
       : [{ id: "alert-empty", title: "系统运行平稳", type: "success" }],
     quickActions: [
-      { label: "去排班管理", path: "/admin/scheduling", type: "primary" },
-      { label: "去权限配置", path: "/admin/auth", type: "warning" },
-      { label: "去系统设置", path: "/admin/system", type: "info" },
-      { label: "去运营报表", path: "/admin/reports", type: "success" },
+      { label: "排班管理", path: "/admin/scheduling", type: "primary" },
+      { label: "权限配置", path: "/admin/auth", type: "warning" },
+      { label: "系统设置", path: "/admin/system", type: "info" },
+      { label: "运营报表", path: "/admin/reports", type: "success" },
     ],
   };
 }
