@@ -12,7 +12,7 @@
       </template>
 
       <el-alert
-        :title="`当前登录患者：${activePatient.name}（${activePatient.id}）`"
+        :title="`当前登录患者：${activePatient.name}`"
         type="success"
         :closable="false"
         show-icon

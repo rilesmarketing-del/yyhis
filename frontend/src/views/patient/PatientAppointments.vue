@@ -14,7 +14,7 @@
           </template>
 
           <el-alert
-            :title="`当前登录患者：${activePatient.name}（${activePatient.id}）`"
+            :title="`当前登录患者：${activePatient.name}`"
             type="success"
             :closable="false"
             show-icon
@@ -163,7 +163,7 @@
 
     <el-dialog v-model="bookingDialogVisible" title="确认预约" width="520px">
       <el-descriptions v-if="selectedSchedule" :column="1" border>
-        <el-descriptions-item label="患者">{{ activePatient.name }}（{{ activePatient.id }}）</el-descriptions-item>
+        <el-descriptions-item label="患者">{{ activePatient.name }}</el-descriptions-item>
         <el-descriptions-item label="科室">{{ selectedSchedule.department }}</el-descriptions-item>
         <el-descriptions-item label="医生">{{ selectedSchedule.doctorName }} / {{ selectedSchedule.title }}</el-descriptions-item>
         <el-descriptions-item label="就诊日期">{{ selectedSchedule.date }}</el-descriptions-item>

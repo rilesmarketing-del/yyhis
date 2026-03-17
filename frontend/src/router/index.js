@@ -1,7 +1,8 @@
-import { createRouter, createWebHistory } from "vue-router";
+﻿import { createRouter, createWebHistory } from "vue-router";
 import MainLayout from "../layout/MainLayout.vue";
 import { roleMenus, roleMeta } from "../config/menu";
-import { ensureCurrentUser } from "../services/auth";
+import { clearAuthSession, ensureCurrentUser } from "../services/auth";
+import { isPatientModeEnabled, isRoleBlockedInPatientMode } from "../services/patientMode";
 
 const loadPagePlaceholder = () => import("../views/common/PagePlaceholder.vue");
 const loadNotFound = () => import("../views/common/NotFound.vue");
@@ -65,28 +66,19 @@ const routes = [
     path: "/patient",
     component: MainLayout,
     meta: { role: "patient" },
-    children: [
-      ...buildRoleChildren("patient"),
-      { path: "", redirect: "/patient/dashboard" },
-    ],
+    children: [...buildRoleChildren("patient"), { path: "", redirect: "/patient/dashboard" }],
   },
   {
     path: "/doctor",
     component: MainLayout,
     meta: { role: "doctor" },
-    children: [
-      ...buildRoleChildren("doctor"),
-      { path: "", redirect: "/doctor/dashboard" },
-    ],
+    children: [...buildRoleChildren("doctor"), { path: "", redirect: "/doctor/dashboard" }],
   },
   {
     path: "/admin",
     component: MainLayout,
     meta: { role: "admin" },
-    children: [
-      ...buildRoleChildren("admin"),
-      { path: "", redirect: "/admin/dashboard" },
-    ],
+    children: [...buildRoleChildren("admin"), { path: "", redirect: "/admin/dashboard" }],
   },
   {
     path: "/:pathMatch(.*)*",
@@ -105,11 +97,23 @@ router.beforeEach(async (to) => {
   if (to.meta?.public) {
     if (to.path === "/login") {
       const user = await ensureCurrentUser();
-      if (user?.role) {
+      if (user?.role && !isRoleBlockedInPatientMode(user.role)) {
         return roleMeta[user.role]?.homePath || "/";
+      }
+      if (user?.role && isPatientModeEnabled()) {
+        clearAuthSession();
       }
     }
     return true;
+  }
+
+  const requestedRole = to.meta?.role;
+  if (isRoleBlockedInPatientMode(requestedRole)) {
+    clearAuthSession();
+    return {
+      path: "/login",
+      query: { patientMode: "enabled" },
+    };
   }
 
   const user = await ensureCurrentUser();
@@ -120,7 +124,15 @@ router.beforeEach(async (to) => {
     };
   }
 
-  if (to.meta?.role && to.meta.role !== user.role) {
+  if (isRoleBlockedInPatientMode(user.role)) {
+    clearAuthSession();
+    return {
+      path: "/login",
+      query: { patientMode: "enabled" },
+    };
+  }
+
+  if (requestedRole && requestedRole !== user.role) {
     return roleMeta[user.role]?.homePath || "/login";
   }
 

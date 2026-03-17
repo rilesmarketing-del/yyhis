@@ -7,26 +7,14 @@
     <el-header class="header">
       <div class="brand-shell">
         <div class="brand">
-          <p class="eyebrow">Hospital Demo</p>
           <h1>智慧医院业务系统</h1>
-          <p class="subtitle">Spring Boot + Vue 3 + Element Plus 演示工作台</p>
-        </div>
-
-        <div class="brand-pulse">
-          <span class="pulse-label">运行中枢</span>
-          <strong>{{ roleLabel }}</strong>
-          <span>{{ currentTitle }}</span>
+          <p class="subtitle">门诊服务、临床接诊与运营管理协同平台</p>
         </div>
       </div>
 
       <div class="account-panel">
-        <div class="account-chip">
-          <span class="account-chip-label">当前账号</span>
-          <span class="account-chip-value">{{ currentUser?.username || "-" }}</span>
-        </div>
         <div class="account-meta">
           <span class="account-name">{{ displayName }}</span>
-          <span class="account-role">{{ roleLabel }} · {{ currentUser?.username || "-" }}</span>
         </div>
         <el-button class="logout-button" type="primary" @click="handleLogout">退出登录</el-button>
       </div>
@@ -35,12 +23,6 @@
     <el-container class="shell-body">
       <el-aside width="268px" class="aside">
         <div class="aside-shell">
-          <div class="aside-heading">
-            <p class="aside-label">导航矩阵</p>
-            <strong>{{ roleLabel }}</strong>
-            <span>{{ currentMenus.length }} 个入口已就绪</span>
-          </div>
-
           <el-menu
             :default-active="activePath"
             class="menu"
@@ -96,7 +78,7 @@ const currentMenus = computed(() => roleMenus[currentRole.value] || []);
 const activePath = computed(() => route.path);
 const roleLabel = computed(() => roleMeta[currentRole.value]?.label || "未知角色");
 const currentTitle = computed(() => route.meta?.title || "页面");
-const displayName = computed(() => currentUser.value?.displayName || "演示账号");
+const displayName = computed(() => currentUser.value?.displayName || "系统用户");
 
 async function handleLogout() {
   await logout();
@@ -189,15 +171,6 @@ async function handleLogout() {
   max-width: 560px;
 }
 
-.eyebrow {
-  margin: 0 0 8px;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  opacity: 0.84;
-}
-
 .brand h1 {
   margin: 0;
   font-size: clamp(24px, 2.5vw, 32px);
@@ -212,61 +185,10 @@ async function handleLogout() {
   opacity: 0.95;
 }
 
-.brand-pulse {
-  min-width: 136px;
-  padding: 14px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  border-radius: 22px;
-  background: linear-gradient(160deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.08));
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14);
-}
-
-.pulse-label {
-  font-size: 11px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  opacity: 0.82;
-}
-
-.brand-pulse strong {
-  font-size: 18px;
-}
-
-.brand-pulse span:last-child {
-  font-size: 12px;
-  opacity: 0.9;
-}
-
 .account-panel {
   display: flex;
   align-items: center;
   gap: 12px;
-}
-
-.account-chip {
-  min-width: 116px;
-  padding: 10px 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-}
-
-.account-chip-label {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  opacity: 0.82;
-}
-
-.account-chip-value {
-  font-size: 14px;
-  font-weight: 700;
 }
 
 .account-meta {
@@ -276,13 +198,10 @@ async function handleLogout() {
 }
 
 .account-name {
-  font-size: 15px;
-  font-weight: 700;
-}
-
-.account-role {
-  font-size: 12px;
-  opacity: 0.86;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: 0.01em;
 }
 
 .logout-button {
@@ -312,35 +231,6 @@ async function handleLogout() {
   background: var(--hub-surface);
   backdrop-filter: blur(18px);
   box-shadow: 0 20px 42px rgba(15, 23, 42, 0.08);
-}
-
-.aside-heading {
-  margin-bottom: 14px;
-  padding: 14px 14px 16px;
-  border-radius: 20px;
-  background: linear-gradient(145deg, rgba(15, 118, 110, 0.08), rgba(245, 158, 11, 0.1));
-  border: 1px solid rgba(15, 118, 110, 0.08);
-  color: var(--hub-ink);
-}
-
-.aside-label {
-  margin: 0 0 8px;
-  font-size: 11px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--hub-teal);
-}
-
-.aside-heading strong {
-  display: block;
-  font-size: 19px;
-}
-
-.aside-heading span {
-  display: block;
-  margin-top: 6px;
-  font-size: 12px;
-  color: var(--hub-muted);
 }
 
 .menu {

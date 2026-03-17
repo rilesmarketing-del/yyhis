@@ -1,74 +1,71 @@
-﻿<template>
+<template>
   <div class="login-page welcome-orbit">
     <div class="orbit-glow orbit-glow-left" />
     <div class="orbit-glow orbit-glow-right" />
     <div class="orbit-grid" />
 
-    <div class="login-shell">
-      <section class="login-hero">
-        <div class="hero-topline">
-          <p class="eyebrow">Hospital Demo P0</p>
-          <span class="hero-pill">暖色医疗中枢版</span>
+    <div class="login-shell" :class="{ 'patient-mode-shell': patientModeEnabled }">
+      <section class="login-hero" :class="{ 'patient-mode-banner': patientModeEnabled }">
+        <div class="hero-topline" :class="{ 'patient-mode-topline': patientModeEnabled }">
+          <p class="eyebrow">智慧医院业务系统</p>
+          <span class="hero-pill">门诊服务与临床协同平台</span>
+          <el-button
+            v-if="patientModeEnabled"
+            plain
+            class="mode-toggle-button mode-toggle-inline"
+            @click="unlockVisible = true"
+          >
+            切换模式
+          </el-button>
         </div>
-        <h1>医院业务系统演示登录</h1>
-        <p class="hero-copy">
-          这一版已经接入了最小鉴权、数据库持久化、真实排班管理，以及管理端组织与人员维护。
-          患者除了使用演示账号，也可以在右侧直接完成自助注册，注册成功后会自动进入患者端首页。
-        </p>
+        <h1>{{ patientModeEnabled ? "医院患者服务入口" : "医院业务系统登录" }}</h1>
+        <p v-if="!patientModeEnabled" class="hero-copy">面向患者服务、临床接诊和运营管理的一体化系统，支持预约、接诊、收费、药房和组织治理等核心业务协同。</p>
 
-        <div class="hero-metrics">
+        <div v-if="!patientModeEnabled" class="hero-metrics role-entry-grid">
           <article class="metric-card">
-            <span class="metric-label">角色入口</span>
-            <strong>3 端联动</strong>
-            <p>患者、医生、管理员共享同一套真实演示链路。</p>
+            <span class="metric-label">患者服务入口</span>
+            <strong>预约与就诊</strong>
+            <p>用于患者预约挂号、支付、查看就诊记录、报告与处方。</p>
+            <button type="button" class="entry-shortcut" @click="fillPreset(patientPreset)">填入患者账号</button>
           </article>
           <article class="metric-card">
-            <span class="metric-label">演示重点</span>
-            <strong>预约到接诊</strong>
-            <p>从挂号、支付、接诊到收费与药房均已打通主流程。</p>
+            <span class="metric-label">医护工作入口</span>
+            <strong>接诊与病历</strong>
+            <p>用于医护人员查看候诊队列、接诊、记录医嘱与维护病历。</p>
+            <button type="button" class="entry-shortcut" @click="fillPreset(doctorPreset)">填入医护账号</button>
           </article>
           <article class="metric-card">
-            <span class="metric-label">体验方式</span>
-            <strong>即点即用</strong>
-            <p>点击下方账号卡即可一键填充演示账户，快速进入对应工作台。</p>
+            <span class="metric-label">运营管理入口</span>
+            <strong>排班与治理</strong>
+            <p>用于管理人员处理排班、收费、药房、报表和组织治理工作。</p>
+            <button type="button" class="entry-shortcut" @click="fillPreset(adminPreset)">填入管理账号</button>
           </article>
         </div>
 
-        <div class="preset-section">
-          <div class="section-heading">
-            <span>快速体验账号</span>
-            <small>点击即可填充右侧登录表单</small>
-          </div>
-          <div class="preset-list">
-            <button
-              v-for="preset in presets"
-              :key="preset.username"
-              type="button"
-              class="preset-card"
-              @click="fillPreset(preset)"
-            >
-              <span class="preset-role">{{ preset.label }}</span>
-              <strong>{{ preset.username }}</strong>
-              <span class="preset-password">{{ preset.password }}</span>
-            </button>
-          </div>
+        <div class="mode-actions" v-if="!patientModeEnabled">
+          <el-button plain class="mode-toggle-button" @click="handleEnablePatientMode">
+            切换为患者模式
+          </el-button>
         </div>
       </section>
 
-      <el-card class="login-card" shadow="never">
+      <el-card class="login-card" :class="{ 'patient-login-card': patientModeEnabled }" shadow="never">
         <template #header>
           <div class="card-header-shell">
             <div>
-              <div class="card-title">账号登录</div>
-              <div class="card-subtitle">输入账号后进入对应角色工作台，患者也可先注册再登录</div>
+              <div class="card-title">{{ patientModeEnabled ? "患者登录" : "账号登录" }}</div>
+              <div class="card-subtitle">
+                {{ patientModeEnabled ? "当前仅开放患者登录与患者自助注册。" : "请输入账号密码进入对应业务入口。" }}
+              </div>
             </div>
             <span class="card-chip">安全接入</span>
           </div>
         </template>
 
         <el-alert
-          title="可直接点击左侧演示账号自动填充，也可以使用管理端新建账号或患者自助注册后的账号登录。"
-          type="info"
+          v-if="!patientModeEnabled"
+          :title="patientModeEnabled ? '当前浏览器处于患者服务模式。若需恢复后台入口，请由管理员验证后解除。' : '请使用对应业务账号登录。患者也可以直接完成自助注册后进入系统。'"
+          :type="patientModeEnabled ? 'warning' : 'info'"
           :closable="false"
           show-icon
           class="login-alert"
@@ -111,8 +108,8 @@
         <el-form-item label="确认密码">
           <el-input v-model="registerForm.confirmPassword" type="password" show-password placeholder="请再次输入密码" />
         </el-form-item>
-        <el-form-item label="显示名">
-          <el-input v-model="registerForm.displayName" placeholder="请输入显示名" />
+        <el-form-item label="患者名称">
+          <el-input v-model="registerForm.displayName" placeholder="请输入患者名称" />
         </el-form-item>
         <el-form-item label="手机号">
           <el-input v-model="registerForm.mobile" placeholder="请输入手机号" />
@@ -123,28 +120,54 @@
         <el-button type="primary" :loading="registering" @click="handleRegister">注册并进入患者端</el-button>
       </template>
     </el-dialog>
+
+    <el-dialog v-model="unlockVisible" title="切换模式" width="440px" class="unlock-admin-dialog">
+      <el-form label-position="top" @submit.prevent>
+        <el-form-item label="管理员账号">
+          <el-input v-model="unlockForm.username" placeholder="请输入管理员用户名" autocomplete="username" />
+        </el-form-item>
+        <el-form-item label="管理员密码">
+          <el-input
+            v-model="unlockForm.password"
+            type="password"
+            show-password
+            placeholder="请输入管理员密码"
+            autocomplete="current-password"
+            @keyup.enter="handleDisablePatientMode"
+          />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="unlockVisible = false">取消</el-button>
+        <el-button type="primary" :loading="unlocking" @click="handleDisablePatientMode">切换模式</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup>
-import { reactive, ref } from "vue";
+import { computed, reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
-import { login, registerPatient } from "../../services/auth";
+import { clearAuthSession, login, loginForVerification, registerPatient } from "../../services/auth";
 import { roleMeta } from "../../config/menu";
 import { setRegistrationOnboarding } from "../../services/patientSession";
+import { disablePatientMode, enablePatientMode, isPatientModeEnabled } from "../../services/patientMode";
 
 const router = useRouter();
 const route = useRoute();
 const submitting = ref(false);
 const registering = ref(false);
 const registerVisible = ref(false);
+const unlocking = ref(false);
+const unlockVisible = ref(false);
+const patientModeState = ref(isPatientModeEnabled());
 
-const presets = [
-  { label: "患者端", username: "patient", password: "patient123", role: "patient" },
-  { label: "医生端", username: "doctor", password: "doctor123", role: "doctor" },
-  { label: "管理端", username: "admin", password: "admin123", role: "admin" },
-];
+const patientPreset = { label: "患者服务入口", username: "patient", password: "patient123", role: "patient" };
+const doctorPreset = { label: "医护工作入口", username: "doctor", password: "doctor123", role: "doctor" };
+const adminPreset = { label: "运营管理入口", username: "admin", password: "admin123", role: "admin" };
+
+const patientModeEnabled = computed(() => patientModeState.value);
 
 const form = reactive({
   username: "patient",
@@ -152,6 +175,10 @@ const form = reactive({
 });
 
 const registerForm = reactive(createRegisterForm());
+const unlockForm = reactive({
+  username: "",
+  password: "",
+});
 
 function createRegisterForm() {
   return {
@@ -173,6 +200,15 @@ function fillLoginForm(username, password) {
   form.password = password;
 }
 
+function resetUnlockForm() {
+  unlockForm.username = "";
+  unlockForm.password = "";
+}
+
+function syncPatientModeState() {
+  patientModeState.value = isPatientModeEnabled();
+}
+
 function openRegisterDialog() {
   Object.assign(registerForm, createRegisterForm());
   registerVisible.value = true;
@@ -184,6 +220,44 @@ function resolveTargetPath(role) {
     return redirect;
   }
   return roleMeta[role]?.homePath || "/";
+}
+
+function handleEnablePatientMode() {
+  enablePatientMode();
+  clearAuthSession();
+  syncPatientModeState();
+  fillPreset(patientPreset);
+  ElMessage.success("当前浏览器已切换为患者模式");
+}
+
+async function handleDisablePatientMode() {
+  if (!unlockForm.username.trim() || !unlockForm.password.trim()) {
+    ElMessage.warning("请输入管理员账号和密码");
+    return;
+  }
+
+  unlocking.value = true;
+  try {
+    const session = await loginForVerification({
+      username: unlockForm.username.trim(),
+      password: unlockForm.password,
+    });
+    if (session.currentUser?.role !== "admin") {
+      ElMessage.error("只有管理员账号可以切换模式");
+      return;
+    }
+
+    disablePatientMode();
+    clearAuthSession();
+    syncPatientModeState();
+    resetUnlockForm();
+    unlockVisible.value = false;
+    ElMessage.success("患者模式已解除，系统已恢复完整入口");
+  } catch (error) {
+    ElMessage.error(error.message || "管理员验证失败，请稍后重试");
+  } finally {
+    unlocking.value = false;
+  }
 }
 
 async function handleLogin() {
@@ -198,6 +272,11 @@ async function handleLogin() {
       username: form.username.trim(),
       password: form.password,
     });
+    if (patientModeEnabled.value && ["doctor", "admin"].includes(user.role)) {
+      clearAuthSession();
+      ElMessage.error("当前浏览器处于患者模式，暂不开放该账号入口");
+      return;
+    }
     ElMessage.success(`欢迎回来，${user.displayName}`);
     await router.replace(resolveTargetPath(user.role));
   } catch (error) {
@@ -243,10 +322,10 @@ async function handleRegister() {
         displayName: user.displayName || response.displayName || displayName,
         patientId: user.patientId || response.patientId,
       });
-      ElMessage.success(`注册成功，已自动进入患者端，患者编号：${user.patientId || response.patientId}`);
+      ElMessage.success("注册成功，已自动进入患者端");
       await router.replace(resolveTargetPath(user.role));
     } catch (loginError) {
-      ElMessage.warning(`注册成功，患者编号：${response.patientId}，账号已创建，请手动登录`);
+      ElMessage.warning("注册成功，账号已创建，请手动登录");
     }
   } catch (error) {
     ElMessage.error(error.message || "注册失败，请稍后重试");
@@ -322,6 +401,18 @@ async function handleRegister() {
   align-items: stretch;
 }
 
+.patient-mode-shell {
+  --patient-mode-inline: 32px;
+  max-width: 760px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.patient-mode-shell > * {
+  width: 100%;
+}
+
 .login-hero,
 .login-card {
   border-radius: 30px;
@@ -337,11 +428,31 @@ async function handleRegister() {
   animation: rise-in 220ms ease-out;
 }
 
+.patient-mode-banner {
+  background: linear-gradient(145deg, rgba(255, 251, 235, 0.92), rgba(240, 253, 250, 0.9));
+  width: 100%;
+  box-sizing: border-box;
+  padding: 28px var(--patient-mode-inline);
+}
+
+.patient-mode-banner h1 {
+  margin: 14px 0 0;
+  font-size: clamp(28px, 4vw, 40px);
+}
+
+.patient-mode-banner .mode-actions {
+  margin-top: 16px;
+}
+
 .hero-topline {
   display: flex;
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
+}
+
+.patient-mode-topline {
+  align-items: center;
 }
 
 .eyebrow {
@@ -377,7 +488,7 @@ async function handleRegister() {
 }
 
 .hero-copy {
-  max-width: 620px;
+  max-width: 650px;
   margin: 0;
   font-size: 16px;
   line-height: 1.85;
@@ -389,6 +500,10 @@ async function handleRegister() {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 14px;
+}
+
+.role-entry-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .metric-card {
@@ -423,58 +538,29 @@ async function handleRegister() {
   color: var(--orbit-muted);
 }
 
-.preset-section {
-  margin-top: 26px;
-}
-
-.section-heading {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 14px;
-  color: var(--orbit-ink);
-}
-
-.section-heading span {
-  font-size: 18px;
+.entry-shortcut {
+  margin-top: 16px;
+  min-height: 42px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(15, 118, 110, 0.14), rgba(245, 158, 11, 0.18));
+  color: #134e4a;
   font-weight: 700;
-}
-
-.section-heading small {
-  font-size: 12px;
-  color: var(--orbit-muted);
-}
-
-.preset-list {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-}
-
-.preset-card {
-  padding: 20px;
-  border: 1px solid rgba(148, 163, 184, 0.18);
-  border-radius: 22px;
-  background: linear-gradient(145deg, #ffffff 0%, #f7faf9 100%);
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  text-align: left;
   cursor: pointer;
-  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
 }
 
-.preset-card:hover {
-  transform: translateY(-3px);
-  border-color: rgba(15, 118, 110, 0.3);
-  box-shadow: 0 18px 34px rgba(15, 118, 110, 0.1);
+.mode-actions {
+  margin-top: 20px;
 }
 
-.preset-role,
-.preset-password {
-  font-size: 12px;
-  color: #64748b;
+.mode-toggle-button {
+  min-height: 44px;
+  border-radius: 14px;
+}
+
+.mode-toggle-inline {
+  margin-left: auto;
 }
 
 .card-header-shell {
@@ -489,6 +575,12 @@ async function handleRegister() {
   background: rgba(255, 255, 255, 0.8);
   box-shadow: 0 24px 60px rgba(15, 23, 42, 0.1);
   backdrop-filter: blur(18px);
+}
+
+.patient-login-card {
+  width: 100%;
+  min-height: auto;
+  box-sizing: border-box;
 }
 
 .card-title {
@@ -529,6 +621,15 @@ async function handleRegister() {
   min-height: 100%;
 }
 
+:deep(.patient-login-card .el-card__body) {
+  justify-content: flex-start;
+  padding: 0 var(--patient-mode-inline) 26px;
+}
+
+:deep(.patient-login-card .el-card__header) {
+  padding: 28px var(--patient-mode-inline) 18px;
+}
+
 :deep(.login-card .el-input__wrapper) {
   min-height: 46px;
   border-radius: 14px;
@@ -552,7 +653,8 @@ async function handleRegister() {
 
 @media (prefers-reduced-motion: reduce) {
   .login-hero,
-  .preset-card {
+  .metric-card,
+  .entry-shortcut {
     animation: none;
     transition: none;
   }
@@ -563,12 +665,13 @@ async function handleRegister() {
     padding: 20px;
   }
 
-  .login-shell {
+  .login-shell,
+  .patient-mode-shell {
     grid-template-columns: 1fr;
   }
 
   .hero-metrics,
-  .preset-list {
+  .role-entry-grid {
     grid-template-columns: 1fr;
   }
 }
@@ -578,8 +681,7 @@ async function handleRegister() {
     padding: 26px;
   }
 
-  .card-header-shell,
-  .section-heading {
+  .card-header-shell {
     flex-direction: column;
     align-items: flex-start;
   }

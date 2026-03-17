@@ -95,8 +95,8 @@ export function buildPatientRegistrationGuide(registrationOnboarding) {
   const displayName = registrationOnboarding.displayName || "新患者";
 
   return {
-    title: "欢迎来到患者工作台",
-    patientLabel: `患者编号 ${registrationOnboarding.patientId}`,
+    title: "欢迎来到患者个人中心",
+    patientLabel: "患者服务已准备就绪",
     description: `${displayName}，你的账号已经准备好了。建议先去预约挂号，后续缴费、就诊和报告都会在这里汇总。`,
     primaryAction: {
       label: "去预约挂号",

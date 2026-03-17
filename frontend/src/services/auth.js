@@ -1,4 +1,4 @@
-import { reactive } from "vue";
+﻿import { reactive } from "vue";
 
 const STORAGE_KEY = "hospital-demo-auth-session";
 
@@ -84,6 +84,10 @@ export function clearAuthSession() {
   applySession(null);
 }
 
+export function setAuthSession(session) {
+  applySession(session);
+}
+
 export function isAuthenticated() {
   return Boolean(authState.token && authState.currentUser);
 }
@@ -105,6 +109,23 @@ export async function login(credentials) {
   });
 
   return authState.currentUser;
+}
+
+export async function loginForVerification(credentials) {
+  const response = await rawRequest("/api/auth/login", {
+    method: "POST",
+    body: JSON.stringify(credentials),
+  });
+
+  return {
+    token: response.token,
+    currentUser: {
+      username: response.username,
+      role: response.role,
+      displayName: response.displayName,
+      patientId: response.patientId,
+    },
+  };
 }
 
 export function registerPatient(payload) {

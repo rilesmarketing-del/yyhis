@@ -23,7 +23,7 @@ export const roleMenus = {
   patient: [
     {
       key: "dashboard",
-      title: "工作台",
+      title: "个人中心",
       path: "/patient/dashboard",
       icon: "DataBoard",
       children: ["今日预约", "待缴费", "最新报告"],

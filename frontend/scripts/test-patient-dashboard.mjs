@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import { buildPatientDashboardModel, buildPatientRegistrationGuide } from "../src/services/patientDashboard.js";
 
 const appointments = [
@@ -75,12 +76,16 @@ const guide = buildPatientRegistrationGuide({
   patientId: "P1088",
 });
 
-assert.equal(guide.title, "欢迎来到患者工作台");
-assert.equal(guide.patientLabel, "患者编号 P1088");
+assert.equal(guide.title, "欢迎来到患者个人中心");
+assert.equal(guide.patientLabel, "患者服务已准备就绪");
 assert.equal(guide.primaryAction.label, "去预约挂号");
 assert.equal(guide.secondaryAction.label, "稍后再说");
 assert.match(guide.description, /新患者/);
 
 assert.equal(buildPatientRegistrationGuide(null), null);
+
+const patientDashboardView = await readFile(new URL("../src/views/patient/PatientDashboard.vue", import.meta.url), "utf8");
+assert.doesNotMatch(patientDashboardView, /activePatient\.id/);
+assert.doesNotMatch(patientDashboardView, /当前登录患者：\$\{activePatient\.name\}（\$\{activePatient\.id\}）/);
 
 console.log("patient dashboard mapping tests passed");

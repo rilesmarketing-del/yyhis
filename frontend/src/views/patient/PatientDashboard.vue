@@ -33,13 +33,12 @@
         <div class="hero-side-card">
           <span class="hero-side-label">当前登录患者</span>
           <strong>{{ activePatient.name }}</strong>
-          <span>{{ activePatient.id }}</span>
           <el-button class="hero-refresh" @click="loadDashboard">刷新数据</el-button>
         </div>
       </div>
 
       <el-alert
-        :title="`当前登录患者：${activePatient.name}（${activePatient.id}）`"
+        :title="`当前登录患者：${activePatient.name}`"
         type="success"
         :closable="false"
         show-icon
@@ -351,10 +350,6 @@ onMounted(() => {
 .hero-side-card strong {
   font-size: 22px;
   color: #0f172a;
-}
-
-.hero-side-card span:last-of-type {
-  color: #64748b;
 }
 
 .patient-alert {

@@ -23,7 +23,7 @@ assert.match(patientSession, /sessionStorage/);
 assert.match(patientDashboardView, /registrationGuide/);
 assert.match(patientDashboardView, /clearRegistrationOnboarding/);
 assert.match(patientDashboardView, /handleGuidePrimaryAction/);
-assert.match(patientDashboardService, /欢迎来到患者工作台/);
+assert.match(patientDashboardService, /欢迎来到患者个人中心/);
 assert.match(patientDashboardService, /去预约挂号/);
 assert.match(patientDashboardService, /稍后再说/);
 
