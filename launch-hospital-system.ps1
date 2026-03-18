@@ -5,7 +5,7 @@ function Get-HospitalProjectRoot {
 }
 
 function Get-HospitalSystemUrl {
-    return "http://127.0.0.1:5173"
+    return "http://localhost:5173"
 }
 
 function Get-FrontendLogPaths {
@@ -26,6 +26,13 @@ function Get-BackendLogPaths {
     }
 }
 
+function Get-HospitalFrontendLaunchCommand {
+    $logs = Get-FrontendLogPaths
+    $projectRoot = Get-HospitalProjectRoot
+    $frontendDir = Join-Path $projectRoot "frontend"
+    return "Set-Location '$frontendDir'; npm run dev 1>> '$($logs.StandardOutput)' 2>> '$($logs.StandardError)'"
+}
+
 function Test-CommandAvailable {
     param(
         [Parameter(Mandatory = $true)]
@@ -33,6 +40,15 @@ function Test-CommandAvailable {
     )
 
     return $null -ne (Get-Command $Name -ErrorAction SilentlyContinue)
+}
+
+function Test-HospitalReadyStatusCode {
+    param(
+        [Parameter(Mandatory = $true)]
+        [int]$StatusCode
+    )
+
+    return $StatusCode -ge 200 -and $StatusCode -lt 500
 }
 
 function Test-HospitalPortListening {
@@ -113,13 +129,11 @@ function Start-HospitalFrontend {
         throw "npm was not found in PATH. Please install Node.js first."
     }
 
-    $projectRoot = Get-HospitalProjectRoot
-    $frontendDir = Join-Path $projectRoot "frontend"
     $logs = Get-FrontendLogPaths
 
     Clear-HospitalLogFiles -LogPaths $logs
 
-    $command = "Set-Location '$frontendDir'; npm run dev -- --host 127.0.0.1 --port 5173 1>> '$($logs.StandardOutput)' 2>> '$($logs.StandardError)'"
+    $command = Get-HospitalFrontendLaunchCommand
     Start-HiddenPowerShellCommand -Command $command
 }
 
@@ -136,8 +150,15 @@ function Wait-HospitalUrlReady {
     while ((Get-Date) -lt $deadline) {
         try {
             $response = Invoke-WebRequest -Uri $Url -UseBasicParsing -TimeoutSec 5
-            if ($response.StatusCode -ge 200 -and $response.StatusCode -lt 500) {
+            if (Test-HospitalReadyStatusCode -StatusCode ([int]$response.StatusCode)) {
                 return $true
+            }
+        } catch [System.Net.WebException] {
+            if ($null -ne $_.Exception.Response) {
+                $statusCode = [int]$_.Exception.Response.StatusCode
+                if (Test-HospitalReadyStatusCode -StatusCode $statusCode) {
+                    return $true
+                }
             }
         } catch {
         }
