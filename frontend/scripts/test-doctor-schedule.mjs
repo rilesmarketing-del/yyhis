@@ -162,6 +162,7 @@ const [adminSchedulingView, doctorScheduleView] = await Promise.all([
 assert.match(adminSchedulingView, /scheduleInsights\.summaryCards/);
 assert.match(adminSchedulingView, /scheduleInsights\.emptyHint/);
 assert.match(adminSchedulingView, /getScheduleCapacityMeta/);
+assert.doesNotMatch(adminSchedulingView, /:lg="16"/);
 assert.match(doctorScheduleView, /scheduleModel\.summaryCards/);
 assert.match(doctorScheduleView, /scheduleModel\.emptyHint/);
 

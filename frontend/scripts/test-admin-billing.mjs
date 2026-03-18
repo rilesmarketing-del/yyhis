@@ -82,7 +82,9 @@ assert.match(billingView, /buildAdminBillingModel/);
 assert.match(billingView, /fetchAdminBillingOverview/);
 assert.match(billingView, /billingModel\.cards/);
 assert.match(billingView, /billingModel\.bills/);
-assert.match(billingView, /挂号预约收费记录/);
+assert.doesNotMatch(billingView, /:lg="17"/);
+assert.doesNotMatch(billingView, /:lg="7"/);
+assert.doesNotMatch(billingView, /note-card/);
 assert.doesNotMatch(billingView, /const chargeItems =/);
 assert.doesNotMatch(billingView, /const exceptions =/);
 

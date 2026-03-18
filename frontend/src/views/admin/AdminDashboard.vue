@@ -4,8 +4,7 @@
       <div class="hero-row">
         <div class="hero-copy-block">
           <p class="hero-eyebrow">Admin Operations</p>
-          <div class="hero-title">管理端运营总览</div>
-          <div class="hero-subtitle">基于真实排班、预约、接诊和患者数据生成的最小运营视图。</div>
+          <div class="hero-title">运营总览</div>
           <div class="hero-badges">
             <span class="hero-badge">运营中枢</span>
             <span class="hero-badge hero-badge-soft">今日重点一屏可见</span>
@@ -44,7 +43,6 @@
             <div class="section-head">
               <div>
                 <span class="section-title">运营概览</span>
-                <p class="section-subtitle">帮助管理端快速判断排班、预约和接诊是否处于稳定状态。</p>
               </div>
             </div>
           </template>
@@ -61,7 +59,6 @@
             <div class="section-head">
               <div>
                 <span class="section-title">管理提醒</span>
-                <p class="section-subtitle">把影响演示和日常运营的重点提示放在高亮区域。</p>
               </div>
             </div>
           </template>

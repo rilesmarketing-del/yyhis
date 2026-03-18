@@ -7,7 +7,6 @@
             <div class="header-row">
               <div>
                 <div class="panel-title">科室分布</div>
-                <div class="panel-subtitle">维护真实科室结构，支持编辑名称和调整上级关系。</div>
               </div>
               <el-button type="primary" plain @click="openDepartmentCreateDialog">新增科室</el-button>
             </div>
@@ -54,7 +53,6 @@
             <div class="header-row">
               <div>
                 <div class="panel-title">人员管理</div>
-                <div class="panel-subtitle">支持编辑账号资料、启停账号和重置默认密码。</div>
               </div>
               <div class="header-actions">
                 <el-button @click="loadSummary">刷新数据</el-button>

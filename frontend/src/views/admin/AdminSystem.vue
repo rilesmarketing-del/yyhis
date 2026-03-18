@@ -4,7 +4,6 @@
       <div class="header-row">
         <div>
           <div class="panel-title">系统管理</div>
-          <div class="panel-subtitle">汇总当前账号、组织、排班与运营信号，优先呈现真实系统运行状态；参数配置与字典维护将在后续补齐。</div>
         </div>
         <el-button @click="loadSystemOverview">刷新数据</el-button>
       </div>

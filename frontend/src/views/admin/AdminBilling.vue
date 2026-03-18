@@ -4,7 +4,6 @@
       <div class="header-row">
         <div>
           <div class="panel-title">收费与医保</div>
-          <div class="panel-subtitle">基于真实挂号预约收费记录生成的最小收费总览。</div>
         </div>
         <el-button @click="loadBilling">刷新数据</el-button>
       </div>
@@ -19,55 +18,31 @@
         </el-card>
       </el-col>
     </el-row>
-
-    <el-row :gutter="12" class="mt-12">
-      <el-col :xs="24" :lg="17">
-        <el-card shadow="never" v-loading="loading">
-          <template #header>
-            <span>真实账单记录</span>
+    <el-card shadow="never" v-loading="loading" class="mt-12">
+      <template #header>
+        <span>{{ '\u771f\u5b9e\u8d26\u5355\u8bb0\u5f55' }}</span>
+      </template>
+      <el-table :data="billingModel.bills" border>
+        <el-table-column prop="serialNumber" :label="'\u8d26\u5355\u53f7'" min-width="180" />
+        <el-table-column prop="patientLabel" :label="'\u60a3\u8005'" min-width="160" />
+        <el-table-column prop="department" :label="'\u79d1\u5ba4'" width="110" />
+        <el-table-column prop="doctorName" :label="'\u533b\u751f'" width="110" />
+        <el-table-column prop="visitTime" :label="'\u5c31\u8bca\u65f6\u95f4'" min-width="170" />
+        <el-table-column prop="amountLabel" :label="'\u91d1\u989d'" width="110" />
+        <el-table-column :label="'\u4e1a\u52a1\u72b6\u6001'" width="100">
+          <template #default="{ row }">
+            <el-tag :type="row.statusType">{{ row.statusLabel }}</el-tag>
           </template>
-          <el-table :data="billingModel.bills" border>
-            <el-table-column prop="serialNumber" label="账单号" min-width="180" />
-            <el-table-column prop="patientLabel" label="患者" min-width="160" />
-            <el-table-column prop="department" label="科室" width="110" />
-            <el-table-column prop="doctorName" label="医生" width="110" />
-            <el-table-column prop="visitTime" label="就诊时间" min-width="170" />
-            <el-table-column prop="amountLabel" label="金额" width="110" />
-            <el-table-column label="业务状态" width="100">
-              <template #default="{ row }">
-                <el-tag :type="row.statusType">{{ row.statusLabel }}</el-tag>
-              </template>
-            </el-table-column>
-            <el-table-column label="支付状态" width="100">
-              <template #default="{ row }">
-                <el-tag :type="row.paymentStatusType">{{ row.paymentStatusLabel }}</el-tag>
-              </template>
-            </el-table-column>
-            <el-table-column prop="paidAtLabel" label="支付时间" min-width="170" />
-          </el-table>
-          <el-empty v-if="!loading && billingModel.bills.length === 0" :description="billingModel.emptyHint" />
-        </el-card>
-      </el-col>
-
-      <el-col :xs="24" :lg="7">
-        <el-card shadow="never" class="note-card" v-loading="loading">
-          <template #header>
-            <span>收费说明</span>
+        </el-table-column>
+        <el-table-column :label="'\u652f\u4ed8\u72b6\u6001'" width="100">
+          <template #default="{ row }">
+            <el-tag :type="row.paymentStatusType">{{ row.paymentStatusLabel }}</el-tag>
           </template>
-          <el-alert
-            title="当前收费视图基于挂号预约收费记录。"
-            type="info"
-            :closable="false"
-            show-icon
-          />
-          <el-descriptions :column="1" border class="note-box">
-            <el-descriptions-item label="当前范围">包含预约产生的待支付、已支付和已退款记录。</el-descriptions-item>
-            <el-descriptions-item label="暂未纳入">检查、药品、住院和发票相关收费暂未纳入本页。</el-descriptions-item>
-            <el-descriptions-item label="用途">用于管理端快速查看真实收费流转，而非人工处理入口。</el-descriptions-item>
-          </el-descriptions>
-        </el-card>
-      </el-col>
-    </el-row>
+        </el-table-column>
+        <el-table-column prop="paidAtLabel" :label="'\u652f\u4ed8\u65f6\u95f4'" min-width="170" />
+      </el-table>
+      <el-empty v-if="!loading && billingModel.bills.length === 0" :description="billingModel.emptyHint" />
+    </el-card>
   </div>
 </template>
 
@@ -154,13 +129,6 @@ onMounted(() => {
   margin-top: 12px;
 }
 
-.note-card {
-  min-height: 100%;
-}
-
-.note-box {
-  margin-top: 14px;
-}
 
 @media (max-width: 900px) {
   .header-row {

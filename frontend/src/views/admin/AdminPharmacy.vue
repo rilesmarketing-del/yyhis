@@ -4,7 +4,6 @@
       <div class="header-row">
         <div>
           <div class="panel-title">药房与库存</div>
-          <div class="panel-subtitle">基于真实接诊记录里的结构化处方条目和文字处方内容生成的最小药房总览。</div>
         </div>
         <el-button @click="loadPharmacy">刷新数据</el-button>
       </div>
@@ -19,40 +18,31 @@
         </el-card>
       </el-col>
     </el-row>
-
-    <el-row :gutter="12" class="mt-12">
-      <el-col :xs="24" :lg="17">
-        <el-card shadow="never" v-loading="loading">
-          <template #header>
-            <span>处方记录</span>
+        <el-card shadow="never" v-loading="loading" class="mt-12">
+      <template #header>
+        <span>{{ '\u5904\u65b9\u8bb0\u5f55' }}</span>
+      </template>
+      <el-table :data="pharmacyModel.records" border>
+        <el-table-column prop="id" :label="'\u8bb0\u5f55\u7f16\u53f7'" min-width="180" />
+        <el-table-column prop="patientLabel" :label="'\u60a3\u8005'" min-width="150" />
+        <el-table-column prop="department" :label="'\u79d1\u5ba4'" min-width="120" />
+        <el-table-column prop="doctorName" :label="'\u533b\u751f'" min-width="120" />
+        <el-table-column prop="visitTime" :label="'\u5c31\u8bca\u65f6\u95f4'" min-width="160" />
+        <el-table-column :label="'\u63a5\u8bca\u72b6\u6001'" width="110">
+          <template #default="{ row }">
+            <el-tag :type="row.statusType" effect="plain">{{ row.statusLabel }}</el-tag>
           </template>
-          <el-table :data="pharmacyModel.records" border>
-            <el-table-column prop="id" label="记录编号" min-width="180" />
-            <el-table-column prop="patientLabel" label="患者" min-width="150" />
-            <el-table-column prop="department" label="科室" min-width="120" />
-            <el-table-column prop="doctorName" label="医生" min-width="120" />
-            <el-table-column prop="visitTime" label="就诊时间" min-width="160" />
-            <el-table-column label="接诊状态" width="110">
-              <template #default="{ row }">
-                <el-tag :type="row.statusType" effect="plain">{{ row.statusLabel }}</el-tag>
-              </template>
-            </el-table-column>
-            <el-table-column prop="structuredCount" label="条目数" width="90" />
-            <el-table-column prop="prescriptionPreview" label="处方摘要" min-width="240" show-overflow-tooltip />
-          </el-table>
-          <el-empty v-if="!loading && pharmacyModel.records.length === 0" :description="pharmacyModel.emptyHint" />
-        </el-card>
-      </el-col>
-
-      <el-col :xs="24" :lg="7">
-        <el-card shadow="never" class="note-card" v-loading="loading">
-          <template #header>
-            <span>能力说明</span>
-          </template>
-          <div class="note-text">{{ pharmacyModel.note }}</div>
-        </el-card>
-      </el-col>
-    </el-row>
+        </el-table-column>
+        <el-table-column prop="structuredCount" :label="'\u6761\u76ee\u6570'" width="90" />
+        <el-table-column
+          prop="prescriptionPreview"
+          :label="'\u5904\u65b9\u6458\u8981'"
+          min-width="240"
+          show-overflow-tooltip
+        />
+      </el-table>
+      <el-empty v-if="!loading && pharmacyModel.records.length === 0" :description="pharmacyModel.emptyHint" />
+    </el-card>
   </div>
 </template>
 
@@ -140,15 +130,6 @@ onMounted(() => {
   line-height: 1.6;
 }
 
-.note-card {
-  height: 100%;
-}
-
-.note-text {
-  color: #475569;
-  line-height: 1.8;
-  font-size: 13px;
-}
 
 @media (max-width: 900px) {
   .header-row {

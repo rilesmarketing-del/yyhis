@@ -4,7 +4,6 @@
       <div class="header-row">
         <div>
           <div class="panel-title">运营报表</div>
-          <div class="panel-subtitle">基于真实排班、预约、接诊和患者数据生成的简版运营统计。</div>
         </div>
         <el-button @click="loadReports">刷新数据</el-button>
       </div>

@@ -4,7 +4,6 @@
       <div class="hero-row">
         <div>
           <div class="hero-title">账号与角色查看</div>
-          <div class="hero-subtitle">基于当前系统账号生成的只读权限概览，便于管理端按端查看角色边界与账号分布。</div>
         </div>
         <div class="hero-actions">
           <el-radio-group v-model="selectedFilter" size="default" @change="handleFilterChange">

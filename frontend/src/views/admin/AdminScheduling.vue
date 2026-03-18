@@ -1,13 +1,10 @@
 <template>
   <div class="scheduling-page">
-    <el-row :gutter="16">
-      <el-col :xs="24" :lg="16">
-        <el-card shadow="never">
+    <el-card shadow="never">
           <template #header>
             <div class="header-row">
               <div>
                 <div class="panel-title">排班配置</div>
-                <div class="panel-subtitle">排班直接绑定真实医生账号，不再使用自由填写的医生姓名。</div>
               </div>
               <div class="header-actions">
                 <el-button @click="loadSchedules">刷新</el-button>
@@ -66,29 +63,7 @@
           </el-table>
 
           <el-empty v-if="!loading && schedules.length === 0" :description="scheduleInsights.emptyHint" />
-        </el-card>
-      </el-col>
-
-      <el-col :xs="24" :lg="8">
-        <el-card shadow="never">
-          <template #header>
-            <span>绑定规则</span>
-          </template>
-          <el-alert
-            title="排班会从所选医生账号同步医生姓名、职称和科室快照。"
-            type="success"
-            :closable="false"
-            show-icon
-          />
-          <el-descriptions :column="1" border class="rule-box">
-            <el-descriptions-item label="来源">只能选择已启用的医生账号。</el-descriptions-item>
-            <el-descriptions-item label="患者端">患者只能看到已启用的排班。</el-descriptions-item>
-            <el-descriptions-item label="医生端">医生按账号绑定关系查询自己的排班。</el-descriptions-item>
-            <el-descriptions-item label="编辑限制">总号源不能小于已使用号源。</el-descriptions-item>
-          </el-descriptions>
-        </el-card>
-      </el-col>
-    </el-row>
+    </el-card>
 
     <el-dialog v-model="dialogVisible" :title="dialogMode === 'create' ? '新建排班' : '编辑排班'" width="560px">
       <el-form :model="form" label-width="96px">

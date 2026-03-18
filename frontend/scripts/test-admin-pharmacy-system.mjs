@@ -125,11 +125,10 @@ const [pharmacyView, systemView] = await Promise.all([
   readFile(new URL("../src/views/admin/AdminSystem.vue", import.meta.url), "utf8"),
 ]);
 
-assert.match(pharmacyView, /buildAdminPharmacyModel/);
-assert.match(pharmacyView, /fetchAdminPharmacyOverview/);
-assert.match(pharmacyView, /pharmacyModel\.cards/);
+assert.doesNotMatch(pharmacyView, /能力说明/);
+assert.doesNotMatch(pharmacyView, /:lg="17"/);
+assert.doesNotMatch(pharmacyView, /:lg="7"/);
 assert.match(pharmacyView, /pharmacyModel\.records/);
-assert.match(pharmacyView, /文字处方内容/);
 assert.doesNotMatch(pharmacyView, /const drugs =/);
 
 assert.match(systemView, /buildAdminSystemModel/);
@@ -138,7 +137,7 @@ assert.match(systemView, /systemModel\.cards/);
 assert.match(systemView, /systemModel\.roleStats/);
 assert.match(systemView, /systemModel\.metrics/);
 assert.match(systemView, /systemModel\.reminders/);
-assert.match(systemView, /参数配置与字典维护/);
+assert.match(systemView, /systemModel\.note/);
 assert.doesNotMatch(systemView, /const params =/);
 assert.doesNotMatch(systemView, /const dicts =/);
 assert.doesNotMatch(systemView, /const logs =/);
