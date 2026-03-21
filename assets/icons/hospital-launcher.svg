@@ -1,0 +1,28 @@
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="24" y1="20" x2="228" y2="232" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F5FCFA"/>
+      <stop offset="1" stop-color="#FFF3DB"/>
+    </linearGradient>
+    <linearGradient id="cross" x1="72" y1="56" x2="184" y2="200" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#158F7F"/>
+      <stop offset="1" stop-color="#0F6F7F"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(186 74) rotate(90) scale(34)">
+      <stop stop-color="#FFD777" stop-opacity="0.95"/>
+      <stop offset="1" stop-color="#FFD777" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect x="18" y="18" width="220" height="220" rx="52" fill="url(#bg)"/>
+  <rect x="18" y="18" width="220" height="220" rx="52" stroke="#B8DED5" stroke-width="4"/>
+
+  <circle cx="186" cy="74" r="34" fill="url(#glow)"/>
+
+  <g transform="rotate(12 128 128)">
+    <rect x="103" y="52" width="50" height="152" rx="24" fill="url(#cross)"/>
+    <rect x="52" y="103" width="152" height="50" rx="24" fill="url(#cross)"/>
+  </g>
+
+  <circle cx="184" cy="72" r="12" fill="#FFCD59"/>
+</svg>
