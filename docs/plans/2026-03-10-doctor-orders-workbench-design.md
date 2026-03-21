@@ -8,7 +8,7 @@
 - 病历页可编辑主诉、诊断、处理建议、医嘱、处方、报告
 - 患者端已能读取已完成接诊后的真实就诊记录、真实报告和真实处方
 
-但 [DoctorOrders.vue](/C:/Users/89466/Desktop/亿元项目/frontend/src/views/doctor/DoctorOrders.vue) 仍然是静态演示页，和真实 `VisitRecord` 没有关系，导致医生“文字工作台”缺少独立入口。
+但 [DoctorOrders.vue](/C:/Users/89466/Desktop/yy/frontend/src/views/doctor/DoctorOrders.vue) 仍然是静态演示页，和真实 `VisitRecord` 没有关系，导致医生“文字工作台”缺少独立入口。
 
 ## 目标
 

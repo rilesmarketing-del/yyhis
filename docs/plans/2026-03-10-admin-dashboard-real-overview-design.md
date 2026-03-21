@@ -8,7 +8,7 @@
 - 患者端真实预约、支付、就诊记录、报告、处方联动
 - 医生端真实接诊、病历、工作台与首页总览
 
-但 [AdminDashboard.vue](/C:/Users/89466/Desktop/亿元项目/frontend/src/views/admin/AdminDashboard.vue) 仍然是静态演示页，展示的营收、药房、医保等指标没有真实数据来源。为了让三端首页都接入真实数据，需要将管理端首页改为只展示当前系统已具备真实口径的数据。
+但 [AdminDashboard.vue](/C:/Users/89466/Desktop/yy/frontend/src/views/admin/AdminDashboard.vue) 仍然是静态演示页，展示的营收、药房、医保等指标没有真实数据来源。为了让三端首页都接入真实数据，需要将管理端首页改为只展示当前系统已具备真实口径的数据。
 
 ## 目标
 

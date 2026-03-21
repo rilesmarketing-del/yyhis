@@ -145,10 +145,10 @@
 
 ## 影响文件
 
-- 新增：`C:\Users\89466\Desktop\亿元项目\智慧医院系统.cmd`
-- 新增：`C:\Users\89466\Desktop\亿元项目\launch-hospital-system.ps1`
-- 新增：`C:\Users\89466\Desktop\亿元项目\scripts\test-launch-hospital-system.ps1`
-- 修改：`C:\Users\89466\Desktop\亿元项目\README.md`
+- 新增：`C:\Users\89466\Desktop\yy\智慧医院系统.cmd`
+- 新增：`C:\Users\89466\Desktop\yy\launch-hospital-system.ps1`
+- 新增：`C:\Users\89466\Desktop\yy\scripts\test-launch-hospital-system.ps1`
+- 修改：`C:\Users\89466\Desktop\yy\README.md`
 
 ## 成功标准
 

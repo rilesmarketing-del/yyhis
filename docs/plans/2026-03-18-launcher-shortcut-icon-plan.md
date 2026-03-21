@@ -4,7 +4,7 @@
 
 **Goal:** Add a branded Windows shortcut with a custom hospital icon for the launcher while keeping the existing `.cmd` file as the real startup entry.
 
-**Architecture:** Keep [鏅烘収鍖婚櫌绯荤粺.cmd](/C:/Users/89466/Desktop/浜垮厓椤圭洰/鏅烘収鍖婚櫌绯荤粺.cmd) unchanged as the executable entry point. Add reusable asset-generation and shortcut-generation helpers that produce a local [鏅烘収鍖婚櫌绯荤粺.lnk](/C:/Users/89466/Desktop/浜垮厓椤圭洰/鏅烘収鍖婚櫌绯荤粺.lnk) pointing to the `.cmd`, with its icon bound to a new project-owned `.ico`.
+**Architecture:** Keep [鏅烘収鍖婚櫌绯荤粺.cmd](/C:/Users/89466/Desktop/yy/鏅烘収鍖婚櫌绯荤粺.cmd) unchanged as the executable entry point. Add reusable asset-generation and shortcut-generation helpers that produce a local [鏅烘収鍖婚櫌绯荤粺.lnk](/C:/Users/89466/Desktop/yy/鏅烘収鍖婚櫌绯荤粺.lnk) pointing to the `.cmd`, with its icon bound to a new project-owned `.ico`.
 
 **Tech Stack:** Windows PowerShell, WScript.Shell COM, SVG asset, ICO generation, Git-tracked scripts
 
@@ -13,8 +13,8 @@
 ### Task 1: Lock shortcut behavior with a failing regression
 
 **Files:**
-- Create: `C:/Users/89466/Desktop/浜垮厓椤圭洰/scripts/test-launcher-shortcut.ps1`
-- Test: `C:/Users/89466/Desktop/浜垮厓椤圭洰/scripts/test-launcher-shortcut.ps1`
+- Create: `C:/Users/89466/Desktop/yy/scripts/test-launcher-shortcut.ps1`
+- Test: `C:/Users/89466/Desktop/yy/scripts/test-launcher-shortcut.ps1`
 
 **Step 1: Write the failing test**
 
@@ -23,7 +23,7 @@ Add assertions that:
 - the shortcut generation script exposes helper functions
 - icon generation can create a non-empty `.ico`
 - shortcut creation writes a `.lnk`
-- shortcut target resolves to [鏅烘収鍖婚櫌绯荤粺.cmd](/C:/Users/89466/Desktop/浜垮厓椤圭洰/鏅烘収鍖婚櫌绯荤粺.cmd)
+- shortcut target resolves to [鏅烘収鍖婚櫌绯荤粺.cmd](/C:/Users/89466/Desktop/yy/鏅烘収鍖婚櫌绯荤粺.cmd)
 - shortcut icon location points to the generated `.ico`
 
 **Step 2: Run test to verify it fails**
@@ -31,7 +31,7 @@ Add assertions that:
 Run:
 
 ```powershell
-powershell -NoLogo -ExecutionPolicy Bypass -File C:\Users\89466\Desktop\浜垮厓椤圭洰\scripts\test-launcher-shortcut.ps1
+powershell -NoLogo -ExecutionPolicy Bypass -File C:\Users\89466\Desktop\yy\scripts\test-launcher-shortcut.ps1
 ```
 
 Expected: fail because the generation script does not exist yet.
@@ -43,8 +43,8 @@ Hold commit until all tasks pass.
 ### Task 2: Add the icon asset source and generation script
 
 **Files:**
-- Create: `C:/Users/89466/Desktop/浜垮厓椤圭洰/assets/icons/hospital-launcher.svg`
-- Create: `C:/Users/89466/Desktop/浜垮厓椤圭洰/scripts/create-launcher-shortcut.ps1`
+- Create: `C:/Users/89466/Desktop/yy/assets/icons/hospital-launcher.svg`
+- Create: `C:/Users/89466/Desktop/yy/scripts/create-launcher-shortcut.ps1`
 
 **Step 1: Write the minimal implementation**
 
@@ -61,7 +61,7 @@ Create:
 Run:
 
 ```powershell
-powershell -NoLogo -ExecutionPolicy Bypass -File C:\Users\89466\Desktop\浜垮厓椤圭洰\scripts\test-launcher-shortcut.ps1
+powershell -NoLogo -ExecutionPolicy Bypass -File C:\Users\89466\Desktop\yy\scripts\test-launcher-shortcut.ps1
 ```
 
 Expected: pass.
@@ -71,7 +71,7 @@ Expected: pass.
 Run:
 
 ```powershell
-powershell -NoLogo -ExecutionPolicy Bypass -File C:\Users\89466\Desktop\浜垮厓椤圭洰\scripts\create-launcher-shortcut.ps1
+powershell -NoLogo -ExecutionPolicy Bypass -File C:\Users\89466\Desktop\yy\scripts\create-launcher-shortcut.ps1
 ```
 
 Expected: local `.ico` and `.lnk` are present in the project.
@@ -81,8 +81,8 @@ Expected: local `.ico` and `.lnk` are present in the project.
 Use:
 
 ```powershell
-git -C C:\Users\89466\Desktop\浜垮厓椤圭洰 add C:\Users\89466\Desktop\浜垮厓椤圭洰\assets\icons\hospital-launcher.svg C:\Users\89466\Desktop\浜垮厓椤圭洰\assets\icons\hospital-launcher.ico C:\Users\89466\Desktop\浜垮厓椤圭洰\scripts\create-launcher-shortcut.ps1 C:\Users\89466\Desktop\浜垮厓椤圭洰\scripts\test-launcher-shortcut.ps1 C:\Users\89466\Desktop\浜垮厓椤圭洰\docs\plans\2026-03-18-launcher-shortcut-icon-design.md C:\Users\89466\Desktop\浜垮厓椤圭洰\docs\plans\2026-03-18-launcher-shortcut-icon-plan.md
-git -C C:\Users\89466\Desktop\浜垮厓椤圭洰 commit -m "Add branded launcher shortcut icon"
+git -C C:\Users\89466\Desktop\yy add C:\Users\89466\Desktop\yy\assets\icons\hospital-launcher.svg C:\Users\89466\Desktop\yy\assets\icons\hospital-launcher.ico C:\Users\89466\Desktop\yy\scripts\create-launcher-shortcut.ps1 C:\Users\89466\Desktop\yy\scripts\test-launcher-shortcut.ps1 C:\Users\89466\Desktop\yy\docs\plans\2026-03-18-launcher-shortcut-icon-design.md C:\Users\89466\Desktop\yy\docs\plans\2026-03-18-launcher-shortcut-icon-plan.md
+git -C C:\Users\89466\Desktop\yy commit -m "Add branded launcher shortcut icon"
 ```
 
 ### Task 3: Verify before reporting success
@@ -95,7 +95,7 @@ git -C C:\Users\89466\Desktop\浜垮厓椤圭洰 commit -m "Add branded launcher
 Run:
 
 ```powershell
-powershell -NoLogo -ExecutionPolicy Bypass -File C:\Users\89466\Desktop\浜垮厓椤圭洰\scripts\test-launcher-shortcut.ps1
+powershell -NoLogo -ExecutionPolicy Bypass -File C:\Users\89466\Desktop\yy\scripts\test-launcher-shortcut.ps1
 ```
 
 Expected: pass.
@@ -106,5 +106,5 @@ Summarize:
 
 - where the icon asset lives
 - where the shortcut lives
-- that the shortcut points to [鏅烘収鍖婚櫌绯荤粺.cmd](/C:/Users/89466/Desktop/浜垮厓椤圭洰/鏅烘収鍖婚櫌绯荤粺.cmd)
+- that the shortcut points to [鏅烘収鍖婚櫌绯荤粺.cmd](/C:/Users/89466/Desktop/yy/鏅烘収鍖婚櫌绯荤粺.cmd)
 

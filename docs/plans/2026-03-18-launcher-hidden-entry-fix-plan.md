@@ -4,7 +4,7 @@
 
 **Goal:** Make the double-click launcher start the hospital system without leaving a visible `cmd` window while reliably opening the frontend page.
 
-**Architecture:** Keep [智慧医院系统.cmd](C:/Users/89466/Desktop/亿元项目/智慧医院系统.cmd) as the user-facing entry, but convert it into a self-hiding trampoline that hands control to [launch-hospital-system.ps1](C:/Users/89466/Desktop/亿元项目/launch-hospital-system.ps1). In the PowerShell launcher, use the stable default `npm run dev` frontend command, align the health check URL with the actual Vite-ready address `http://localhost:5173`, and treat `404` as a valid “frontend is up” response.
+**Architecture:** Keep [智慧医院系统.cmd](C:/Users/89466/Desktop/yy/智慧医院系统.cmd) as the user-facing entry, but convert it into a self-hiding trampoline that hands control to [launch-hospital-system.ps1](C:/Users/89466/Desktop/yy/launch-hospital-system.ps1). In the PowerShell launcher, use the stable default `npm run dev` frontend command, align the health check URL with the actual Vite-ready address `http://localhost:5173`, and treat `404` as a valid “frontend is up” response.
 
 **Tech Stack:** Windows CMD, Windows PowerShell, Maven, npm, Vite, custom PowerShell regression script
 
@@ -13,8 +13,8 @@
 ### Task 1: Lock the launcher behavior with tests
 
 **Files:**
-- Modify: `C:/Users/89466/Desktop/亿元项目/scripts/test-launch-hospital-system.ps1`
-- Test: `C:/Users/89466/Desktop/亿元项目/scripts/test-launch-hospital-system.ps1`
+- Modify: `C:/Users/89466/Desktop/yy/scripts/test-launch-hospital-system.ps1`
+- Test: `C:/Users/89466/Desktop/yy/scripts/test-launch-hospital-system.ps1`
 
 **Step 1: Write the failing test**
 
@@ -30,7 +30,7 @@ Add assertions that:
 Run:
 
 ```powershell
-powershell -NoLogo -ExecutionPolicy Bypass -File C:\Users\89466\Desktop\亿元项目\scripts\test-launch-hospital-system.ps1
+powershell -NoLogo -ExecutionPolicy Bypass -File C:\Users\89466\Desktop\yy\scripts\test-launch-hospital-system.ps1
 ```
 
 Expected: fail because the current `.cmd` entry does not hide itself and the launcher does not yet expose the corrected readiness behavior.
@@ -50,7 +50,7 @@ Hold commit until all tasks pass.
 ### Task 2: Convert the `.cmd` entry into a hidden trampoline
 
 **Files:**
-- Modify: `C:/Users/89466/Desktop/亿元项目/智慧医院系统.cmd`
+- Modify: `C:/Users/89466/Desktop/yy/智慧医院系统.cmd`
 
 **Step 1: Write the minimal implementation**
 
@@ -66,7 +66,7 @@ Update the entry file to:
 Run:
 
 ```powershell
-powershell -NoLogo -ExecutionPolicy Bypass -File C:\Users\89466\Desktop\亿元项目\scripts\test-launch-hospital-system.ps1
+powershell -NoLogo -ExecutionPolicy Bypass -File C:\Users\89466\Desktop\yy\scripts\test-launch-hospital-system.ps1
 ```
 
 Expected: the hidden-entry assertions pass; the frontend-command assertion may still fail until Task 3 is done.
@@ -78,8 +78,8 @@ Hold commit until all tasks pass.
 ### Task 3: Fix the health check path and keep startup behavior aligned
 
 **Files:**
-- Modify: `C:/Users/89466/Desktop/亿元项目/launch-hospital-system.ps1`
-- Test: `C:/Users/89466/Desktop/亿元项目/scripts/test-launch-hospital-system.ps1`
+- Modify: `C:/Users/89466/Desktop/yy/launch-hospital-system.ps1`
+- Test: `C:/Users/89466/Desktop/yy/scripts/test-launch-hospital-system.ps1`
 
 **Step 1: Write the minimal implementation**
 
@@ -94,7 +94,7 @@ Refactor the launcher so:
 Run:
 
 ```powershell
-powershell -NoLogo -ExecutionPolicy Bypass -File C:\Users\89466\Desktop\亿元项目\scripts\test-launch-hospital-system.ps1
+powershell -NoLogo -ExecutionPolicy Bypass -File C:\Users\89466\Desktop\yy\scripts\test-launch-hospital-system.ps1
 ```
 
 Expected: pass.
@@ -104,7 +104,7 @@ Expected: pass.
 Run:
 
 ```powershell
-powershell -NoLogo -ExecutionPolicy Bypass -File C:\Users\89466\Desktop\亿元项目\launch-hospital-system.ps1
+powershell -NoLogo -ExecutionPolicy Bypass -File C:\Users\89466\Desktop\yy\launch-hospital-system.ps1
 ```
 
 Expected: frontend and backend start successfully, frontend logs show Vite on `127.0.0.1:5173`, and the browser target URL responds.
@@ -114,8 +114,8 @@ Expected: frontend and backend start successfully, frontend logs show Vite on `1
 Use:
 
 ```powershell
-git -C C:\Users\89466\Desktop\亿元项目 add C:\Users\89466\Desktop\亿元项目\智慧医院系统.cmd C:\Users\89466\Desktop\亿元项目\launch-hospital-system.ps1 C:\Users\89466\Desktop\亿元项目\scripts\test-launch-hospital-system.ps1 C:\Users\89466\Desktop\亿元项目\docs\plans\2026-03-18-launcher-hidden-entry-fix-design.md C:\Users\89466\Desktop\亿元项目\docs\plans\2026-03-18-launcher-hidden-entry-fix-plan.md
-git -C C:\Users\89466\Desktop\亿元项目 commit -m "Fix hidden launcher entry behavior"
+git -C C:\Users\89466\Desktop\yy add C:\Users\89466\Desktop\yy\智慧医院系统.cmd C:\Users\89466\Desktop\yy\launch-hospital-system.ps1 C:\Users\89466\Desktop\yy\scripts\test-launch-hospital-system.ps1 C:\Users\89466\Desktop\yy\docs\plans\2026-03-18-launcher-hidden-entry-fix-design.md C:\Users\89466\Desktop\yy\docs\plans\2026-03-18-launcher-hidden-entry-fix-plan.md
+git -C C:\Users\89466\Desktop\yy commit -m "Fix hidden launcher entry behavior"
 ```
 
 ### Task 4: Run verification before reporting success
@@ -128,8 +128,8 @@ git -C C:\Users\89466\Desktop\亿元项目 commit -m "Fix hidden launcher entry 
 Run:
 
 ```powershell
-powershell -NoLogo -ExecutionPolicy Bypass -File C:\Users\89466\Desktop\亿元项目\scripts\test-launch-hospital-system.ps1
-cd C:\Users\89466\Desktop\亿元项目\frontend
+powershell -NoLogo -ExecutionPolicy Bypass -File C:\Users\89466\Desktop\yy\scripts\test-launch-hospital-system.ps1
+cd C:\Users\89466\Desktop\yy\frontend
 npm run test:ci
 npm run build
 npm run verify:bundle

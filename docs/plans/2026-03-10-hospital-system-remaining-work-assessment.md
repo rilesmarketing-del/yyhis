@@ -50,7 +50,7 @@ These items are the highest leverage because they either affect visible trust, b
 
 ### 2. Make the doctor schedule page real
 
-**Current issue:** [DoctorSchedule.vue](/C:/Users/89466/Desktop/亿元项目/frontend/src/views/doctor/DoctorSchedule.vue) is still static, while admin scheduling is already real.
+**Current issue:** [DoctorSchedule.vue](/C:/Users/89466/Desktop/yy/frontend/src/views/doctor/DoctorSchedule.vue) is still static, while admin scheduling is already real.
 
 **Why it matters:** once a doctor logs in, "my schedule" is a natural expectation. A static page weakens the credibility of the doctor-side experience.
 
@@ -60,7 +60,7 @@ These items are the highest leverage because they either affect visible trust, b
 
 ### 3. Replace the visible static billing page with a minimum real billing view
 
-**Current issue:** [AdminBilling.vue](/C:/Users/89466/Desktop/亿元项目/frontend/src/views/admin/AdminBilling.vue) is still pure static content.
+**Current issue:** [AdminBilling.vue](/C:/Users/89466/Desktop/yy/frontend/src/views/admin/AdminBilling.vue) is still pure static content.
 
 **Why it matters:** billing is a top-level admin menu entry. If it remains fake, an external walkthrough will immediately expose the unfinished boundary.
 
@@ -76,7 +76,7 @@ No export, reimbursement engine, or invoice printing is needed in this step.
 
 ### 4. Decide how to handle other visible static pages before external walkthroughs
 
-**Current issue:** [AdminPharmacy.vue](/C:/Users/89466/Desktop/亿元项目/frontend/src/views/admin/AdminPharmacy.vue) and [AdminSystem.vue](/C:/Users/89466/Desktop/亿元项目/frontend/src/views/admin/AdminSystem.vue) are still static.
+**Current issue:** [AdminPharmacy.vue](/C:/Users/89466/Desktop/yy/frontend/src/views/admin/AdminPharmacy.vue) and [AdminSystem.vue](/C:/Users/89466/Desktop/yy/frontend/src/views/admin/AdminSystem.vue) are still static.
 
 **Why it matters:** even if they are not the main demo path, they are still visible menu entries.
 

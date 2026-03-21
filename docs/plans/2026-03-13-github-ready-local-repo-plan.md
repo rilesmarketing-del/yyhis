@@ -41,7 +41,7 @@ Expected: existing configured values available for future pushes
 ### Task 2: Add minimal GitHub connection note
 
 **Files:**
-- Modify: `C:/Users/89466/Desktop/亿元项目/README.md`
+- Modify: `C:/Users/89466/Desktop/yy/README.md`
 
 **Step 1: Add a short section**
 
@@ -60,8 +60,8 @@ Read back the section and confirm it does not assume a specific hosting URL or b
 ### Task 3: Add planning artifacts
 
 **Files:**
-- Create: `C:/Users/89466/Desktop/亿元项目/docs/plans/2026-03-13-github-ready-local-repo-design.md`
-- Create: `C:/Users/89466/Desktop/亿元项目/docs/plans/2026-03-13-github-ready-local-repo-plan.md`
+- Create: `C:/Users/89466/Desktop/yy/docs/plans/2026-03-13-github-ready-local-repo-design.md`
+- Create: `C:/Users/89466/Desktop/yy/docs/plans/2026-03-13-github-ready-local-repo-plan.md`
 
 **Step 1: Save the approved design**
 

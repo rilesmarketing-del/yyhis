@@ -2,7 +2,7 @@
 
 ## 背景
 
-当前预约主链路已经完成数据库化：患者预约、支付、改约、取消、管理端收费汇总、医生接诊联动都直接读取 `appointment_records` 表。遗留的 [AppointmentPersistenceRepository.java](C:/Users/89466/Desktop/亿元项目/backend/src/main/java/com/hospital/patientappointments/repository/AppointmentPersistenceRepository.java) 与 `backend/data/appointments.json` 仅保留了早期轻量持久化方案的痕迹，业务服务与现有测试已不再依赖这条 JSON 链路。
+当前预约主链路已经完成数据库化：患者预约、支付、改约、取消、管理端收费汇总、医生接诊联动都直接读取 `appointment_records` 表。遗留的 [AppointmentPersistenceRepository.java](C:/Users/89466/Desktop/yy/backend/src/main/java/com/hospital/patientappointments/repository/AppointmentPersistenceRepository.java) 与 `backend/data/appointments.json` 仅保留了早期轻量持久化方案的痕迹，业务服务与现有测试已不再依赖这条 JSON 链路。
 
 现在的目标不是“再做一套新持久化”，而是安全地下线这段遗留能力：如果历史 `appointments.json` 里还有数据，就在数据库为空时自动导入一次；导入完成后彻底以数据库作为唯一预约数据源，不再保留运行时双读。
 
@@ -11,8 +11,8 @@
 - 启动时在严格条件下自动导入历史 `appointments.json`
 - 只在 `appointment_records` 表为空时触发导入，避免覆盖现有数据库数据
 - 导入后将原 JSON 文件归档，防止重复导入
-- 删除或收编 [AppointmentPersistenceRepository.java](C:/Users/89466/Desktop/亿元项目/backend/src/main/java/com/hospital/patientappointments/repository/AppointmentPersistenceRepository.java)，不再作为业务仓储存在
-- 保持 [PatientAppointmentService.java](C:/Users/89466/Desktop/亿元项目/backend/src/main/java/com/hospital/patientappointments/service/PatientAppointmentService.java) 及现有预约链路行为不变
+- 删除或收编 [AppointmentPersistenceRepository.java](C:/Users/89466/Desktop/yy/backend/src/main/java/com/hospital/patientappointments/repository/AppointmentPersistenceRepository.java)，不再作为业务仓储存在
+- 保持 [PatientAppointmentService.java](C:/Users/89466/Desktop/yy/backend/src/main/java/com/hospital/patientappointments/service/PatientAppointmentService.java) 及现有预约链路行为不变
 
 ## 非目标
 
@@ -45,7 +45,7 @@
 
 ## 数据映射设计
 
-迁移时直接将 JSON 记录映射成 [AppointmentRecord.java](C:/Users/89466/Desktop/亿元项目/backend/src/main/java/com/hospital/patientappointments/model/AppointmentRecord.java) 实体并写入数据库。
+迁移时直接将 JSON 记录映射成 [AppointmentRecord.java](C:/Users/89466/Desktop/yy/backend/src/main/java/com/hospital/patientappointments/model/AppointmentRecord.java) 实体并写入数据库。
 
 必填字段：
 - `id`
@@ -105,7 +105,7 @@
 - 导入成功后归档 JSON 文件
 
 同时处理遗留仓储：
-- 删除 [AppointmentPersistenceRepository.java](C:/Users/89466/Desktop/亿元项目/backend/src/main/java/com/hospital/patientappointments/repository/AppointmentPersistenceRepository.java)
+- 删除 [AppointmentPersistenceRepository.java](C:/Users/89466/Desktop/yy/backend/src/main/java/com/hospital/patientappointments/repository/AppointmentPersistenceRepository.java)
 - 或将其内部读取逻辑吸收到迁移服务中，不再以业务 Repository 形式对外存在
 
 配置新增：
@@ -126,11 +126,11 @@
 
 ### 启动链路验证
 
-增加最小 Spring 集成测试，证明应用启动时迁移器会被执行，导入后的数据能被 [PatientAppointmentService.java](C:/Users/89466/Desktop/亿元项目/backend/src/main/java/com/hospital/patientappointments/service/PatientAppointmentService.java) 正常读取。
+增加最小 Spring 集成测试，证明应用启动时迁移器会被执行，导入后的数据能被 [PatientAppointmentService.java](C:/Users/89466/Desktop/yy/backend/src/main/java/com/hospital/patientappointments/service/PatientAppointmentService.java) 正常读取。
 
 ### 业务回归
 
-保留并复用现有 [PatientAppointmentServiceTest.java](C:/Users/89466/Desktop/亿元项目/backend/src/test/java/com/hospital/patientappointments/service/PatientAppointmentServiceTest.java) 全链路数据库测试，确认删除 JSON 仓储后不影响预约、支付、改约、退款等能力。
+保留并复用现有 [PatientAppointmentServiceTest.java](C:/Users/89466/Desktop/yy/backend/src/test/java/com/hospital/patientappointments/service/PatientAppointmentServiceTest.java) 全链路数据库测试，确认删除 JSON 仓储后不影响预约、支付、改约、退款等能力。
 
 ## 风险与控制
 

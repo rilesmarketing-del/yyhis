@@ -2,7 +2,7 @@
 
 ## 背景
 
-当前系统已经有最小鉴权、真实账号登录、管理端总览与报表，但 [AdminOrg.vue](/C:/Users/89466/Desktop/亿元项目/frontend/src/views/admin/AdminOrg.vue) 仍然是静态组织页，不能维护真实科室和人员；登录页也只有演示账号登录，没有患者自助创建账号能力。
+当前系统已经有最小鉴权、真实账号登录、管理端总览与报表，但 [AdminOrg.vue](/C:/Users/89466/Desktop/yy/frontend/src/views/admin/AdminOrg.vue) 仍然是静态组织页，不能维护真实科室和人员；登录页也只有演示账号登录，没有患者自助创建账号能力。
 
 ## 目标
 

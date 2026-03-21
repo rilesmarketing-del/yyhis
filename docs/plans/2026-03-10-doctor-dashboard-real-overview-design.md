@@ -2,7 +2,7 @@
 
 ## 背景
 
-当前医生端已经完成了接诊台、病历页、患者列表和当前接诊工作台的真实联动，但 [DoctorDashboard.vue](/C:/Users/89466/Desktop/亿元项目/frontend/src/views/doctor/DoctorDashboard.vue) 仍然是静态演示页，统计卡、候诊概览和待处理事项都没有接入真实数据。
+当前医生端已经完成了接诊台、病历页、患者列表和当前接诊工作台的真实联动，但 [DoctorDashboard.vue](/C:/Users/89466/Desktop/yy/frontend/src/views/doctor/DoctorDashboard.vue) 仍然是静态演示页，统计卡、候诊概览和待处理事项都没有接入真实数据。
 
 ## 目标
 

@@ -5,6 +5,22 @@ on:
   pull_request:
 
 jobs:
+  repo-hygiene:
+    name: Repo Hygiene
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Check legacy project paths
+        run: node ./scripts/test-legacy-project-paths.mjs
+
   backend:
     name: Backend
     runs-on: ubuntu-latest

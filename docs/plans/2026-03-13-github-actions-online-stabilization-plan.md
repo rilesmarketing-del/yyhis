@@ -36,8 +36,8 @@ If the latest CI run is already successful, no code change is needed. Document t
 
 **Files:**
 - Possibly inspect but do not modify yet:
-  - `C:/Users/89466/Desktop/亿元项目/.github/workflows/ci.yml`
-  - `C:/Users/89466/Desktop/亿元项目/frontend/package.json`
+  - `C:/Users/89466/Desktop/yy/.github/workflows/ci.yml`
+  - `C:/Users/89466/Desktop/yy/frontend/package.json`
   - other files only if directly implicated by the failing step
 
 **Step 1: Map the failure to the current workflow**

@@ -71,7 +71,7 @@ Implementation notes:
 
 ## Frontend Design
 
-Update [AdminBilling.vue](/C:/Users/89466/Desktop/亿元项目/frontend/src/views/admin/AdminBilling.vue) to match the rest of the admin real-data pages:
+Update [AdminBilling.vue](/C:/Users/89466/Desktop/yy/frontend/src/views/admin/AdminBilling.vue) to match the rest of the admin real-data pages:
 
 - Hero header with refresh action
 - Three summary cards:

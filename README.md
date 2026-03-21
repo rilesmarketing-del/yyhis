@@ -15,6 +15,7 @@ After this repository is connected to GitHub, `.github/workflows/ci.yml` runs on
 
 It validates:
 
+- repository path hygiene via `node ./scripts/test-legacy-project-paths.mjs`
 - backend `mvn test`
 - frontend `npm run test:ci`
 - frontend `npm run build`

@@ -13,8 +13,8 @@
 ### Task 1: Add the launcher regression script
 
 **Files:**
-- Create: `C:\Users\89466\Desktop\亿元项目\scripts\test-launch-hospital-system.ps1`
-- Test: `C:\Users\89466\Desktop\亿元项目\scripts\test-launch-hospital-system.ps1`
+- Create: `C:\Users\89466\Desktop\yy\scripts\test-launch-hospital-system.ps1`
+- Test: `C:\Users\89466\Desktop\yy\scripts\test-launch-hospital-system.ps1`
 
 **Step 1: Write the failing test**
 
@@ -30,7 +30,7 @@ Create a PowerShell test script that:
 Run:
 
 ```powershell
-powershell -NoLogo -ExecutionPolicy Bypass -File C:\Users\89466\Desktop\亿元项目\scripts\test-launch-hospital-system.ps1
+powershell -NoLogo -ExecutionPolicy Bypass -File C:\Users\89466\Desktop\yy\scripts\test-launch-hospital-system.ps1
 ```
 
 Expected:
@@ -44,8 +44,8 @@ Do not commit yet. Keep iterating until the implementation exists.
 ### Task 2: Create the PowerShell launcher
 
 **Files:**
-- Create: `C:\Users\89466\Desktop\亿元项目\launch-hospital-system.ps1`
-- Test: `C:\Users\89466\Desktop\亿元项目\scripts\test-launch-hospital-system.ps1`
+- Create: `C:\Users\89466\Desktop\yy\launch-hospital-system.ps1`
+- Test: `C:\Users\89466\Desktop\yy\scripts\test-launch-hospital-system.ps1`
 
 **Step 1: Write minimal implementation**
 
@@ -66,7 +66,7 @@ Implement the script with:
 Run:
 
 ```powershell
-powershell -NoLogo -ExecutionPolicy Bypass -File C:\Users\89466\Desktop\亿元项目\scripts\test-launch-hospital-system.ps1
+powershell -NoLogo -ExecutionPolicy Bypass -File C:\Users\89466\Desktop\yy\scripts\test-launch-hospital-system.ps1
 ```
 
 Expected:
@@ -80,8 +80,8 @@ Clean up naming and keep the launcher logic readable without changing behavior.
 ### Task 3: Add the double-click entry file
 
 **Files:**
-- Create: `C:\Users\89466\Desktop\亿元项目\智慧医院系统.cmd`
-- Modify: `C:\Users\89466\Desktop\亿元项目\launch-hospital-system.ps1`
+- Create: `C:\Users\89466\Desktop\yy\智慧医院系统.cmd`
+- Modify: `C:\Users\89466\Desktop\yy\launch-hospital-system.ps1`
 
 **Step 1: Write the failing test**
 
@@ -95,7 +95,7 @@ Extend `test-launch-hospital-system.ps1` to assert:
 Run:
 
 ```powershell
-powershell -NoLogo -ExecutionPolicy Bypass -File C:\Users\89466\Desktop\亿元项目\scripts\test-launch-hospital-system.ps1
+powershell -NoLogo -ExecutionPolicy Bypass -File C:\Users\89466\Desktop\yy\scripts\test-launch-hospital-system.ps1
 ```
 
 Expected:
@@ -114,7 +114,7 @@ Create `智慧医院系统.cmd` that:
 Run:
 
 ```powershell
-powershell -NoLogo -ExecutionPolicy Bypass -File C:\Users\89466\Desktop\亿元项目\scripts\test-launch-hospital-system.ps1
+powershell -NoLogo -ExecutionPolicy Bypass -File C:\Users\89466\Desktop\yy\scripts\test-launch-hospital-system.ps1
 ```
 
 Expected:
@@ -124,8 +124,8 @@ Expected:
 ### Task 4: Validate launcher behavior locally
 
 **Files:**
-- Modify: `C:\Users\89466\Desktop\亿元项目\launch-hospital-system.ps1`
-- Test: `C:\Users\89466\Desktop\亿元项目\scripts\test-launch-hospital-system.ps1`
+- Modify: `C:\Users\89466\Desktop\yy\launch-hospital-system.ps1`
+- Test: `C:\Users\89466\Desktop\yy\scripts\test-launch-hospital-system.ps1`
 
 **Step 1: Write the failing test**
 
@@ -138,7 +138,7 @@ Extend the regression script with a small smoke assertion that:
 Run:
 
 ```powershell
-powershell -NoLogo -ExecutionPolicy Bypass -File C:\Users\89466\Desktop\亿元项目\scripts\test-launch-hospital-system.ps1
+powershell -NoLogo -ExecutionPolicy Bypass -File C:\Users\89466\Desktop\yy\scripts\test-launch-hospital-system.ps1
 ```
 
 Expected:
@@ -154,7 +154,7 @@ Add an injectable port-state layer or test-mode override so the launcher logic c
 Run:
 
 ```powershell
-powershell -NoLogo -ExecutionPolicy Bypass -File C:\Users\89466\Desktop\亿元项目\scripts\test-launch-hospital-system.ps1
+powershell -NoLogo -ExecutionPolicy Bypass -File C:\Users\89466\Desktop\yy\scripts\test-launch-hospital-system.ps1
 ```
 
 Expected:
@@ -164,7 +164,7 @@ Expected:
 ### Task 5: Document how to use the launcher
 
 **Files:**
-- Modify: `C:\Users\89466\Desktop\亿元项目\README.md`
+- Modify: `C:\Users\89466\Desktop\yy\README.md`
 
 **Step 1: Write the failing test**
 
@@ -186,17 +186,17 @@ Read the README section and confirm it matches the implemented behavior.
 ### Task 6: Run final verification and commit
 
 **Files:**
-- Modify: `C:\Users\89466\Desktop\亿元项目\launch-hospital-system.ps1`
-- Modify: `C:\Users\89466\Desktop\亿元项目\智慧医院系统.cmd`
-- Modify: `C:\Users\89466\Desktop\亿元项目\README.md`
-- Modify: `C:\Users\89466\Desktop\亿元项目\scripts\test-launch-hospital-system.ps1`
+- Modify: `C:\Users\89466\Desktop\yy\launch-hospital-system.ps1`
+- Modify: `C:\Users\89466\Desktop\yy\智慧医院系统.cmd`
+- Modify: `C:\Users\89466\Desktop\yy\README.md`
+- Modify: `C:\Users\89466\Desktop\yy\scripts\test-launch-hospital-system.ps1`
 
 **Step 1: Run targeted verification**
 
 Run:
 
 ```powershell
-powershell -NoLogo -ExecutionPolicy Bypass -File C:\Users\89466\Desktop\亿元项目\scripts\test-launch-hospital-system.ps1
+powershell -NoLogo -ExecutionPolicy Bypass -File C:\Users\89466\Desktop\yy\scripts\test-launch-hospital-system.ps1
 ```
 
 Expected:
@@ -208,7 +208,7 @@ Expected:
 Run:
 
 ```powershell
-cd C:\Users\89466\Desktop\亿元项目\frontend
+cd C:\Users\89466\Desktop\yy\frontend
 npm run test:ci
 npm run build
 npm run verify:bundle
@@ -221,6 +221,6 @@ Expected:
 **Step 3: Commit**
 
 ```bash
-git add C:\Users\89466\Desktop\亿元项目\智慧医院系统.cmd C:\Users\89466\Desktop\亿元项目\launch-hospital-system.ps1 C:\Users\89466\Desktop\亿元项目\scripts\test-launch-hospital-system.ps1 C:\Users\89466\Desktop\亿元项目\README.md C:\Users\89466\Desktop\亿元项目\docs\plans\2026-03-17-one-click-launcher-design.md C:\Users\89466\Desktop\亿元项目\docs\plans\2026-03-17-one-click-launcher-plan.md
+git add C:\Users\89466\Desktop\yy\智慧医院系统.cmd C:\Users\89466\Desktop\yy\launch-hospital-system.ps1 C:\Users\89466\Desktop\yy\scripts\test-launch-hospital-system.ps1 C:\Users\89466\Desktop\yy\README.md C:\Users\89466\Desktop\yy\docs\plans\2026-03-17-one-click-launcher-design.md C:\Users\89466\Desktop\yy\docs\plans\2026-03-17-one-click-launcher-plan.md
 git commit -m "Add one-click local launcher"
 ```

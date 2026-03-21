@@ -39,7 +39,7 @@ Build it from `VisitRecord` rows where `prescriptionNote` is not blank.
 
 ### UI Shape
 
-Update [AdminPharmacy.vue](/C:/Users/89466/Desktop/亿元项目/frontend/src/views/admin/AdminPharmacy.vue) into a prescription workload overview:
+Update [AdminPharmacy.vue](/C:/Users/89466/Desktop/yy/frontend/src/views/admin/AdminPharmacy.vue) into a prescription workload overview:
 
 - Hero header with refresh action
 - Three summary cards:
@@ -92,7 +92,7 @@ Build the page by combining:
 
 ### UI Shape
 
-Update [AdminSystem.vue](/C:/Users/89466/Desktop/亿元项目/frontend/src/views/admin/AdminSystem.vue) into a system operations overview:
+Update [AdminSystem.vue](/C:/Users/89466/Desktop/yy/frontend/src/views/admin/AdminSystem.vue) into a system operations overview:
 
 - Hero header with refresh action
 - Four summary cards:

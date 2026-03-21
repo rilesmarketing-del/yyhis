@@ -2,7 +2,7 @@
 
 ## 背景
 
-当前管理端首页已经接入真实数据，能够展示排班、预约、接诊、患者的最小总览。但 [AdminReports.vue](/C:/Users/89466/Desktop/亿元项目/frontend/src/views/admin/AdminReports.vue) 仍然是静态页，包含业务报表、财务报表、资源报表和导出历史等演示内容，与当前系统真实能力不匹配。
+当前管理端首页已经接入真实数据，能够展示排班、预约、接诊、患者的最小总览。但 [AdminReports.vue](/C:/Users/89466/Desktop/yy/frontend/src/views/admin/AdminReports.vue) 仍然是静态页，包含业务报表、财务报表、资源报表和导出历史等演示内容，与当前系统真实能力不匹配。
 
 ## 目标
 

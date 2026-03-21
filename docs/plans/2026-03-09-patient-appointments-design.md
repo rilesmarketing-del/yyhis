@@ -4,7 +4,7 @@
 
 ## Goal
 
-Restructure the project under `C:\Users\89466\Desktop\亿元项目` into `frontend/` and `backend/`, then implement a patient appointment booking MVP with a Vue frontend and a Spring Boot backend.
+Restructure the project under `C:\Users\89466\Desktop\yy` into `frontend/` and `backend/`, then implement a patient appointment booking MVP with a Vue frontend and a Spring Boot backend.
 
 ## Current Context
 
@@ -18,7 +18,7 @@ Restructure the project under `C:\Users\89466\Desktop\亿元项目` into `fronte
 ## Target Structure
 
 ```text
-C:\Users\89466\Desktop\亿元项目
+C:\Users\89466\Desktop\yy
 ├─ frontend
 │  ├─ src
 │  ├─ scripts

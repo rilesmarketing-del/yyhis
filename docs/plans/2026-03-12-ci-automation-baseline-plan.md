@@ -13,7 +13,7 @@
 ### Task 1: Add frontend aggregate CI script
 
 **Files:**
-- Modify: `C:/Users/89466/Desktop/亿元项目/frontend/package.json`
+- Modify: `C:/Users/89466/Desktop/yy/frontend/package.json`
 
 **Step 1: Write the failing expectation**
 
@@ -44,7 +44,7 @@ Do not commit yet if later tasks are tightly coupled, but keep the diff isolated
 ### Task 2: Add GitHub Actions workflow
 
 **Files:**
-- Create: `C:/Users/89466/Desktop/亿元项目/.github/workflows/ci.yml`
+- Create: `C:/Users/89466/Desktop/yy/.github/workflows/ci.yml`
 
 **Step 1: Write the workflow skeleton**
 
@@ -106,9 +106,9 @@ Suggested starting point:
 ### Task 3: Add short CI usage documentation
 
 **Files:**
-- Check existing: `C:/Users/89466/Desktop/亿元项目/README.md`
+- Check existing: `C:/Users/89466/Desktop/yy/README.md`
 - Create or modify depending on presence:
-  - `C:/Users/89466/Desktop/亿元项目/README.md`
+  - `C:/Users/89466/Desktop/yy/README.md`
 
 **Step 1: Inspect current docs state**
 
@@ -156,7 +156,7 @@ Expected: pass
 
 **Step 4: Review workflow file**
 
-Read back `C:/Users/89466/Desktop/亿元项目/.github/workflows/ci.yml` and confirm:
+Read back `C:/Users/89466/Desktop/yy/.github/workflows/ci.yml` and confirm:
 
 - triggers are correct
 - working directories are correct

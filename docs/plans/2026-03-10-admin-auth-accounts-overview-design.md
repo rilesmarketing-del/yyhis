@@ -2,7 +2,7 @@
 
 ## 背景
 
-当前系统已经具备最小鉴权能力，后端有真实演示账号、Token 登录和角色路由控制；但 [AdminAuth.vue](/C:/Users/89466/Desktop/亿元项目/frontend/src/views/admin/AdminAuth.vue) 仍然是静态角色与权限假数据页，无法反映系统内真实账号状态，也无法让管理端可视化查看当前演示账号与角色边界。
+当前系统已经具备最小鉴权能力，后端有真实演示账号、Token 登录和角色路由控制；但 [AdminAuth.vue](/C:/Users/89466/Desktop/yy/frontend/src/views/admin/AdminAuth.vue) 仍然是静态角色与权限假数据页，无法反映系统内真实账号状态，也无法让管理端可视化查看当前演示账号与角色边界。
 
 ## 目标
 

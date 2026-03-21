@@ -2,31 +2,31 @@
 
 ## 鑳屾櫙
 
-褰撳墠鐢ㄦ埛鍏ュ彛鏄?[鏅烘収鍖婚櫌绯荤粺.cmd](/C:/Users/89466/Desktop/浜垮厓椤圭洰/鏅烘収鍖婚櫌绯荤粺.cmd)銆傚湪 Windows 涓紝`.cmd` 鏂囦欢鏈綋寰堥毦绋冲畾鎼哄甫鑷畾涔夊簲鐢ㄥ浘鏍囷紝鍥犳鍗充娇鍚姩閫昏緫宸茬粡鍙敤锛屾闈㈣鎰熶粛鐒跺儚涓€涓櫘閫氳剼鏈紝涓嶇鍚堚€滄寮忕郴缁熷叆鍙ｂ€濈殑棰勬湡銆?
+褰撳墠鐢ㄦ埛鍏ュ彛鏄?[鏅烘収鍖婚櫌绯荤粺.cmd](/C:/Users/89466/Desktop/yy/鏅烘収鍖婚櫌绯荤粺.cmd)銆傚湪 Windows 涓紝`.cmd` 鏂囦欢鏈綋寰堥毦绋冲畾鎼哄甫鑷畾涔夊簲鐢ㄥ浘鏍囷紝鍥犳鍗充娇鍚姩閫昏緫宸茬粡鍙敤锛屾闈㈣鎰熶粛鐒跺儚涓€涓櫘閫氳剼鏈紝涓嶇鍚堚€滄寮忕郴缁熷叆鍙ｂ€濈殑棰勬湡銆?
 ## 鐩爣
 
-- 淇濈暀鐜版湁 [鏅烘収鍖婚櫌绯荤粺.cmd](/C:/Users/89466/Desktop/浜垮厓椤圭洰/鏅烘収鍖婚櫌绯荤粺.cmd) 浣滀负鐪熷疄鍚姩鍏ュ彛
-- 鎻愪緵涓€涓甫鑷畾涔夊浘鏍囩殑 [鏅烘収鍖婚櫌绯荤粺.lnk](/C:/Users/89466/Desktop/浜垮厓椤圭洰/鏅烘収鍖婚櫌绯荤粺.lnk) 浣滀负鏃ュ父鍙屽嚮鍏ュ彛
+- 淇濈暀鐜版湁 [鏅烘収鍖婚櫌绯荤粺.cmd](/C:/Users/89466/Desktop/yy/鏅烘収鍖婚櫌绯荤粺.cmd) 浣滀负鐪熷疄鍚姩鍏ュ彛
+- 鎻愪緵涓€涓甫鑷畾涔夊浘鏍囩殑 [鏅烘収鍖婚櫌绯荤粺.lnk](/C:/Users/89466/Desktop/yy/鏅烘収鍖婚櫌绯荤粺.lnk) 浣滀负鏃ュ父鍙屽嚮鍏ュ彛
 - 鍥炬爣椋庢牸涓庡綋鍓嶇郴缁熻瑙変繚鎸佷竴鑷达紝璧扳€滃尰鐤椾腑鏋㈤鈥?- 鍥炬爣璧勬簮鍜屽揩鎹锋柟寮忕敓鎴愰€昏緫鍙鐢ㄣ€佸彲閲嶆柊鐢熸垚
 
 ## 鏂规
 
 ### 1. 浣跨敤蹇嵎鏂瑰紡鎵胯浇鍥炬爣
 
-涓嶇洿鎺ュ皾璇曚慨鏀?`.cmd` 鏂囦欢鏈綋鍥炬爣锛岃€屾槸鍦ㄩ」鐩牴鐩綍鍒涘缓 [鏅烘収鍖婚櫌绯荤粺.lnk](/C:/Users/89466/Desktop/浜垮厓椤圭洰/鏅烘収鍖婚櫌绯荤粺.lnk)锛?
-- 鐩爣鎸囧悜 [鏅烘収鍖婚櫌绯荤粺.cmd](/C:/Users/89466/Desktop/浜垮厓椤圭洰/鏅烘収鍖婚櫌绯荤粺.cmd)
+涓嶇洿鎺ュ皾璇曚慨鏀?`.cmd` 鏂囦欢鏈綋鍥炬爣锛岃€屾槸鍦ㄩ」鐩牴鐩綍鍒涘缓 [鏅烘収鍖婚櫌绯荤粺.lnk](/C:/Users/89466/Desktop/yy/鏅烘収鍖婚櫌绯荤粺.lnk)锛?
+- 鐩爣鎸囧悜 [鏅烘収鍖婚櫌绯荤粺.cmd](/C:/Users/89466/Desktop/yy/鏅烘収鍖婚櫌绯荤粺.cmd)
 - 宸ヤ綔鐩綍鎸囧悜椤圭洰鏍圭洰褰?- 鍥炬爣璺緞鎸囧悜椤圭洰鍐呮柊鐨?`.ico`
 
 杩欐牱鑳借幏寰楃ǔ瀹氱殑 Windows 鍥炬爣灞曠ず鏁堟灉锛屽悓鏃跺畬鍏ㄤ笉褰卞搷鐜版湁鍚姩閫昏緫銆?
 ### 2. 鍥炬爣璧勬簮鍒嗕负鈥滄簮鍥?+ 瀹為檯 ico鈥?
 鏂板锛?
-- [assets/icons/hospital-launcher.svg](/C:/Users/89466/Desktop/浜垮厓椤圭洰/assets/icons/hospital-launcher.svg) 浣滀负鍙鐨勬簮鍥?- [assets/icons/hospital-launcher.ico](/C:/Users/89466/Desktop/浜垮厓椤圭洰/assets/icons/hospital-launcher.ico) 浣滀负 Windows 蹇嵎鏂瑰紡瀹為檯浣跨敤鐨勫浘鏍?
+- [assets/icons/hospital-launcher.svg](/C:/Users/89466/Desktop/yy/assets/icons/hospital-launcher.svg) 浣滀负鍙鐨勬簮鍥?- [assets/icons/hospital-launcher.ico](/C:/Users/89466/Desktop/yy/assets/icons/hospital-launcher.ico) 浣滀负 Windows 蹇嵎鏂瑰紡瀹為檯浣跨敤鐨勫浘鏍?
 瑙嗚鏂瑰悜锛?
 - 娴呴潚鐧藉簳
 - 闈掔豢鑹插尰鐤楀崄瀛?- 鐞ョ弨鑹查珮鍏夌偣缂€
 - 鍦嗚銆佹煍鍜屻€侀珮璇嗗埆搴?
 ### 3. 鐢ㄨ剼鏈粺涓€鐢熸垚鍜屽埛鏂?
-鏂板涓€涓湰鍦拌剼鏈紝渚嬪 [create-launcher-shortcut.ps1](/C:/Users/89466/Desktop/浜垮厓椤圭洰/scripts/create-launcher-shortcut.ps1)锛岃礋璐ｏ細
+鏂板涓€涓湰鍦拌剼鏈紝渚嬪 [create-launcher-shortcut.ps1](/C:/Users/89466/Desktop/yy/scripts/create-launcher-shortcut.ps1)锛岃礋璐ｏ細
 
 - 鐢熸垚鎴栧埛鏂?`.ico`
 - 鍒涘缓鎴栬鐩?`.lnk`
@@ -36,7 +36,7 @@
 
 - 鏂板蹇嵎鏂瑰紡鍥炲綊鑴氭湰
 - 鍏堥攣浣忎互涓嬭涓猴細
-  - `.ico` 宸茬敓鎴?  - `.lnk` 宸插垱寤?  - `.lnk` 鐩爣鎸囧悜 [鏅烘収鍖婚櫌绯荤粺.cmd](/C:/Users/89466/Desktop/浜垮厓椤圭洰/鏅烘収鍖婚櫌绯荤粺.cmd)
+  - `.ico` 宸茬敓鎴?  - `.lnk` 宸插垱寤?  - `.lnk` 鐩爣鎸囧悜 [鏅烘収鍖婚櫌绯荤粺.cmd](/C:/Users/89466/Desktop/yy/鏅烘収鍖婚櫌绯荤粺.cmd)
   - `.lnk` 鐨?`IconLocation` 鎸囧悜鏂扮殑 `.ico`
 - 瀹炵幇鍚庤繍琛岃鑴氭湰楠岃瘉閫氳繃
 

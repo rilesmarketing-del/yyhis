@@ -4,10 +4,10 @@
 
 当前系统的密码仍然是演示级实现：
 
-- [AuthService.java](C:/Users/89466/Desktop/亿元项目/backend/src/main/java/com/hospital/patientappointments/service/AuthService.java) 直接用 `account.getPassword().equals(password)` 做明文比对
-- [AccountProvisioningService.java](C:/Users/89466/Desktop/亿元项目/backend/src/main/java/com/hospital/patientappointments/service/AccountProvisioningService.java) 在患者注册和管理员建号时直接把原始密码写入 `user_accounts.password`
-- [AdminOrgService.java](C:/Users/89466/Desktop/亿元项目/backend/src/main/java/com/hospital/patientappointments/service/AdminOrgService.java) 在密码重置时直接保存明文 `123456`
-- [DemoDataInitializer.java](C:/Users/89466/Desktop/亿元项目/backend/src/main/java/com/hospital/patientappointments/service/DemoDataInitializer.java) 也会播种明文演示账号
+- [AuthService.java](C:/Users/89466/Desktop/yy/backend/src/main/java/com/hospital/patientappointments/service/AuthService.java) 直接用 `account.getPassword().equals(password)` 做明文比对
+- [AccountProvisioningService.java](C:/Users/89466/Desktop/yy/backend/src/main/java/com/hospital/patientappointments/service/AccountProvisioningService.java) 在患者注册和管理员建号时直接把原始密码写入 `user_accounts.password`
+- [AdminOrgService.java](C:/Users/89466/Desktop/yy/backend/src/main/java/com/hospital/patientappointments/service/AdminOrgService.java) 在密码重置时直接保存明文 `123456`
+- [DemoDataInitializer.java](C:/Users/89466/Desktop/yy/backend/src/main/java/com/hospital/patientappointments/service/DemoDataInitializer.java) 也会播种明文演示账号
 
 这会带来两个直接风险：
 
@@ -85,7 +85,7 @@
 
 ### AuthService
 
-[AuthService.java](C:/Users/89466/Desktop/亿元项目/backend/src/main/java/com/hospital/patientappointments/service/AuthService.java) 改为依赖 `PasswordService`：
+[AuthService.java](C:/Users/89466/Desktop/yy/backend/src/main/java/com/hospital/patientappointments/service/AuthService.java) 改为依赖 `PasswordService`：
 
 - 替换当前的明文 `equals` 比对
 - 在旧明文账号登录成功后触发升级保存
@@ -93,7 +93,7 @@
 
 ### AccountProvisioningService
 
-[AccountProvisioningService.java](C:/Users/89466/Desktop/亿元项目/backend/src/main/java/com/hospital/patientappointments/service/AccountProvisioningService.java) 负责所有“新密码入库”场景：
+[AccountProvisioningService.java](C:/Users/89466/Desktop/yy/backend/src/main/java/com/hospital/patientappointments/service/AccountProvisioningService.java) 负责所有“新密码入库”场景：
 
 - `createManagedAccount`
 - `registerPatient`
@@ -102,7 +102,7 @@
 
 ### AdminOrgService
 
-[AdminOrgService.java](C:/Users/89466/Desktop/亿元项目/backend/src/main/java/com/hospital/patientappointments/service/AdminOrgService.java) 的 `resetPassword` 逻辑改成：
+[AdminOrgService.java](C:/Users/89466/Desktop/yy/backend/src/main/java/com/hospital/patientappointments/service/AdminOrgService.java) 的 `resetPassword` 逻辑改成：
 
 - 业务口径仍然是“重置为 `123456`”
 - 实际写入数据库的是 `123456` 的 BCrypt 哈希
@@ -111,7 +111,7 @@
 
 ### DemoDataInitializer
 
-[DemoDataInitializer.java](C:/Users/89466/Desktop/亿元项目/backend/src/main/java/com/hospital/patientappointments/service/DemoDataInitializer.java) 在播种空库演示账号时，改为写入哈希后的演示密码：
+[DemoDataInitializer.java](C:/Users/89466/Desktop/yy/backend/src/main/java/com/hospital/patientappointments/service/DemoDataInitializer.java) 在播种空库演示账号时，改为写入哈希后的演示密码：
 
 - `patient123`
 - `doctor123`
@@ -151,7 +151,7 @@
 
 ### 鉴权集成测试
 
-扩展 [AuthIntegrationTest.java](C:/Users/89466/Desktop/亿元项目/backend/src/test/java/com/hospital/patientappointments/integration/AuthIntegrationTest.java)：
+扩展 [AuthIntegrationTest.java](C:/Users/89466/Desktop/yy/backend/src/test/java/com/hospital/patientappointments/integration/AuthIntegrationTest.java)：
 
 - 旧明文账号仍可登录
 - 登录成功后数据库中的密码已升级成哈希
@@ -159,7 +159,7 @@
 
 ### 组织治理集成测试
 
-扩展 [AdminOrgIntegrationTest.java](C:/Users/89466/Desktop/亿元项目/backend/src/test/java/com/hospital/patientappointments/integration/AdminOrgIntegrationTest.java)：
+扩展 [AdminOrgIntegrationTest.java](C:/Users/89466/Desktop/yy/backend/src/test/java/com/hospital/patientappointments/integration/AdminOrgIntegrationTest.java)：
 
 - 管理员新建账号后数据库存的是哈希
 - 管理员重置密码后数据库存的是哈希

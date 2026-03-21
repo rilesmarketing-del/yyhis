@@ -8,7 +8,7 @@
 
 - `DoctorClinicService` 仍通过医生账号 `displayName` 推导 `doctorName`，再和预约记录里的医生姓名文本匹配。
 - 管理端排班页当前仍是手工录入医生姓名、职称、科室，无法保证和新建医生账号稳定关联。
-- 医生端 [DoctorSchedule.vue](/C:/Users/89466/Desktop/亿元项目/frontend/src/views/doctor/DoctorSchedule.vue) 仍为静态页面。
+- 医生端 [DoctorSchedule.vue](/C:/Users/89466/Desktop/yy/frontend/src/views/doctor/DoctorSchedule.vue) 仍为静态页面。
 
 这些问题会导致：新建医生账号虽然能立即登录，但若管理端排班姓名和账号显示名不一致，医生就可能看不到自己的真实排班和待接诊队列。
 
