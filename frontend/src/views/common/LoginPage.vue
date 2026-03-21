@@ -17,12 +17,12 @@
             {{ patientModeEnabled ? "切换模式" : "切换为患者模式" }}
           </el-button>
         </div>
-        <h1>{{ patientModeEnabled ? "医院患者服务入口" : "医院业务系统登录" }}</h1>
+        <h1>{{ patientModeEnabled ? "医院患者服务入口" : "医院管理后台登录" }}</h1>
         <p class="hero-copy">
           {{
             patientModeEnabled
               ? "当前浏览器已切换为患者服务入口，适用于患者登录与自助注册。"
-              : "面向患者服务、临床接诊和运营管理的一体化系统，支持预约、接诊、收费、药房和组织治理等核心业务协同。"
+              : "面向组织治理、排班配置、收费管理和运营分析的统一后台入口。"
           }}
         </p>
       </section>
@@ -31,9 +31,9 @@
         <template #header>
           <div class="card-header-shell">
             <div>
-              <div class="card-title">{{ patientModeEnabled ? "患者登录" : "账号登录" }}</div>
+              <div class="card-title">{{ patientModeEnabled ? "患者登录" : "管理员登录" }}</div>
               <div class="card-subtitle">
-                {{ patientModeEnabled ? "当前仅开放患者登录与患者自助注册。" : "请输入账号密码进入对应业务入口。" }}
+                {{ patientModeEnabled ? "当前仅开放患者登录与患者自助注册。" : "请输入管理员账号密码进入管理后台。" }}
               </div>
             </div>
             <span class="card-chip">安全接入</span>
@@ -53,6 +53,9 @@
               autocomplete="current-password"
               @keyup.enter="handleLogin"
             />
+          </el-form-item>
+          <el-form-item v-if="!patientModeEnabled" class="remember-password-item">
+            <el-checkbox v-model="rememberPassword">记住密码</el-checkbox>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" class="login-button" :loading="submitting" @click="handleLogin">
@@ -122,6 +125,11 @@ import { clearAuthSession, login, loginForVerification, registerPatient } from "
 import { roleMeta } from "../../config/menu";
 import { setRegistrationOnboarding } from "../../services/patientSession";
 import { disablePatientMode, enablePatientMode, isPatientModeEnabled } from "../../services/patientMode";
+import {
+  clearRememberedBackofficeCredentials,
+  getRememberedBackofficeCredentials,
+  setRememberedBackofficeCredentials,
+} from "../../services/loginMemory";
 
 const router = useRouter();
 const route = useRoute();
@@ -131,15 +139,26 @@ const registerVisible = ref(false);
 const unlocking = ref(false);
 const unlockVisible = ref(false);
 const patientModeState = ref(isPatientModeEnabled());
+const rememberedBackofficeCredentials = getRememberedBackofficeCredentials();
 
 const patientPreset = { label: "患者服务入口", username: "patient", password: "patient123", role: "patient" };
 
 const patientModeEnabled = computed(() => patientModeState.value);
+const adminPreset = { label: "管理后台入口", username: "admin", password: "admin123", role: "admin" };
+
+function getNormalModeLoginDefaults() {
+  return {
+    username: rememberedBackofficeCredentials.username || adminPreset.username,
+    password: rememberedBackofficeCredentials.password || adminPreset.password,
+  };
+}
 
 const form = reactive({
-  username: "patient",
-  password: "patient123",
+  ...(patientModeState.value
+    ? { username: patientPreset.username, password: patientPreset.password }
+    : getNormalModeLoginDefaults()),
 });
+const rememberPassword = ref(!patientModeState.value && rememberedBackofficeCredentials.rememberPassword !== false);
 
 const registerForm = reactive(createRegisterForm());
 const unlockForm = reactive({
@@ -160,6 +179,12 @@ function createRegisterForm() {
 function fillLoginForm(username, password) {
   form.username = username;
   form.password = password;
+}
+
+function applyNormalModeDefaults() {
+  const defaults = getRememberedBackofficeCredentials();
+  fillLoginForm(defaults.username || adminPreset.username, defaults.password || adminPreset.password);
+  rememberPassword.value = defaults.rememberPassword !== false;
 }
 
 function resetUnlockForm() {
@@ -222,6 +247,7 @@ async function handleDisablePatientMode() {
     disablePatientMode();
     clearAuthSession();
     syncPatientModeState();
+    applyNormalModeDefaults();
     resetUnlockForm();
     unlockVisible.value = false;
     ElMessage.success("患者模式已解除，系统已恢复完整入口");
@@ -248,6 +274,17 @@ async function handleLogin() {
       clearAuthSession();
       ElMessage.error("当前浏览器处于患者模式，暂不开放该账号入口");
       return;
+    }
+    if (!patientModeEnabled.value) {
+      if (rememberPassword.value) {
+        setRememberedBackofficeCredentials({
+          username: form.username.trim(),
+          password: form.password,
+          rememberPassword: true,
+        });
+      } else {
+        clearRememberedBackofficeCredentials();
+      }
     }
     ElMessage.success(`欢迎回来，${user.displayName}`);
     await router.replace(resolveTargetPath(user.role));
@@ -508,6 +545,11 @@ async function handleRegister() {
 .register-button {
   width: 100%;
   justify-content: center;
+}
+
+.remember-password-item {
+  margin-top: -4px;
+  margin-bottom: 8px;
 }
 
 :deep(.login-card .el-card__body) {

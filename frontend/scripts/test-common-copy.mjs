@@ -24,9 +24,13 @@ assert.match(mainLayout, /\.account-name\s*\{[\s\S]*font-size:\s*22px;/);
 assert.match(mainLayout, /退出登录/);
 
 const loginPage = await readFile(new URL("../src/views/common/LoginPage.vue", import.meta.url), "utf8");
-assert.match(loginPage, /医院业务系统登录/);
+assert.match(loginPage, /医院管理后台登录/);
+assert.match(loginPage, /管理员登录/);
+assert.match(loginPage, /请输入管理员账号密码进入管理后台/);
 assert.match(loginPage, /切换为患者模式/);
 assert.match(loginPage, /切换模式/);
+assert.match(loginPage, /记住密码/);
+assert.match(loginPage, /rememberPassword/);
 assert.match(loginPage, /patient-login-card/);
 assert.match(loginPage, /mode-toggle-inline/);
 assert.match(loginPage, /label="患者名称"/);
@@ -53,6 +57,10 @@ assert.doesNotMatch(loginPage, /patient-mode-state-card/);
 assert.doesNotMatch(loginPage, /patient-mode-summary/);
 assert.doesNotMatch(loginPage, /演示/);
 assert.doesNotMatch(loginPage, /体验账号/);
+
+const loginMemoryService = await readFile(new URL("../src/services/loginMemory.js", import.meta.url), "utf8");
+assert.match(loginMemoryService, /LOGIN_MEMORY_STORAGE_KEY/);
+assert.match(loginMemoryService, /admin123/);
 
 const patientAppointmentsView = await readFile(new URL("../src/views/patient/PatientAppointments.vue", import.meta.url), "utf8");
 assert.doesNotMatch(patientAppointmentsView, /activePatient\.id/);
