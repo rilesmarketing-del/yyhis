@@ -44,6 +44,7 @@ assert.equal(pharmacyModel.cards[0].value, "2");
 assert.equal(pharmacyModel.cards[0].desc, "已填写处方内容的接诊记录");
 assert.equal(pharmacyModel.cards[1].label, "今日处方");
 assert.equal(pharmacyModel.cards[1].value, "1");
+assert.equal(pharmacyModel.cards[1].desc, "按最近保存时间统计今日处方");
 assert.equal(pharmacyModel.cards[2].label, "涉及患者");
 assert.equal(pharmacyModel.cards[2].value, "2");
 assert.equal(pharmacyModel.records.length, 2);

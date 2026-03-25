@@ -64,7 +64,7 @@ export function buildAdminPharmacyModel(overview = {}) {
   return {
     cards: [
       { label: "处方记录数", value: String(cards.totalPrescriptions ?? 0), desc: "已填写处方内容的接诊记录" },
-      { label: "今日处方", value: String(cards.todayPrescriptions ?? 0), desc: "按就诊日期统计今日处方" },
+      { label: "今日处方", value: String(cards.todayPrescriptions ?? 0), desc: "按最近保存时间统计今日处方" },
       { label: "涉及患者", value: String(cards.patientCount ?? 0), desc: "去重患者数量" },
     ],
     records: records.map((item) => {

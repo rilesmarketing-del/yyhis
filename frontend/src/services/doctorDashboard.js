@@ -93,10 +93,10 @@ export function buildDoctorDashboardModel({ queue = [], records = [], patients =
     overview: buildOverview(queue, todayRecords),
     todos: buildTodos({ queue, completedToday, inProgressRecords, patients }),
     quickActions: [
-      { label: "去接诊台", path: "/doctor/clinic", type: "primary" },
-      { label: "去病历页", path: "/doctor/records", type: "success" },
-      { label: "去工作台", path: "/doctor/orders", type: "warning" },
-      { label: "去患者列表", path: "/doctor/patients", type: "info" },
+      { label: "接诊台", path: "/doctor/clinic", type: "primary" },
+      { label: "病历页", path: "/doctor/records", type: "success" },
+      { label: "工作台", path: "/doctor/orders", type: "warning" },
+      { label: "患者列表", path: "/doctor/patients", type: "info" },
     ],
   };
 }

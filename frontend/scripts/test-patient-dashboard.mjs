@@ -87,5 +87,12 @@ assert.equal(buildPatientRegistrationGuide(null), null);
 const patientDashboardView = await readFile(new URL("../src/views/patient/PatientDashboard.vue", import.meta.url), "utf8");
 assert.doesNotMatch(patientDashboardView, /activePatient\.id/);
 assert.doesNotMatch(patientDashboardView, /当前登录患者：\$\{activePatient\.name\}（\$\{activePatient\.id\}）/);
+assert.doesNotMatch(patientDashboardView, /围绕当前患者真实预约与就诊记录生成的温和型总览/);
+assert.doesNotMatch(patientDashboardView, /今日关注/);
+assert.doesNotMatch(patientDashboardView, /安心就诊链路/);
+assert.match(patientDashboardView, /\.hero-shell\s*\{[\s\S]*align-items:\s*center;/);
+assert.match(patientDashboardView, /\.hero-eyebrow\s*\{[\s\S]*font-size:\s*15px;/);
+assert.match(patientDashboardView, /\.panel-title\s*\{[\s\S]*font-size:\s*42px;/);
+assert.match(patientDashboardView, /\.panel-title\s*\{[\s\S]*line-height:\s*1\.05;/);
 
 console.log("patient dashboard mapping tests passed");

@@ -5,18 +5,14 @@
         <div class="hero-copy-block">
           <p class="hero-eyebrow">Doctor Command</p>
           <div class="hero-title">医生工作总览</div>
-          <div class="hero-subtitle">围绕当前候诊、接诊和患者维护情况生成的真实工作中枢。</div>
-          <div class="hero-badges">
-            <span class="hero-badge">今日接诊面板</span>
-            <span class="hero-badge hero-badge-soft">效率优先</span>
-          </div>
         </div>
 
         <div class="hero-actions">
-          <el-button class="refresh-button" @click="loadDashboard">刷新</el-button>
+          <el-button class="hero-action-button refresh-button" @click="loadDashboard">刷新</el-button>
           <el-button
             v-for="action in quickActions"
             :key="action.path"
+            class="hero-action-button"
             :type="action.type === 'info' ? '' : action.type"
             :plain="action.type !== 'primary'"
             @click="goTo(action.path)"
@@ -48,7 +44,7 @@
               </div>
             </div>
           </template>
-          <el-table :data="overview" border v-loading="loading">
+          <el-table class="overview-table" :data="overview" border empty-text="暂无候诊与接诊数据" v-loading="loading">
             <el-table-column prop="patientName" label="患者" width="120" />
             <el-table-column prop="department" label="科室" width="120" />
             <el-table-column prop="time" label="时间" min-width="160" />
@@ -164,8 +160,9 @@ onMounted(() => {
 .hero-row {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-end;
   gap: 18px;
+  padding-bottom: 8px;
 }
 
 .hero-copy-block {
@@ -188,37 +185,6 @@ onMounted(() => {
   color: #0f172a;
 }
 
-.hero-subtitle {
-  margin-top: 8px;
-  font-size: 14px;
-  line-height: 1.7;
-  color: #5b6c77;
-}
-
-.hero-badges {
-  margin-top: 16px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.hero-badge {
-  display: inline-flex;
-  align-items: center;
-  min-height: 36px;
-  padding: 0 14px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 700;
-  color: #0f4c81;
-  background: rgba(37, 99, 235, 0.1);
-}
-
-.hero-badge-soft {
-  color: #0f766e;
-  background: rgba(15, 118, 110, 0.1);
-}
-
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
@@ -226,9 +192,17 @@ onMounted(() => {
   justify-content: flex-end;
 }
 
-.refresh-button {
+.hero-action-button {
   min-height: 42px;
+  min-width: 120px;
   border-radius: 14px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.refresh-button {
+  min-width: 120px;
 }
 
 .mt-12 {
@@ -282,9 +256,20 @@ onMounted(() => {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(240, 249, 255, 0.9));
 }
 
-:deep(.el-table) {
+:deep(.overview-table) {
   border-radius: 16px;
   overflow: hidden;
+  background: #ffffff;
+}
+
+:deep(.overview-table .el-table__inner-wrapper) {
+  border-radius: 16px;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+:deep(.overview-table .el-table__inner-wrapper::before) {
+  display: none;
 }
 
 @media (max-width: 900px) {

@@ -36,7 +36,8 @@ public class AdminPharmacyService {
 
         int totalPrescriptions = prescriptionRecords.size();
         int todayPrescriptions = (int) prescriptionRecords.stream()
-            .filter(record -> today.equals(record.getVisitDate()))
+            .filter(record -> record.getUpdatedAt() != null)
+            .filter(record -> today.equals(record.getUpdatedAt().toLocalDate().toString()))
             .count();
         int patientCount = (int) prescriptionRecords.stream()
             .map(VisitRecord::getPatientId)

@@ -29,7 +29,7 @@
             <span v-if="loading">账单加载中...</span>
           </div>
 
-          <el-table :data="unpaidBills" border v-loading="loading">
+          <el-table :data="unpaidBills" border v-loading="loading" empty-text="暂无待支付账单">
             <el-table-column prop="serialNumber" label="账单号" min-width="180" />
             <el-table-column prop="typeLabel" label="费用类型" width="110" />
             <el-table-column label="就诊信息" min-width="220">

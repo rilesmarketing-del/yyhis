@@ -12,7 +12,7 @@
           </div>
         </template>
 
-        <el-table :data="queue" border v-loading="loading">
+        <el-table :data="queue" border empty-text="暂无待接诊数据" v-loading="loading">
           <el-table-column prop="patientName" label="患者" width="120" />
           <el-table-column prop="department" label="科室" width="120" />
           <el-table-column prop="date" label="日期" width="120" />

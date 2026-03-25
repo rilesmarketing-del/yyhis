@@ -290,6 +290,9 @@ async function handleComplete() {
       type: "warning",
     });
     completing.value = true;
+    const saved = await saveDoctorRecord(selectedRecord.value.id, buildVisitRecordPayload(form));
+    selectedRecord.value = saved;
+    syncForm(saved);
     const completed = await completeDoctorRecord(selectedRecord.value.id);
     selectedRecord.value = completed;
     syncForm(completed);

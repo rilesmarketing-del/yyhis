@@ -22,12 +22,6 @@
         <div class="hero-copy-block">
           <p class="hero-eyebrow">Patient Hub</p>
           <div class="panel-title">患者首页</div>
-          <div class="panel-subtitle">围绕当前患者真实预约与就诊记录生成的温和型总览。</div>
-
-          <div class="hero-badges">
-            <span class="hero-badge">今日关注</span>
-            <span class="hero-badge hero-badge-soft">安心就诊链路</span>
-          </div>
         </div>
 
         <div class="hero-side-card">
@@ -229,7 +223,7 @@ onMounted(() => {
 .welcome-eyebrow,
 .hero-eyebrow {
   margin: 0;
-  font-size: 11px;
+  font-size: 15px;
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -282,6 +276,7 @@ onMounted(() => {
 .hero-shell {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   gap: 18px;
   margin-bottom: 18px;
 }
@@ -292,8 +287,9 @@ onMounted(() => {
 
 .panel-title {
   margin-top: 10px;
-  font-size: 24px;
+  font-size: 42px;
   font-weight: 700;
+  line-height: 1.05;
   color: #0f172a;
 }
 

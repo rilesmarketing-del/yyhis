@@ -8,6 +8,10 @@ function Get-HospitalSystemUrl {
     return "http://localhost:5173"
 }
 
+function Get-HospitalBrowserUrl {
+    return "http://localhost:5173/login?launcher=fresh"
+}
+
 function Get-FrontendLogPaths {
     $projectRoot = Get-HospitalProjectRoot
 
@@ -196,6 +200,7 @@ function Start-HospitalSystem {
     }
 
     $systemUrl = Get-HospitalSystemUrl
+    $browserUrl = Get-HospitalBrowserUrl
 
     if (-not $SkipHealthCheck) {
         if (-not (Wait-HospitalUrlReady -Url $systemUrl)) {
@@ -204,7 +209,7 @@ function Start-HospitalSystem {
     }
 
     if (-not $SkipBrowser) {
-        Open-HospitalSystem -Url $systemUrl
+        Open-HospitalSystem -Url $browserUrl
     }
 
     return $launchPlan

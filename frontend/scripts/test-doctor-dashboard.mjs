@@ -1,4 +1,5 @@
 ﻿import assert from "node:assert/strict";
+import fs from "node:fs";
 import { buildDoctorDashboardModel } from "../src/services/doctorDashboard.js";
 
 const queue = [
@@ -66,5 +67,29 @@ assert.equal(model.overview[3].status, "已完成");
 assert.equal(model.todos[0].text, "当前有 2 位患者待接诊");
 assert.equal(model.todos[1].text, "有 1 份病历待完成");
 assert.equal(model.todos[2].text, "今日已完成 1 次接诊");
+assert.deepEqual(
+  model.quickActions.map((item) => item.label),
+  ["接诊台", "病历页", "工作台", "患者列表"]
+);
+
+const doctorDashboardView = fs.readFileSync(new URL("../src/views/doctor/DoctorDashboard.vue", import.meta.url), "utf8");
+assert.doesNotMatch(doctorDashboardView, /围绕当前候诊、接诊和患者维护情况生成的真实工作中枢/);
+assert.doesNotMatch(doctorDashboardView, /今日接诊面板/);
+assert.doesNotMatch(doctorDashboardView, /效率优先/);
+assert.match(doctorDashboardView, /class="hero-action-button"/);
+assert.match(doctorDashboardView, /\.hero-action-button\s*\{/);
+assert.match(doctorDashboardView, /min-height:\s*42px/);
+assert.match(doctorDashboardView, /min-width:\s*120px/);
+assert.match(doctorDashboardView, /justify-content:\s*center/);
+assert.match(doctorDashboardView, /\.hero-row\s*\{[\s\S]*align-items:\s*flex-end/);
+assert.match(doctorDashboardView, /\.hero-row\s*\{[\s\S]*padding-bottom:\s*8px/);
+assert.match(
+  doctorDashboardView,
+  /<el-table class="overview-table" :data="overview" border empty-text="暂无候诊与接诊数据" v-loading="loading">/
+);
+assert.match(doctorDashboardView, /empty-text="暂无候诊与接诊数据"/);
+assert.match(doctorDashboardView, /:deep\(\.overview-table\)\s*\{[\s\S]*background:\s*#ffffff/);
+assert.match(doctorDashboardView, /:deep\(\.overview-table \.el-table__inner-wrapper\)\s*\{[\s\S]*border-radius:\s*16px/);
+assert.match(doctorDashboardView, /:deep\(\.overview-table \.el-table__inner-wrapper\)\s*\{[\s\S]*overflow:\s*hidden/);
 
 console.log("doctor dashboard mapping tests passed");

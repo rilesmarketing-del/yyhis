@@ -1,5 +1,5 @@
 ﻿<template>
-  <el-container class="shell medical-hub-shell">
+  <el-container class="shell medical-hub-shell" :class="{ 'senior-care-mode': seniorCareEnabled }">
     <div class="shell-ambient ambient-one" />
     <div class="shell-ambient ambient-two" />
     <div class="shell-ambient ambient-three" />
@@ -68,6 +68,7 @@ import { computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { roleMenus, roleMeta } from "../config/menu";
 import { authState, logout } from "../services/auth";
+import { disableSeniorCareMode, isSeniorCareModeEnabled } from "../services/seniorCareMode";
 
 const route = useRoute();
 const router = useRouter();
@@ -79,8 +80,10 @@ const activePath = computed(() => route.path);
 const roleLabel = computed(() => roleMeta[currentRole.value]?.label || "未知角色");
 const currentTitle = computed(() => route.meta?.title || "页面");
 const displayName = computed(() => currentUser.value?.displayName || "系统用户");
+const seniorCareEnabled = computed(() => currentRole.value === "patient" && isSeniorCareModeEnabled());
 
 async function handleLogout() {
+  disableSeniorCareMode();
   await logout();
   await router.replace("/login");
 }

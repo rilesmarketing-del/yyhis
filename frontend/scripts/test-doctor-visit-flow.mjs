@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import fs from "node:fs";
 import { pickCurrentVisit, sortDoctorPatients, sortDoctorQueue, sortDoctorRecords } from "../src/services/doctorClinic.js";
 
 const queue = sortDoctorQueue([
@@ -19,5 +20,8 @@ const patients = sortDoctorPatients([
   { patientId: "P1", latestVisitDate: "2026-03-10" },
 ]);
 assert.equal(patients[0].patientId, "P1");
+
+const doctorClinicView = fs.readFileSync(new URL("../src/views/doctor/DoctorClinic.vue", import.meta.url), "utf8");
+assert.match(doctorClinicView, /empty-text="暂无待接诊数据"/);
 
 console.log("doctor visit flow mapping tests passed");

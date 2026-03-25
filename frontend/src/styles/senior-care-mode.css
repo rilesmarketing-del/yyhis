@@ -1,0 +1,175 @@
+.welcome-orbit.senior-care-preview .eyebrow,
+.welcome-orbit.senior-care-preview .hero-pill,
+.welcome-orbit.senior-care-preview .card-subtitle,
+.welcome-orbit.senior-care-preview .senior-care-hint,
+.welcome-orbit.senior-care-preview .el-form-item__label {
+  font-size: 18px !important;
+  line-height: 1.7 !important;
+}
+
+.welcome-orbit.senior-care-preview .login-hero h1 {
+  font-size: clamp(42px, 5vw, 62px) !important;
+}
+
+.welcome-orbit.senior-care-preview .hero-copy,
+.welcome-orbit.senior-care-preview .remember-checkbox-text {
+  font-size: 20px !important;
+  line-height: 1.8 !important;
+}
+
+.welcome-orbit.senior-care-preview .card-title,
+.welcome-orbit.senior-care-preview .senior-care-title {
+  font-size: 30px !important;
+  line-height: 1.2 !important;
+}
+
+.welcome-orbit.senior-care-preview .mode-toggle-button,
+.welcome-orbit.senior-care-preview .login-button,
+.welcome-orbit.senior-care-preview .register-button,
+.welcome-orbit.senior-care-preview .el-switch {
+  font-size: 20px !important;
+}
+
+.welcome-orbit.senior-care-preview .mode-toggle-button,
+.welcome-orbit.senior-care-preview .login-button,
+.welcome-orbit.senior-care-preview .register-button {
+  min-height: 54px !important;
+}
+
+.welcome-orbit.senior-care-preview .el-input__wrapper {
+  min-height: 58px !important;
+}
+
+.welcome-orbit.senior-care-preview .el-input__inner,
+.welcome-orbit.senior-care-preview .el-input__wrapper,
+.welcome-orbit.senior-care-preview .el-switch__label {
+  font-size: 20px !important;
+}
+
+.medical-hub-shell.senior-care-mode .brand h1 {
+  font-size: clamp(30px, 3vw, 38px) !important;
+}
+
+.medical-hub-shell.senior-care-mode .subtitle,
+.medical-hub-shell.senior-care-mode .breadcrumb-label,
+.medical-hub-shell.senior-care-mode .breadcrumb-pill,
+.medical-hub-shell.senior-care-mode .el-breadcrumb__inner,
+.medical-hub-shell.senior-care-mode .account-name {
+  font-size: 18px !important;
+}
+
+.medical-hub-shell.senior-care-mode .logout-button,
+.medical-hub-shell.senior-care-mode .menu .el-menu-item,
+.medical-hub-shell.senior-care-mode .router-view-shell .el-button {
+  font-size: 18px !important;
+}
+
+.medical-hub-shell.senior-care-mode .menu .el-menu-item {
+  min-height: 58px;
+}
+
+.medical-hub-shell.senior-care-mode .router-view-shell,
+.medical-hub-shell.senior-care-mode .router-view-shell .muted-text {
+  font-size: 18px;
+}
+
+.medical-hub-shell.senior-care-mode .dashboard-page .hero-eyebrow,
+.medical-hub-shell.senior-care-mode .dashboard-page .section-label,
+.medical-hub-shell.senior-care-mode .dashboard-page .stat-label {
+  font-size: 22px !important;
+}
+
+.medical-hub-shell.senior-care-mode .dashboard-page .panel-title {
+  font-size: 50px !important;
+}
+
+.medical-hub-shell.senior-care-mode .dashboard-page .welcome-title {
+  font-size: 34px !important;
+}
+
+.medical-hub-shell.senior-care-mode .dashboard-page .welcome-subtitle,
+.medical-hub-shell.senior-care-mode .dashboard-page .welcome-desc,
+.medical-hub-shell.senior-care-mode .dashboard-page .stat-caption,
+.medical-hub-shell.senior-care-mode .dashboard-page .section-subtitle,
+.medical-hub-shell.senior-care-mode .dashboard-page .quick-action-desc {
+  font-size: 20px !important;
+  line-height: 1.8 !important;
+}
+
+.medical-hub-shell.senior-care-mode .dashboard-page .section-title,
+.medical-hub-shell.senior-care-mode .dashboard-page .quick-action-title {
+  font-size: 30px !important;
+  line-height: 1.35 !important;
+}
+
+.medical-hub-shell.senior-care-mode .dashboard-page .stat-value {
+  font-size: 52px !important;
+  line-height: 1.1 !important;
+}
+
+.medical-hub-shell.senior-care-mode .dashboard-page .stat-desc {
+  font-size: 20px !important;
+  line-height: 1.75 !important;
+}
+
+.medical-hub-shell.senior-care-mode .appointment-page .panel-title,
+.medical-hub-shell.senior-care-mode .payments-page .panel-title,
+.medical-hub-shell.senior-care-mode .prescriptions-page .panel-title,
+.medical-hub-shell.senior-care-mode .reports-page .panel-title,
+.medical-hub-shell.senior-care-mode .visits-page .panel-title {
+  font-size: 28px !important;
+}
+
+.medical-hub-shell.senior-care-mode .appointment-page .panel-subtitle,
+.medical-hub-shell.senior-care-mode .payments-page .panel-subtitle,
+.medical-hub-shell.senior-care-mode .prescriptions-page .panel-subtitle,
+.medical-hub-shell.senior-care-mode .reports-page .panel-subtitle,
+.medical-hub-shell.senior-care-mode .visits-page .panel-subtitle,
+.medical-hub-shell.senior-care-mode .appointment-page .section-meta,
+.medical-hub-shell.senior-care-mode .payments-page .section-meta,
+.medical-hub-shell.senior-care-mode .prescriptions-page .collapse-meta,
+.medical-hub-shell.senior-care-mode .reports-page .toolbar-row,
+.medical-hub-shell.senior-care-mode .visits-page .toolbar-row {
+  font-size: 18px !important;
+  line-height: 1.7 !important;
+}
+
+.medical-hub-shell.senior-care-mode .router-view-shell .el-form-item__label,
+.medical-hub-shell.senior-care-mode .router-view-shell .el-radio__label,
+.medical-hub-shell.senior-care-mode .router-view-shell .el-checkbox__label,
+.medical-hub-shell.senior-care-mode .router-view-shell .el-tag,
+.medical-hub-shell.senior-care-mode .router-view-shell .el-empty__description p,
+.medical-hub-shell.senior-care-mode .router-view-shell .el-descriptions__label,
+.medical-hub-shell.senior-care-mode .router-view-shell .el-descriptions__content,
+.medical-hub-shell.senior-care-mode .router-view-shell .el-collapse-item__header,
+.medical-hub-shell.senior-care-mode .router-view-shell .el-collapse-item__content,
+.medical-hub-shell.senior-care-mode .router-view-shell .el-timeline-item__content {
+  font-size: 18px !important;
+  line-height: 1.7 !important;
+}
+
+.medical-hub-shell.senior-care-mode .router-view-shell .el-input__wrapper,
+.medical-hub-shell.senior-care-mode .router-view-shell .el-select__wrapper,
+.medical-hub-shell.senior-care-mode .router-view-shell .el-date-editor,
+.medical-hub-shell.senior-care-mode .router-view-shell .el-button {
+  min-height: 50px !important;
+}
+
+.medical-hub-shell.senior-care-mode .router-view-shell .el-input__inner,
+.medical-hub-shell.senior-care-mode .router-view-shell .el-input__wrapper,
+.medical-hub-shell.senior-care-mode .router-view-shell .el-select__selected-item,
+.medical-hub-shell.senior-care-mode .router-view-shell .el-select__placeholder,
+.medical-hub-shell.senior-care-mode .router-view-shell .el-date-editor .el-range-input,
+.medical-hub-shell.senior-care-mode .router-view-shell .el-date-editor .el-input__inner,
+.medical-hub-shell.senior-care-mode .router-view-shell .el-button span,
+.medical-hub-shell.senior-care-mode .router-view-shell .el-empty__description,
+.medical-hub-shell.senior-care-mode .router-view-shell .el-dialog__title {
+  font-size: 18px !important;
+}
+
+.medical-hub-shell.senior-care-mode .router-view-shell .el-table th,
+.medical-hub-shell.senior-care-mode .router-view-shell .el-table td,
+.medical-hub-shell.senior-care-mode .router-view-shell .el-table .cell {
+  font-size: 18px !important;
+  line-height: 1.7 !important;
+}

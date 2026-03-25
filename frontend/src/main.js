@@ -69,6 +69,7 @@ import {
 
 import App from "./App.vue";
 import router from "./router";
+import "./styles/senior-care-mode.css";
 
 const app = createApp(App);
 

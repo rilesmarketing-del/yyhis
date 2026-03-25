@@ -1,5 +1,5 @@
 <template>
-  <div class="login-page welcome-orbit">
+  <div class="login-page welcome-orbit" :class="{ 'senior-care-preview': patientModeEnabled && seniorCareModeEnabled }">
     <div class="orbit-glow orbit-glow-left" />
     <div class="orbit-glow orbit-glow-right" />
     <div class="orbit-grid" />
@@ -36,7 +36,6 @@
                 {{ patientModeEnabled ? "当前仅开放患者登录与患者自助注册。" : "请输入管理员账号密码进入管理后台。" }}
               </div>
             </div>
-            <span class="card-chip">安全接入</span>
           </div>
         </template>
 
@@ -54,16 +53,30 @@
               @keyup.enter="handleLogin"
             />
           </el-form-item>
-          <el-form-item v-if="!patientModeEnabled" class="remember-password-item">
-            <el-checkbox v-model="rememberPassword">记住密码</el-checkbox>
+          <el-form-item v-if="!patientModeEnabled" class="remember-password-item remember-password-row">
+            <label class="remember-checkbox-native">
+              <input v-model="rememberPassword" type="checkbox" class="remember-checkbox-input" />
+              <span class="remember-checkbox-box" aria-hidden="true" />
+              <span class="remember-checkbox-text">记住密码</span>
+            </label>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" class="login-button" :loading="submitting" @click="handleLogin">
               登录系统
             </el-button>
           </el-form-item>
-          <el-form-item>
+          <el-form-item v-if="patientModeEnabled">
             <el-button text class="register-button" @click="openRegisterDialog">患者自助注册</el-button>
+          </el-form-item>
+          <el-form-item v-if="patientModeEnabled" class="senior-care-item">
+            <div class="senior-care-toggle-row">
+              <div class="senior-care-copy">
+                <div class="senior-care-title">长者关怀模式</div>
+              </div>
+              <el-button class="senior-care-toggle-button" :class="{ 'is-active': seniorCareModeEnabled }" @click="toggleSeniorCareMode">
+                {{ seniorCareModeEnabled ? "关闭" : "开启" }}
+              </el-button>
+            </div>
           </el-form-item>
         </el-form>
       </el-card>
@@ -125,6 +138,7 @@ import { clearAuthSession, login, loginForVerification, registerPatient } from "
 import { roleMeta } from "../../config/menu";
 import { setRegistrationOnboarding } from "../../services/patientSession";
 import { disablePatientMode, enablePatientMode, isPatientModeEnabled } from "../../services/patientMode";
+import { disableSeniorCareMode, enableSeniorCareMode, isSeniorCareModeEnabled } from "../../services/seniorCareMode";
 import {
   clearRememberedBackofficeCredentials,
   getRememberedBackofficeCredentials,
@@ -139,6 +153,7 @@ const registerVisible = ref(false);
 const unlocking = ref(false);
 const unlockVisible = ref(false);
 const patientModeState = ref(isPatientModeEnabled());
+const seniorCareModeEnabled = ref(isSeniorCareModeEnabled());
 const rememberedBackofficeCredentials = getRememberedBackofficeCredentials();
 
 const patientPreset = { label: "患者服务入口", username: "patient", password: "patient123", role: "patient" };
@@ -196,7 +211,26 @@ function syncPatientModeState() {
   patientModeState.value = isPatientModeEnabled();
 }
 
+function handleSeniorCareToggle(enabled) {
+  seniorCareModeEnabled.value = enabled;
+
+  if (enabled) {
+    enableSeniorCareMode();
+    return;
+  }
+
+  disableSeniorCareMode();
+}
+
+function toggleSeniorCareMode() {
+  handleSeniorCareToggle(!seniorCareModeEnabled.value);
+}
+
 function openRegisterDialog() {
+  if (!patientModeEnabled.value) {
+    return;
+  }
+
   Object.assign(registerForm, createRegisterForm());
   registerVisible.value = true;
 }
@@ -245,8 +279,10 @@ async function handleDisablePatientMode() {
     }
 
     disablePatientMode();
+    disableSeniorCareMode();
     clearAuthSession();
     syncPatientModeState();
+    seniorCareModeEnabled.value = false;
     applyNormalModeDefaults();
     resetUnlockForm();
     unlockVisible.value = false;
@@ -274,6 +310,15 @@ async function handleLogin() {
       clearAuthSession();
       ElMessage.error("当前浏览器处于患者模式，暂不开放该账号入口");
       return;
+    }
+    if (patientModeEnabled.value && user.role === "patient") {
+      if (seniorCareModeEnabled.value) {
+        enableSeniorCareMode();
+      } else {
+        disableSeniorCareMode();
+      }
+    } else {
+      disableSeniorCareMode();
     }
     if (!patientModeEnabled.value) {
       if (rememberPassword.value) {
@@ -326,6 +371,11 @@ async function handleRegister() {
 
     try {
       const user = await login({ username, password });
+      if (seniorCareModeEnabled.value) {
+        enableSeniorCareMode();
+      } else {
+        disableSeniorCareMode();
+      }
       setRegistrationOnboarding({
         username: user.username || username,
         displayName: user.displayName || response.displayName || displayName,
@@ -461,8 +511,7 @@ async function handleRegister() {
   color: var(--orbit-teal);
 }
 
-.hero-pill,
-.card-chip {
+.hero-pill {
   display: inline-flex;
   align-items: center;
   min-height: 36px;
@@ -547,9 +596,132 @@ async function handleRegister() {
   justify-content: center;
 }
 
+.senior-care-item {
+  margin-top: -4px;
+  margin-bottom: 0;
+}
+
+.senior-care-toggle-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(15, 118, 110, 0.14);
+  background: linear-gradient(135deg, rgba(240, 253, 250, 0.92), rgba(255, 251, 235, 0.88));
+}
+
+.senior-care-copy {
+  display: flex;
+  flex-direction: column;
+}
+
+.senior-care-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--orbit-ink);
+}
+
+.senior-care-toggle-button {
+  min-width: 96px;
+  min-height: 42px;
+  padding-inline: 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 118, 110, 0.14);
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--orbit-teal-deep);
+  font-size: 16px;
+  font-weight: 700;
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+}
+
+.senior-care-toggle-button.is-active {
+  color: #ffffff;
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--orbit-teal), #14b8a6);
+}
+
 .remember-password-item {
   margin-top: -4px;
   margin-bottom: 8px;
+}
+
+.remember-password-row {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.remember-checkbox-native {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--orbit-ink);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+}
+
+.remember-checkbox-input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.remember-checkbox-box {
+  position: relative;
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  margin-top: 0;
+  border: 2px solid rgba(15, 23, 42, 0.28);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+  transition:
+    border-color 140ms ease,
+    background 140ms ease,
+    box-shadow 140ms ease,
+    transform 140ms ease;
+}
+
+.remember-checkbox-box::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 4px;
+  height: 8px;
+  border-right: 2px solid #ffffff;
+  border-bottom: 2px solid #ffffff;
+  opacity: 0;
+  transform: translate(-50%, -50%) rotate(45deg) scale(0.8);
+  transition:
+    opacity 140ms ease,
+    transform 140ms ease;
+}
+
+.remember-checkbox-input:checked + .remember-checkbox-box {
+  background: linear-gradient(135deg, var(--orbit-teal), #14b8a6);
+  border-color: var(--orbit-teal);
+}
+
+.remember-checkbox-input:checked + .remember-checkbox-box::after {
+  opacity: 1;
+  transform: translate(-50%, -50%) rotate(45deg) scale(1);
+}
+
+.remember-checkbox-native:hover .remember-checkbox-box,
+.remember-checkbox-input:focus-visible + .remember-checkbox-box {
+  border-color: rgba(15, 118, 110, 0.55);
+  box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.12);
+}
+
+.remember-checkbox-text {
+  padding-left: 0;
+  line-height: 1;
 }
 
 :deep(.login-card .el-card__body) {
@@ -614,6 +786,11 @@ async function handleRegister() {
   .card-header-shell {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .senior-care-toggle-row {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }
 </style>

@@ -64,9 +64,14 @@ assert.match(loginMemoryService, /admin123/);
 
 const patientAppointmentsView = await readFile(new URL("../src/views/patient/PatientAppointments.vue", import.meta.url), "utf8");
 assert.doesNotMatch(patientAppointmentsView, /activePatient\.id/);
+assert.match(patientAppointmentsView, /查询预约/);
+assert.match(patientAppointmentsView, /empty-text="暂无预约数据"/);
+assert.match(patientAppointmentsView, /当前筛选条件下暂无可预约号源/);
+assert.doesNotMatch(patientAppointmentsView, /查询排班/);
 
 const patientPaymentsView = await readFile(new URL("../src/views/patient/PatientPayments.vue", import.meta.url), "utf8");
 assert.doesNotMatch(patientPaymentsView, /activePatient\.id/);
+assert.match(patientPaymentsView, /empty-text="暂无待支付账单"/);
 
 const patientVisitsView = await readFile(new URL("../src/views/patient/PatientVisits.vue", import.meta.url), "utf8");
 assert.doesNotMatch(patientVisitsView, /activePatient\.id/);

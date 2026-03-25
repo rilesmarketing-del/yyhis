@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import fs from "node:fs";
 import { buildDoctorOrdersDraft } from "../src/services/doctorClinic.js";
 import { buildPatientReports } from "../src/services/patientReports.js";
 import { buildPatientPrescriptions } from "../src/services/patientPrescriptions.js";
@@ -101,5 +102,11 @@ const pharmacyModel = buildAdminPharmacyModel({
 assert.equal(pharmacyModel.records.length, 1);
 assert.equal(pharmacyModel.records[0].structuredCount, 1);
 assert.match(pharmacyModel.records[0].prescriptionPreview, /Aspirin/);
+
+const doctorRecordsView = fs.readFileSync(new URL("../src/views/doctor/DoctorRecords.vue", import.meta.url), "utf8");
+assert.match(
+  doctorRecordsView,
+  /async function handleComplete\(\)\s*\{[\s\S]*const saved = await saveDoctorRecord\(selectedRecord\.value\.id, buildVisitRecordPayload\(form\)\);[\s\S]*const completed = await completeDoctorRecord\(selectedRecord\.value\.id\);/
+);
 
 console.log("doctor clinical structured data mapping tests passed");

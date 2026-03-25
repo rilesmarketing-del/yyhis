@@ -19,6 +19,7 @@ Assert-True (Test-Path $launcherPath) "Expected launcher script at $launcherPath
 . $launcherPath
 
 Assert-True ($null -ne (Get-Command Get-HospitalSystemUrl -ErrorAction SilentlyContinue)) "Expected Get-HospitalSystemUrl helper"
+Assert-True ($null -ne (Get-Command Get-HospitalBrowserUrl -ErrorAction SilentlyContinue)) "Expected Get-HospitalBrowserUrl helper"
 Assert-True ($null -ne (Get-Command Get-FrontendLogPaths -ErrorAction SilentlyContinue)) "Expected Get-FrontendLogPaths helper"
 Assert-True ($null -ne (Get-Command Get-BackendLogPaths -ErrorAction SilentlyContinue)) "Expected Get-BackendLogPaths helper"
 Assert-True ($null -ne (Get-Command Get-HospitalFrontendLaunchCommand -ErrorAction SilentlyContinue)) "Expected Get-HospitalFrontendLaunchCommand helper"
@@ -27,6 +28,8 @@ Assert-True ((Get-Command Start-HospitalSystem).Parameters.ContainsKey("SkipHeal
 
 $systemUrl = Get-HospitalSystemUrl
 Assert-True ($systemUrl -eq "http://localhost:5173") "Expected frontend url to be http://localhost:5173"
+$browserUrl = Get-HospitalBrowserUrl
+Assert-True ($browserUrl -eq "http://localhost:5173/login?launcher=fresh") "Expected browser url to force the login page"
 
 $frontendLogs = Get-FrontendLogPaths
 $backendLogs = Get-BackendLogPaths

@@ -37,7 +37,7 @@
               />
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" @click="loadSchedules">查询排班</el-button>
+              <el-button type="primary" @click="loadSchedules">查询预约</el-button>
               <el-button @click="resetScheduleQuery">重置</el-button>
             </el-form-item>
           </el-form>
@@ -47,7 +47,7 @@
             <span v-if="scheduleLoading">排班加载中...</span>
           </div>
 
-          <el-table :data="schedules" border>
+          <el-table :data="schedules" border empty-text="暂无预约数据">
             <el-table-column prop="department" label="科室" width="120" />
             <el-table-column prop="doctorName" label="医生" width="110" />
             <el-table-column prop="title" label="职称" width="120" />
@@ -72,7 +72,7 @@
             </el-table-column>
           </el-table>
 
-          <el-empty v-if="!scheduleLoading && schedules.length === 0" description="当前筛选条件下暂无排班" />
+          <el-empty v-if="!scheduleLoading && schedules.length === 0" description="当前筛选条件下暂无可预约号源" />
         </el-card>
       </el-col>
 

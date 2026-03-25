@@ -96,6 +96,11 @@ const router = createRouter({
 router.beforeEach(async (to) => {
   if (to.meta?.public) {
     if (to.path === "/login") {
+      if (to.query.launcher === "fresh") {
+        clearAuthSession();
+        return true;
+      }
+
       const user = await ensureCurrentUser();
       if (user?.role && !isRoleBlockedInPatientMode(user.role)) {
         return roleMeta[user.role]?.homePath || "/";

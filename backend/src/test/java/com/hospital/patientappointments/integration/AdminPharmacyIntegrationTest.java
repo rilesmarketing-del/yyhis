@@ -71,6 +71,33 @@ class AdminPharmacyIntegrationTest {
     }
 
     @Test
+    void todayPrescriptionsUseLastSavedDayInsteadOfVisitDate() throws Exception {
+        String adminToken = login("admin", "admin123");
+        Long departmentId = userAccountRepository.findByUsername("doctor").orElseThrow().getDepartmentId();
+        createDoctorAccount(adminToken, "doctor_rx_today", "doctor123", "Today Rx Doctor", departmentId);
+
+        String futureDate = LocalDate.now().plusDays(3).toString();
+        String scheduleId = createSchedule(adminToken, "doctor_rx_today", futureDate, "11:00-11:30");
+
+        String patientToken = login("patient", "patient123");
+        String appointmentId = createAndPayAppointment(patientToken, scheduleId);
+
+        String doctorToken = login("doctor_rx_today", "doctor123");
+        String visitId = startVisit(doctorToken, appointmentId);
+        updateVisitRecord(doctorToken, visitId, "Amlodipine 5mg once daily");
+        completeVisit(doctorToken, visitId);
+
+        mockMvc.perform(get("/api/admin/pharmacy/overview")
+                .header("Authorization", "Bearer " + adminToken))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.cards.totalPrescriptions").value(1))
+            .andExpect(jsonPath("$.cards.todayPrescriptions").value(1))
+            .andExpect(jsonPath("$.records.length()").value(1))
+            .andExpect(jsonPath("$.records[0].id").value(visitId))
+            .andExpect(jsonPath("$.records[0].visitDate").value(futureDate));
+    }
+
+    @Test
     void nonAdminCannotAccessPharmacyOverview() throws Exception {
         String doctorToken = login("doctor", "doctor123");
 

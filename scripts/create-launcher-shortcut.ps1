@@ -14,14 +14,21 @@ function Get-HospitalLauncherPaths {
         throw "Launcher cmd entry was not found in $projectRoot."
     }
 
+    $vbsPath = Join-Path $projectRoot ($cmdFile.BaseName + ".vbs")
+
+    if (-not (Test-Path $vbsPath)) {
+        throw "Launcher vbs entry was not found at $vbsPath."
+    }
+
     $iconDir = Join-Path $projectRoot "assets\icons"
 
     return [pscustomobject]@{
-        ProjectRoot   = $projectRoot
-        CmdPath       = $cmdFile.FullName
-        IconSvgPath   = Join-Path $iconDir "hospital-launcher.svg"
-        IconIcoPath   = Join-Path $iconDir "hospital-launcher.ico"
-        ShortcutPath  = Join-Path $projectRoot ($cmdFile.BaseName + ".lnk")
+        ProjectRoot  = $projectRoot
+        CmdPath      = $cmdFile.FullName
+        VbsPath      = $vbsPath
+        IconSvgPath  = Join-Path $iconDir "hospital-launcher.svg"
+        IconIcoPath  = Join-Path $iconDir "hospital-launcher.ico"
+        ShortcutPath = Join-Path $projectRoot ($cmdFile.BaseName + ".lnk")
     }
 }
 
@@ -182,13 +189,16 @@ function Remove-StaleHospitalLauncherShortcuts {
         [Parameter(Mandatory = $true)]
         [string]$ProjectRoot,
         [Parameter(Mandatory = $true)]
-        [string]$CmdPath,
+        [string[]]$TargetPaths,
         [Parameter(Mandatory = $true)]
         [string]$DesiredShortcutPath
     )
 
     $shell = New-Object -ComObject WScript.Shell
-    $desiredTarget = (Resolve-Path $CmdPath).Path
+    $resolvedTargets = $TargetPaths |
+        Where-Object { $_ } |
+        ForEach-Object { (Resolve-Path $_ -ErrorAction SilentlyContinue).Path } |
+        Where-Object { $_ }
 
     Get-ChildItem -Path $ProjectRoot -Filter "*.lnk" -File | ForEach-Object {
         if ($_.FullName -eq $DesiredShortcutPath) {
@@ -196,7 +206,9 @@ function Remove-StaleHospitalLauncherShortcuts {
         }
 
         $candidate = $shell.CreateShortcut($_.FullName)
-        if ($candidate.TargetPath -and (Resolve-Path $candidate.TargetPath -ErrorAction SilentlyContinue).Path -eq $desiredTarget) {
+        $candidateTarget = (Resolve-Path $candidate.TargetPath -ErrorAction SilentlyContinue).Path
+
+        if ($candidateTarget -and $resolvedTargets -contains $candidateTarget) {
             Remove-Item -Path $_.FullName -Force
         }
     }
@@ -210,8 +222,8 @@ function Install-HospitalLauncherShortcut {
     }
 
     New-HospitalLauncherIcon -OutputPath $paths.IconIcoPath | Out-Null
-    Remove-StaleHospitalLauncherShortcuts -ProjectRoot $paths.ProjectRoot -CmdPath $paths.CmdPath -DesiredShortcutPath $paths.ShortcutPath
-    New-HospitalLauncherShortcut -ShortcutPath $paths.ShortcutPath -TargetPath $paths.CmdPath -IconPath $paths.IconIcoPath -WorkingDirectory $paths.ProjectRoot | Out-Null
+    Remove-StaleHospitalLauncherShortcuts -ProjectRoot $paths.ProjectRoot -TargetPaths @($paths.CmdPath, $paths.VbsPath) -DesiredShortcutPath $paths.ShortcutPath
+    New-HospitalLauncherShortcut -ShortcutPath $paths.ShortcutPath -TargetPath $paths.VbsPath -IconPath $paths.IconIcoPath -WorkingDirectory $paths.ProjectRoot | Out-Null
 
     return $paths
 }
